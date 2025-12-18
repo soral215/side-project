@@ -9,7 +9,7 @@ export * from './validations';
 
 // 명시적 export (tsx 호환성)
 export { createApiResponse, createErrorResponse, formatDate, formatZodError } from './utils';
-export type { User, ApiResponse, CreateUserRequest, UpdateUserRequest } from './types';
-export { createUserSchema, updateUserSchema, ZodError } from './validations';
-export type { CreateUserInput, UpdateUserInput } from './validations';
+export type { User, ApiResponse, CreateUserRequest, UpdateUserRequest, PaginatedResponse, PaginationParams } from './types';
+export { createUserSchema, updateUserSchema, registerSchema, loginSchema, ZodError } from './validations';
+export type { CreateUserInput, UpdateUserInput, RegisterInput, LoginInput } from './validations';
 

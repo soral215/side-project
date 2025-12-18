@@ -28,3 +28,20 @@ export interface UpdateUserRequest {
   email?: string;
 }
 
+// 페이징 관련 타입
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+

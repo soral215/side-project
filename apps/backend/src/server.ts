@@ -1,23 +1,36 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import swaggerUi from 'swagger-ui-express';
 import { createApiResponse, createErrorResponse } from '@side-project/shared';
 import { userRoutes } from './routes/user.routes.js';
+import { authRoutes } from './routes/auth.routes.js';
+import { uploadRoutes } from './routes/upload.routes.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { requestLogger } from './middleware/logger.js';
+import logger from './lib/logger.js';
+import { swaggerSpec } from './swagger.js';
 
 dotenv.config();
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+  },
+});
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Request logging
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
-});
+// Request logging (Winston)
+app.use(requestLogger);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -27,6 +40,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/health',
       users: '/api/users',
+      auth: '/api/auth',
     },
     timestamp: new Date().toISOString(),
   }));
@@ -37,21 +51,48 @@ app.get('/health', (req, res) => {
   res.json(createApiResponse({ status: 'ok', timestamp: new Date().toISOString() }));
 });
 
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// 정적 파일 서빙 (업로드된 이미지)
+app.use('/uploads', express.static('uploads'));
 
 // 404 handler
 app.use((req, res) => {
   res.status(404).json(createErrorResponse('Route not found', 'NOT_FOUND'));
 });
 
-// Error handler
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json(createErrorResponse('Internal server error', 'INTERNAL_ERROR'));
+// Error handler (모든 에러를 처리하는 미들웨어)
+app.use(errorHandler);
+
+// Socket.io 연결 처리
+io.on('connection', (socket) => {
+  logger.info(`Socket connected: ${socket.id}`);
+
+  socket.on('disconnect', () => {
+    logger.info(`Socket disconnected: ${socket.id}`);
+  });
+
+  // 사용자 목록 업데이트 알림
+  socket.on('user:updated', (data: any) => {
+    socket.broadcast.emit('user:updated', data);
+  });
+
+  // 새 사용자 생성 알림
+  socket.on('user:created', (data: any) => {
+    socket.broadcast.emit('user:created', data);
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Backend server running on http://localhost:${PORT}`);
+// Socket.io 인스턴스를 app에 추가 (라우트에서 사용 가능하도록)
+app.set('io', io);
+
+httpServer.listen(PORT, () => {
+  logger.info(`🚀 Backend server running on http://localhost:${PORT}`);
 });
 

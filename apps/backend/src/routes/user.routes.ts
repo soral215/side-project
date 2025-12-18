@@ -1,24 +1,88 @@
-import { Router, type IRouter } from 'express';
-import { createApiResponse, createErrorResponse, createUserSchema, updateUserSchema, ZodError, formatZodError } from '@side-project/shared';
+import { Router, type IRouter, type Request, type Response, type NextFunction } from 'express';
+import { createApiResponse, createErrorResponse, updateUserSchema, type PaginatedResponse, type User } from '@side-project/shared';
 import prisma from '../lib/prisma.js';
 
 const router: IRouter = Router();
 
-// GET /api/users - 모든 사용자 조회
-router.get('/', async (req, res) => {
+// GET /api/users - 모든 사용자 조회 (페이징 및 검색 지원)
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || '';
+
+    // 페이지 번호와 limit 유효성 검사
+    if (page < 1) {
+      return res.status(400).json(createErrorResponse('Page must be greater than 0', 'INVALID_PAGE'));
+    }
+    if (limit < 1 || limit > 100) {
+      return res.status(400).json(createErrorResponse('Limit must be between 1 and 100', 'INVALID_LIMIT'));
+    }
+
+    const skip = (page - 1) * limit;
+
+    // 검색 조건 구성
+    const where = search
+      ? {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' as const } },
+            { email: { contains: search, mode: 'insensitive' as const } },
+          ],
+        }
+      : {};
+
+    // SQLite는 case-insensitive를 지원하지 않으므로 contains만 사용
+    const whereForSqlite = search
+      ? {
+          OR: [
+            { name: { contains: search } },
+            { email: { contains: search } },
+          ],
+        }
+      : {};
+
+    // 전체 개수 조회
+    const total = await prisma.user.count({
+      where: whereForSqlite,
     });
-    res.json(createApiResponse(users));
+
+    // 사용자 목록 조회
+    const users = await prisma.user.findMany({
+      where: whereForSqlite,
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    // Date를 string으로 변환
+    const formattedUsers: User[] = users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+    }));
+
+    const response: PaginatedResponse<User> = {
+      data: formattedUsers,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    };
+
+    res.json(createApiResponse(response));
   } catch (error) {
-    console.error('Failed to fetch users:', error);
-    res.status(500).json(createErrorResponse('Failed to fetch users', 'DATABASE_ERROR'));
+    next(error); // 에러 미들웨어로 전달
   }
 });
 
 // GET /api/users/:id - 특정 사용자 조회
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },
@@ -26,83 +90,62 @@ router.get('/:id', async (req, res) => {
     if (!user) {
       return res.status(404).json(createErrorResponse('User not found', 'USER_NOT_FOUND'));
     }
-    res.json(createApiResponse(user));
+    // Date를 string으로 변환
+    const formattedUser: User = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+    };
+    res.json(createApiResponse(formattedUser));
   } catch (error) {
-    console.error('Failed to fetch user:', error);
-    res.status(500).json(createErrorResponse('Failed to fetch user', 'DATABASE_ERROR'));
+    next(error); // 에러 미들웨어로 전달
   }
 });
 
-// POST /api/users - 사용자 생성
-router.post('/', async (req, res) => {
-  try {
-    // Zod 검증
-    const validatedData = createUserSchema.parse(req.body);
-
-    const newUser = await prisma.user.create({
-      data: validatedData,
-    });
-
-    res.status(201).json(createApiResponse(newUser));
-  } catch (error: any) {
-    console.error('Failed to create user:', error);
-    
-    // Zod 검증 에러 처리
-    if (error instanceof ZodError) {
-      return res.status(400).json(formatZodError(error));
-    }
-    
-    // 이메일 중복 체크
-    if (error.code === 'P2002') {
-      return res.status(400).json(createErrorResponse('Email already exists', 'DUPLICATE_EMAIL'));
-    }
-    res.status(500).json(createErrorResponse('Failed to create user', 'DATABASE_ERROR'));
-  }
-});
+// POST /api/users - 사용자 생성 (제거됨, 회원가입은 /api/auth/register 사용)
 
 // PUT /api/users/:id - 사용자 업데이트
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Zod 검증
-    const validatedData = updateUserSchema.parse(req.body);
+    // Zod 검증 (에러 발생 시 ZodError가 throw됨)
+    let validatedData;
+    try {
+      validatedData = updateUserSchema.parse(req.body);
+    } catch (error) {
+      return next(error); // ZodError를 미들웨어로 전달
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id: req.params.id },
       data: validatedData,
     });
 
-    res.json(createApiResponse(updatedUser));
+    // Date를 string으로 변환
+    const formattedUser: User = {
+      id: updatedUser.id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      createdAt: updatedUser.createdAt.toISOString(),
+      updatedAt: updatedUser.updatedAt.toISOString(),
+    };
+
+    res.json(createApiResponse(formattedUser));
   } catch (error: any) {
-    console.error('Failed to update user:', error);
-    
-    // Zod 검증 에러 처리
-    if (error instanceof ZodError) {
-      return res.status(400).json(formatZodError(error));
-    }
-    
-    if (error.code === 'P2025') {
-      return res.status(404).json(createErrorResponse('User not found', 'USER_NOT_FOUND'));
-    }
-    if (error.code === 'P2002') {
-      return res.status(400).json(createErrorResponse('Email already exists', 'DUPLICATE_EMAIL'));
-    }
-    res.status(500).json(createErrorResponse('Failed to update user', 'DATABASE_ERROR'));
+    next(error); // 에러 미들웨어로 전달
   }
 });
 
 // DELETE /api/users/:id - 사용자 삭제
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await prisma.user.delete({
       where: { id: req.params.id },
     });
     res.json(createApiResponse({ message: 'User deleted successfully' }));
   } catch (error: any) {
-    console.error('Failed to delete user:', error);
-    if (error.code === 'P2025') {
-      return res.status(404).json(createErrorResponse('User not found', 'USER_NOT_FOUND'));
-    }
-    res.status(500).json(createErrorResponse('Failed to delete user', 'DATABASE_ERROR'));
+    next(error); // 에러 미들웨어로 전달
   }
 });
 
