@@ -1,5 +1,5 @@
 import { Router, type IRouter } from 'express';
-import { createApiResponse, createErrorResponse, type CreateUserRequest } from '@side-project/shared';
+import { createApiResponse, createErrorResponse, createUserSchema, updateUserSchema, ZodError, formatZodError } from '@side-project/shared';
 import prisma from '../lib/prisma.js';
 
 const router: IRouter = Router();
@@ -36,22 +36,22 @@ router.get('/:id', async (req, res) => {
 // POST /api/users - 사용자 생성
 router.post('/', async (req, res) => {
   try {
-    const { name, email }: CreateUserRequest = req.body;
-
-    if (!name || !email) {
-      return res.status(400).json(createErrorResponse('Name and email are required', 'VALIDATION_ERROR'));
-    }
+    // Zod 검증
+    const validatedData = createUserSchema.parse(req.body);
 
     const newUser = await prisma.user.create({
-      data: {
-        name,
-        email,
-      },
+      data: validatedData,
     });
 
     res.status(201).json(createApiResponse(newUser));
   } catch (error: any) {
     console.error('Failed to create user:', error);
+    
+    // Zod 검증 에러 처리
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodError(error));
+    }
+    
     // 이메일 중복 체크
     if (error.code === 'P2002') {
       return res.status(400).json(createErrorResponse('Email already exists', 'DUPLICATE_EMAIL'));
@@ -63,19 +63,23 @@ router.post('/', async (req, res) => {
 // PUT /api/users/:id - 사용자 업데이트
 router.put('/:id', async (req, res) => {
   try {
-    const { name, email } = req.body;
+    // Zod 검증
+    const validatedData = updateUserSchema.parse(req.body);
 
     const updatedUser = await prisma.user.update({
       where: { id: req.params.id },
-      data: {
-        ...(name && { name }),
-        ...(email && { email }),
-      },
+      data: validatedData,
     });
 
     res.json(createApiResponse(updatedUser));
   } catch (error: any) {
     console.error('Failed to update user:', error);
+    
+    // Zod 검증 에러 처리
+    if (error instanceof ZodError) {
+      return res.status(400).json(formatZodError(error));
+    }
+    
     if (error.code === 'P2025') {
       return res.status(404).json(createErrorResponse('User not found', 'USER_NOT_FOUND'));
     }
