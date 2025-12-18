@@ -45,7 +45,7 @@ export default function Home() {
     if (mounted && isAuthenticated) {
       fetchUsers();
     }
-  }, [currentPage, search]);
+  }, [mounted, isAuthenticated, currentPage, search]);
 
   const fetchUsers = async () => {
     try {
@@ -221,6 +221,12 @@ export default function Home() {
                 {currentUser.name} ({currentUser.email})
               </span>
             )}
+            <button
+              onClick={() => router.push('/profile')}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
+            >
+              프로필
+            </button>
             <button
               onClick={handleLogout}
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
