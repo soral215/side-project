@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { type User, type ApiResponse, createApiResponse } from '@side-project/shared';
+import { type User, type ApiResponse, createUserSchema, ZodError } from '@side-project/shared';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -10,6 +10,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
 
   useEffect(() => {
     fetchUsers();
@@ -32,22 +33,54 @@ export default function Home() {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({}); // 에러 초기화
+
     try {
+      // 1. 클라이언트 사이드 검증
+      const validatedData = createUserSchema.parse({ name, email });
+
+      // 2. 검증 통과 시 API 호출
       const response = await fetch(`${API_URL}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify(validatedData),
       });
+
       const data: ApiResponse<User> = await response.json();
+
       if (data.success) {
         setName('');
         setEmail('');
+        setErrors({});
         fetchUsers();
+      } else if (data.error) {
+        // 백엔드 검증 에러 처리
+        if (data.error.code === 'VALIDATION_ERROR' && 'details' in data.error) {
+          const fieldErrors: { [key: string]: string } = {};
+          const details = (data.error as any).details as Array<{ field: string; message: string }>;
+          details.forEach((detail) => {
+            fieldErrors[detail.field] = detail.message;
+          });
+          setErrors(fieldErrors);
+        } else {
+          alert(data.error.message);
+        }
       }
     } catch (error) {
-      console.error('Failed to create user:', error);
+      // Zod 검증 에러 처리
+      if (error instanceof ZodError) {
+        const fieldErrors: { [key: string]: string } = {};
+        error.errors.forEach((err) => {
+          const field = err.path[0] as string;
+          fieldErrors[field] = err.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        console.error('Failed to create user:', error);
+        alert('사용자 생성에 실패했습니다.');
+      }
     }
   };
 
@@ -71,10 +104,20 @@ export default function Home() {
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
+                onChange={(e) => {
+                  setName(e.target.value);
+                  // 입력 시 에러 제거
+                  if (errors.name) setErrors({ ...errors, name: undefined });
+                }}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  errors.name
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-blue-500'
+                }`}
               />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -83,10 +126,20 @@ export default function Home() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  // 입력 시 에러 제거
+                  if (errors.email) setErrors({ ...errors, email: undefined });
+                }}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  errors.email
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-blue-500'
+                }`}
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
             <button
               type="submit"
