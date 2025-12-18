@@ -2,24 +2,18 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { type ApiResponse, updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
+import { useQueryClient } from '@tanstack/react-query';
+import { useProfile, useUpdateProfile, useChangePassword, useDeleteAccount } from '../../src/hooks/useProfile';
+import { useAuthStore } from '../../src/stores/authStore';
+import { apiClient } from '../../src/lib/api';
+import { updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
-interface Profile {
-  id: string;
-  name: string;
-  email: string;
-  imageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function ProfilePage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   
   // 프로필 수정
@@ -27,7 +21,6 @@ export default function ProfilePage() {
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editErrors, setEditErrors] = useState<{ name?: string; email?: string }>({});
-  const [editLoading, setEditLoading] = useState(false);
   
   // 비밀번호 변경
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -35,52 +28,37 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordErrors, setPasswordErrors] = useState<{ currentPassword?: string; newPassword?: string; confirmPassword?: string }>({});
-  const [passwordLoading, setPasswordLoading] = useState(false);
   
   // 계정 삭제
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
-  const [deleteLoading, setDeleteLoading] = useState(false);
   
   // 이미지 업로드
   const [uploading, setUploading] = useState(false);
+
+  // React Query hooks
+  const queryClient = useQueryClient();
+  const { data: profile, isLoading } = useProfile();
+  const updateProfileMutation = useUpdateProfile();
+  const changePasswordMutation = useChangePassword();
+  const deleteAccountMutation = useDeleteAccount();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (mounted) {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
-      fetchProfile();
+    if (mounted && !isAuthenticated) {
+      router.push('/login');
     }
-  }, [mounted, router]);
+  }, [mounted, isAuthenticated, router]);
 
-  const fetchProfile = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data: ApiResponse<Profile> = await response.json();
-      if (data.success && data.data) {
-        setProfile(data.data);
-        setEditName(data.data.name);
-        setEditEmail(data.data.email);
-      }
-    } catch (error) {
-      console.error('Failed to fetch profile:', error);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (profile) {
+      setEditName(profile.name);
+      setEditEmail(profile.email);
     }
-  };
+  }, [profile]);
 
   const handleEdit = () => {
     if (profile) {
@@ -102,46 +80,19 @@ export default function ProfilePage() {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!profile) return;
+
     setEditErrors({});
-    setEditLoading(true);
 
     try {
       const validatedData = updateProfileSchema.parse({
-        name: editName !== profile!.name ? editName : undefined,
-        email: editEmail !== profile!.email ? editEmail : undefined,
+        name: editName !== profile.name ? editName : undefined,
+        email: editEmail !== profile.email ? editEmail : undefined,
       });
 
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(validatedData),
-      });
-
-      const data: ApiResponse<Profile> = await response.json();
-
-      if (data.success && data.data) {
-        setProfile(data.data);
-        // localStorage의 user 정보도 업데이트
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        localStorage.setItem('user', JSON.stringify({ ...user, ...data.data }));
-        setEditMode(false);
-        alert('프로필이 성공적으로 수정되었습니다.');
-      } else if (data.error) {
-        if (data.error.code === 'VALIDATION_ERROR' && 'details' in data.error) {
-          const fieldErrors: { [key: string]: string } = {};
-          const details = (data.error as any).details as Array<{ field: string; message: string }>;
-          details.forEach((detail) => {
-            fieldErrors[detail.field] = detail.message;
-          });
-          setEditErrors(fieldErrors);
-        } else {
-          alert(data.error.message || '프로필 수정에 실패했습니다.');
-        }
-      }
+      await updateProfileMutation.mutateAsync(validatedData);
+      setEditMode(false);
+      alert('프로필이 성공적으로 수정되었습니다.');
     } catch (error) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
@@ -151,11 +102,8 @@ export default function ProfilePage() {
         });
         setEditErrors(fieldErrors);
       } else {
-        console.error('Failed to update profile:', error);
-        alert('프로필 수정에 실패했습니다.');
+        alert(error instanceof Error ? error.message : '프로필 수정에 실패했습니다.');
       }
-    } finally {
-      setEditLoading(false);
     }
   };
 
@@ -163,7 +111,6 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 이미지 파일 검증
     if (!file.type.startsWith('image/')) {
       alert('이미지 파일만 업로드 가능합니다.');
       return;
@@ -176,25 +123,12 @@ export default function ProfilePage() {
 
     try {
       setUploading(true);
-      const token = localStorage.getItem('token');
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch(`${API_URL}/api/upload`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      const data: ApiResponse<{ fileUrl: string; user: Profile }> = await response.json();
+      const token = useAuthStore.getState().token;
+      const data = await apiClient.upload<{ fileUrl: string; user: typeof profile }>('/api/upload', file, token);
 
       if (data.success && data.data) {
-        setProfile(data.data.user);
-        // localStorage의 user 정보도 업데이트
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        localStorage.setItem('user', JSON.stringify({ ...user, imageUrl: data.data.user.imageUrl }));
+        // 프로필 쿼리 무효화하여 다시 로드
+        queryClient.invalidateQueries({ queryKey: ['profile'] });
         alert('프로필 이미지가 업로드되었습니다.');
       } else {
         alert(data.error?.message || '이미지 업로드에 실패했습니다.');
@@ -213,7 +147,6 @@ export default function ProfilePage() {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordErrors({});
-    setPasswordLoading(true);
 
     try {
       const validatedData = changePasswordSchema.parse({
@@ -222,36 +155,12 @@ export default function ProfilePage() {
         confirmPassword,
       });
 
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/profile/password`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(validatedData),
-      });
-
-      const data: ApiResponse<{ message: string }> = await response.json();
-
-      if (data.success) {
-        alert('비밀번호가 성공적으로 변경되었습니다.');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-        setShowPasswordChange(false);
-      } else if (data.error) {
-        if (data.error.code === 'VALIDATION_ERROR' && 'details' in data.error) {
-          const fieldErrors: { [key: string]: string } = {};
-          const details = (data.error as any).details as Array<{ field: string; message: string }>;
-          details.forEach((detail) => {
-            fieldErrors[detail.field] = detail.message;
-          });
-          setPasswordErrors(fieldErrors);
-        } else {
-          alert(data.error.message || '비밀번호 변경에 실패했습니다.');
-        }
-      }
+      await changePasswordMutation.mutateAsync(validatedData);
+      alert('비밀번호가 성공적으로 변경되었습니다.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setShowPasswordChange(false);
     } catch (error) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
@@ -261,11 +170,8 @@ export default function ProfilePage() {
         });
         setPasswordErrors(fieldErrors);
       } else {
-        console.error('Failed to change password:', error);
-        alert('비밀번호 변경에 실패했습니다.');
+        alert(error instanceof Error ? error.message : '비밀번호 변경에 실패했습니다.');
       }
-    } finally {
-      setPasswordLoading(false);
     }
   };
 
@@ -280,36 +186,23 @@ export default function ProfilePage() {
     }
 
     try {
-      setDeleteLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/profile`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ password: deletePassword }),
-      });
-
-      const data: ApiResponse<{ message: string }> = await response.json();
-
-      if (data.success) {
-        alert('계정이 삭제되었습니다.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        router.push('/login');
-      } else {
-        alert(data.error?.message || '계정 삭제에 실패했습니다.');
-      }
+      await deleteAccountMutation.mutateAsync(deletePassword);
+      alert('계정이 삭제되었습니다.');
+      router.push('/login');
     } catch (error) {
-      console.error('Failed to delete account:', error);
-      alert('계정 삭제에 실패했습니다.');
-    } finally {
-      setDeleteLoading(false);
+      alert(error instanceof Error ? error.message : '계정 삭제에 실패했습니다.');
     }
   };
 
-  if (!mounted || loading) {
+  if (!mounted || !isAuthenticated) {
+    return (
+      <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600">로딩 중...</p>
+      </main>
+    );
+  }
+
+  if (isLoading) {
     return (
       <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
         <p className="text-gray-600">로딩 중...</p>
@@ -399,9 +292,7 @@ export default function ProfilePage() {
               ) : (
                 <form onSubmit={handleUpdateProfile} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      이름
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
                     <input
                       type="text"
                       value={editName}
@@ -420,9 +311,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      이메일
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
                     <input
                       type="email"
                       value={editEmail}
@@ -443,10 +332,10 @@ export default function ProfilePage() {
                   <div className="flex gap-2">
                     <button
                       type="submit"
-                      disabled={editLoading}
+                      disabled={updateProfileMutation.isPending}
                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
                     >
-                      {editLoading ? '저장 중...' : '저장'}
+                      {updateProfileMutation.isPending ? '저장 중...' : '저장'}
                     </button>
                     <button
                       type="button"
@@ -482,9 +371,7 @@ export default function ProfilePage() {
           {showPasswordChange && (
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  현재 비밀번호
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">현재 비밀번호</label>
                 <input
                   type="password"
                   value={currentPassword}
@@ -503,9 +390,7 @@ export default function ProfilePage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  새 비밀번호
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">새 비밀번호</label>
                 <input
                   type="password"
                   value={newPassword}
@@ -524,9 +409,7 @@ export default function ProfilePage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  새 비밀번호 확인
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">새 비밀번호 확인</label>
                 <input
                   type="password"
                   value={confirmPassword}
@@ -546,10 +429,10 @@ export default function ProfilePage() {
               </div>
               <button
                 type="submit"
-                disabled={passwordLoading}
+                disabled={changePasswordMutation.isPending}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
-                {passwordLoading ? '변경 중...' : '비밀번호 변경'}
+                {changePasswordMutation.isPending ? '변경 중...' : '비밀번호 변경'}
               </button>
             </form>
           )}
@@ -571,9 +454,7 @@ export default function ProfilePage() {
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  비밀번호 확인
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">비밀번호 확인</label>
                 <input
                   type="password"
                   value={deletePassword}
@@ -585,10 +466,10 @@ export default function ProfilePage() {
               <div className="flex gap-2">
                 <button
                   onClick={handleDeleteAccount}
-                  disabled={deleteLoading || !deletePassword}
+                  disabled={deleteAccountMutation.isPending || !deletePassword}
                   className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
-                  {deleteLoading ? '삭제 중...' : '확인 및 삭제'}
+                  {deleteAccountMutation.isPending ? '삭제 중...' : '확인 및 삭제'}
                 </button>
                 <button
                   onClick={() => {
@@ -607,4 +488,3 @@ export default function ProfilePage() {
     </main>
   );
 }
-

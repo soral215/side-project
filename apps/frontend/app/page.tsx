@@ -2,112 +2,40 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { type User, type ApiResponse, type PaginatedResponse, updateUserSchema, ZodError } from '@side-project/shared';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { useUsers, useUpdateUser, useDeleteUser } from '../src/hooks/useUsers';
+import { useAuthStore } from '../src/stores/authStore';
+import { useServerStatus } from '../src/hooks/useServerStatus';
+import { updateUserSchema, ZodError } from '@side-project/shared';
 
 export default function Home() {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>([]);
-  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 0 });
+  const { user, isAuthenticated, clearAuth } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingUser, setEditingUser] = useState<{ id: string; name: string; email: string } | null>(null);
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editErrors, setEditErrors] = useState<{ name?: string; email?: string }>({});
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [serverStatus, setServerStatus] = useState<'online' | 'offline' | 'checking'>('checking');
+  const [mounted, setMounted] = useState(false);
 
-  // 클라이언트 마운트 확인
+  // React Query hooks
+  const { data: usersData, isLoading, error } = useUsers(currentPage, 10, search);
+  const updateUserMutation = useUpdateUser();
+  const deleteUserMutation = useDeleteUser();
+  const { data: isServerOnline = false } = useServerStatus();
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 인증 확인 및 데이터 로드
   useEffect(() => {
     if (!mounted) return;
 
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-      fetchUsers();
-    } else {
-      setIsAuthenticated(false);
+    if (!isAuthenticated) {
       router.push('/login');
     }
-  }, [mounted, router]);
-
-  // 페이지/검색 변경 시 데이터 다시 로드
-  useEffect(() => {
-    if (mounted && isAuthenticated) {
-      fetchUsers();
-    }
-  }, [mounted, isAuthenticated, currentPage, search]);
-
-  // 헬스체크 주기적 확인
-  useEffect(() => {
-    if (!mounted) return;
-
-    const checkHealth = async () => {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3초 타임아웃
-
-        const response = await fetch(`${API_URL}/health`, {
-          method: 'GET',
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeoutId);
-
-        if (response.ok) {
-          setServerStatus('online');
-        } else {
-          setServerStatus('offline');
-        }
-      } catch (error) {
-        setServerStatus('offline');
-      }
-    };
-
-    // 초기 체크
-    checkHealth();
-
-    // 30초마다 체크
-    const interval = setInterval(checkHealth, 30000);
-
-    return () => clearInterval(interval);
-  }, [mounted]);
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('token');
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: '10',
-        ...(search && { search }),
-      });
-      const response = await fetch(`${API_URL}/api/users?${params}`, {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-      const data: ApiResponse<PaginatedResponse<User>> = await response.json();
-      if (data.success && data.data) {
-        setUsers(data.data.data);
-        setPagination(data.data.pagination);
-      }
-    } catch (error) {
-      console.error('Failed to fetch users:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [mounted, isAuthenticated, router]);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -115,12 +43,11 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    clearAuth();
     router.push('/login');
   };
 
-  const handleEditClick = (user: User) => {
+  const handleEditClick = (user: { id: string; name: string; email: string }) => {
     setEditingUser(user);
     setEditName(user.name);
     setEditEmail(user.email);
@@ -139,47 +66,16 @@ export default function Home() {
         email: editEmail !== editingUser.email ? editEmail : undefined,
       });
 
-      const optimisticUsers = users.map((u) =>
-        u.id === editingUser.id
-          ? { ...u, name: editName, email: editEmail, updatedAt: new Date().toISOString() }
-          : u
-      );
-      setUsers(optimisticUsers);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/users/${editingUser.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify(validatedData),
+      await updateUserMutation.mutateAsync({
+        id: editingUser.id,
+        data: validatedData,
       });
 
-      const data: ApiResponse<User> = await response.json();
-
-      if (data.success && data.data) {
-        setEditingUser(null);
-        setEditName('');
-        setEditEmail('');
-        setEditErrors({});
-        setUsers(users.map((u) => (u.id === data.data!.id ? data.data! : u)));
-        fetchUsers();
-      } else if (data.error) {
-        setUsers(users);
-        if (data.error.code === 'VALIDATION_ERROR' && 'details' in data.error) {
-          const fieldErrors: { [key: string]: string } = {};
-          const details = (data.error as any).details as Array<{ field: string; message: string }>;
-          details.forEach((detail) => {
-            fieldErrors[detail.field] = detail.message;
-          });
-          setEditErrors(fieldErrors);
-        } else {
-          alert(data.error.message);
-        }
-      }
+      setEditingUser(null);
+      setEditName('');
+      setEditEmail('');
+      setEditErrors({});
     } catch (error) {
-      setUsers(users);
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
         error.errors.forEach((err) => {
@@ -188,8 +84,7 @@ export default function Home() {
         });
         setEditErrors(fieldErrors);
       } else {
-        console.error('Failed to update user:', error);
-        alert('사용자 수정에 실패했습니다.');
+        alert(error instanceof Error ? error.message : '사용자 수정에 실패했습니다.');
       }
     }
   };
@@ -201,40 +96,15 @@ export default function Home() {
   const handleDeleteConfirm = async () => {
     if (!deleteConfirm) return;
 
-    const userToDelete = users.find((u) => u.id === deleteConfirm);
-    if (!userToDelete) return;
-
-    const optimisticUsers = users.filter((u) => u.id !== deleteConfirm);
-    setUsers(optimisticUsers);
-
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/users/${deleteConfirm}`, {
-        method: 'DELETE',
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-
-      const data: ApiResponse<{ message: string }> = await response.json();
-
-      if (!data.success) {
-        setUsers(users);
-        alert(data.error?.message || '사용자 삭제에 실패했습니다.');
-      } else {
-        fetchUsers();
-      }
-    } catch (error) {
-      setUsers(users);
-      console.error('Failed to delete user:', error);
-      alert('사용자 삭제에 실패했습니다.');
-    } finally {
+      await deleteUserMutation.mutateAsync(deleteConfirm);
       setDeleteConfirm(null);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '사용자 삭제에 실패했습니다.');
     }
   };
 
-  // 초기 렌더링 시 항상 로딩 화면 표시
-  if (!mounted || !isAuthenticated || loading) {
+  if (!mounted || !isAuthenticated) {
     return (
       <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
         <p className="text-gray-600">로딩 중...</p>
@@ -242,7 +112,7 @@ export default function Home() {
     );
   }
 
-  const currentUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : {};
+  const serverStatus = isServerOnline ? 'online' : 'offline';
 
   return (
     <main className="min-h-screen p-8 bg-gray-50">
@@ -258,31 +128,19 @@ export default function Home() {
                 className={`w-3 h-3 rounded-full ${
                   serverStatus === 'online'
                     ? 'bg-green-500'
-                    : serverStatus === 'offline'
-                    ? 'bg-red-500'
-                    : 'bg-yellow-500 animate-pulse'
+                    : 'bg-red-500'
                 }`}
-                title={
-                  serverStatus === 'online'
-                    ? '서버 정상 작동 중'
-                    : serverStatus === 'offline'
-                    ? '서버 연결 실패'
-                    : '서버 상태 확인 중'
-                }
+                title={serverStatus === 'online' ? '서버 정상 작동 중' : '서버 연결 실패'}
               />
               <span className="text-xs text-gray-500">
-                {serverStatus === 'online'
-                  ? '서버 정상'
-                  : serverStatus === 'offline'
-                  ? '서버 오프라인'
-                  : '확인 중...'}
+                {serverStatus === 'online' ? '서버 정상' : '서버 오프라인'}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            {currentUser.name && (
+            {user && (
               <span className="text-sm text-gray-600">
-                {currentUser.name} ({currentUser.email})
+                {user.name} ({user.email})
               </span>
             )}
             <button
@@ -316,14 +174,16 @@ export default function Home() {
               />
             </div>
           </div>
-          {loading ? (
+          {isLoading ? (
             <p className="text-gray-600">로딩 중...</p>
-          ) : users.length === 0 ? (
+          ) : error ? (
+            <p className="text-red-600">에러: {error instanceof Error ? error.message : '알 수 없는 오류'}</p>
+          ) : !usersData || usersData.data.length === 0 ? (
             <p className="text-gray-600">사용자가 없습니다.</p>
           ) : (
             <>
               <div className="space-y-3 mb-4">
-                {users.map((user) => (
+                {usersData.data.map((user) => (
                   <div
                     key={user.id}
                     className="p-4 border border-gray-200 rounded-md hover:bg-gray-50"
@@ -355,11 +215,12 @@ export default function Home() {
                 ))}
               </div>
               {/* 페이지네이션 */}
-              {pagination.totalPages > 1 && (
+              {usersData.pagination.totalPages > 1 && (
                 <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                   <div className="text-sm text-gray-600">
-                    총 {pagination.total}명 중 {((currentPage - 1) * pagination.limit) + 1}-
-                    {Math.min(currentPage * pagination.limit, pagination.total)}명 표시
+                    총 {usersData.pagination.total}명 중{' '}
+                    {(currentPage - 1) * usersData.pagination.limit + 1}-
+                    {Math.min(currentPage * usersData.pagination.limit, usersData.pagination.total)}명 표시
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -369,14 +230,14 @@ export default function Home() {
                     >
                       이전
                     </button>
-                    {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    {Array.from({ length: Math.min(5, usersData.pagination.totalPages) }, (_, i) => {
                       let pageNum;
-                      if (pagination.totalPages <= 5) {
+                      if (usersData.pagination.totalPages <= 5) {
                         pageNum = i + 1;
                       } else if (currentPage <= 3) {
                         pageNum = i + 1;
-                      } else if (currentPage >= pagination.totalPages - 2) {
-                        pageNum = pagination.totalPages - 4 + i;
+                      } else if (currentPage >= usersData.pagination.totalPages - 2) {
+                        pageNum = usersData.pagination.totalPages - 4 + i;
                       } else {
                         pageNum = currentPage - 2 + i;
                       }
@@ -395,8 +256,8 @@ export default function Home() {
                       );
                     })}
                     <button
-                      onClick={() => setCurrentPage(Math.min(pagination.totalPages, currentPage + 1))}
-                      disabled={currentPage === pagination.totalPages}
+                      onClick={() => setCurrentPage(Math.min(usersData.pagination.totalPages, currentPage + 1))}
+                      disabled={currentPage === usersData.pagination.totalPages}
                       className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       다음
@@ -413,14 +274,10 @@ export default function Home() {
       {editingUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
-              사용자 수정
-            </h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">사용자 수정</h2>
             <form onSubmit={handleUpdateUser} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  이름
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
                 <input
                   type="text"
                   value={editName}
@@ -439,9 +296,7 @@ export default function Home() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  이메일
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
                 <input
                   type="email"
                   value={editEmail}
@@ -474,9 +329,10 @@ export default function Home() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  disabled={updateUserMutation.isPending}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  저장
+                  {updateUserMutation.isPending ? '저장 중...' : '저장'}
                 </button>
               </div>
             </form>
@@ -488,9 +344,7 @@ export default function Home() {
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
-              사용자 삭제
-            </h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">사용자 삭제</h2>
             <p className="text-gray-600 mb-6">
               정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
             </p>
@@ -503,9 +357,10 @@ export default function Home() {
               </button>
               <button
                 onClick={handleDeleteConfirm}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                disabled={deleteUserMutation.isPending}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
               >
-                삭제
+                {deleteUserMutation.isPending ? '삭제 중...' : '삭제'}
               </button>
             </div>
           </div>
