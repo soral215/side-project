@@ -20,6 +20,7 @@ export default function Home() {
   const [editEmail, setEditEmail] = useState('');
   const [editErrors, setEditErrors] = useState<{ name?: string; email?: string }>({});
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [serverStatus, setServerStatus] = useState<'online' | 'offline' | 'checking'>('checking');
 
   // 클라이언트 마운트 확인
   useEffect(() => {
@@ -46,6 +47,41 @@ export default function Home() {
       fetchUsers();
     }
   }, [mounted, isAuthenticated, currentPage, search]);
+
+  // 헬스체크 주기적 확인
+  useEffect(() => {
+    if (!mounted) return;
+
+    const checkHealth = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3초 타임아웃
+
+        const response = await fetch(`${API_URL}/health`, {
+          method: 'GET',
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          setServerStatus('online');
+        } else {
+          setServerStatus('offline');
+        }
+      } catch (error) {
+        setServerStatus('offline');
+      }
+    };
+
+    // 초기 체크
+    checkHealth();
+
+    // 30초마다 체크
+    const interval = setInterval(checkHealth, 30000);
+
+    return () => clearInterval(interval);
+  }, [mounted]);
 
   const fetchUsers = async () => {
     try {
@@ -212,9 +248,37 @@ export default function Home() {
     <main className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            모노레포 사이드 프로젝트
-          </h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold text-gray-900">
+              모노레포 사이드 프로젝트
+            </h1>
+            {/* 서버 상태 표시 */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  serverStatus === 'online'
+                    ? 'bg-green-500'
+                    : serverStatus === 'offline'
+                    ? 'bg-red-500'
+                    : 'bg-yellow-500 animate-pulse'
+                }`}
+                title={
+                  serverStatus === 'online'
+                    ? '서버 정상 작동 중'
+                    : serverStatus === 'offline'
+                    ? '서버 연결 실패'
+                    : '서버 상태 확인 중'
+                }
+              />
+              <span className="text-xs text-gray-500">
+                {serverStatus === 'online'
+                  ? '서버 정상'
+                  : serverStatus === 'offline'
+                  ? '서버 오프라인'
+                  : '확인 중...'}
+              </span>
+            </div>
+          </div>
           <div className="flex items-center gap-4">
             {currentUser.name && (
               <span className="text-sm text-gray-600">
