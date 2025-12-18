@@ -11,6 +11,7 @@
     "clean": "rm -rf .next out"
   },
   "dependencies": {
+    "@side-project/design-system": "workspace:^",
     "@side-project/shared": "workspace:*",
     "@tanstack/react-query": "^5.90.12",
     "next": "14.1.0",
