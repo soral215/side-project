@@ -15,7 +15,8 @@
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
-    "railway-build": "node scripts/setup-prisma.js && prisma generate && prisma migrate deploy && tsc"
+    "railway-build": "node scripts/setup-prisma.js && prisma generate && tsc",
+    "railway-start": "prisma migrate deploy && node dist/server.js"
   },
   "dependencies": {
     "@prisma/client": "5.19.0",
