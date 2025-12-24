@@ -15,7 +15,7 @@
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
-    "railway-build": "node scripts/setup-prisma.js && prisma generate && tsc",
+    "railway-build": "node scripts/setup-prisma.js && prisma generate && echo '🔨 Starting TypeScript compilation...' && tsc && echo '✅ TypeScript compilation complete!'",
     "railway-start": "node scripts/setup-prisma.js && prisma db push --accept-data-loss && node dist/server.js"
   },
   "dependencies": {
