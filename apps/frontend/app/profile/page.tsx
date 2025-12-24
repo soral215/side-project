@@ -8,7 +8,7 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { apiClient } from '../../src/lib/api';
 import { updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://side-projectbackend-production-1e9c.up.railway.app';
 
 export default function ProfilePage() {
   const router = useRouter();
