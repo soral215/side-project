@@ -214,6 +214,216 @@ Railway 대시보드 → 서비스 → Deployments → 최신 배포 → View Lo
 
 Railway는 자동으로 `PORT` 환경 변수를 제공합니다. 코드에서 `process.env.PORT`를 사용하면 됩니다.
 
+---
+
+## 🔧 실제 발생한 문제 및 해결 과정
+
+이 섹션은 실제 배포 과정에서 발생한 문제들과 해결 방법을 상세히 기록합니다.
+
+### 1. Prisma Provider 불일치 오류
+
+**오류 메시지:**
+```
+Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`
+```
+
+**원인:**
+- `schema.prisma`가 `provider = "postgresql"`로 설정되어 있었음
+- 로컬 `.env`는 `DATABASE_URL="file:./dev.db"` (SQLite)로 설정되어 있었음
+- Prisma가 PostgreSQL URL을 기대했지만 SQLite URL을 받아서 오류 발생
+
+**해결 방법:**
+- `apps/backend/scripts/setup-prisma.js` 스크립트 생성
+- `DATABASE_URL` 환경 변수를 확인하여 자동으로 provider 변경
+- 로컬: SQLite 유지 (`file:./dev.db`)
+- Railway: PostgreSQL로 자동 전환 (`postgresql://` 또는 `postgres://`로 시작)
+
+**관련 파일:**
+- `apps/backend/scripts/setup-prisma.js`
+- `apps/backend/prisma/schema.prisma` (기본값: `provider = "sqlite"`)
+
+---
+
+### 2. Nixpacks 빌드 오류
+
+**오류 메시지:**
+```
+error: undefined variable 'nodejs-20_x'
+```
+
+**원인:**
+- `nixpacks.toml`에서 잘못된 패키지 이름 사용
+- Nix 패키지 이름 규칙을 따르지 않음
+
+**해결 방법:**
+- `nodejs-20_x` → `nodejs-20`으로 변경
+- 이후 Railway 대시보드 설정을 직접 사용하도록 `nixpacks.toml` 비활성화 (`.disabled`로 변경)
+
+**관련 파일:**
+- `nixpacks.toml.disabled` (비활성화됨)
+- Railway 대시보드 → Settings → Build에서 직접 설정
+
+---
+
+### 3. Prisma 마이그레이션 Provider 불일치
+
+**오류 메시지:**
+```
+Error: P3019 The datasource provider `postgresql` specified in your schema does not match the one specified in the migration_lock.toml, `sqlite`.
+```
+
+**원인:**
+- 로컬에서 SQLite로 생성된 마이그레이션 파일들이 Git에 포함됨
+- 프로덕션에서 PostgreSQL을 사용하려고 할 때 마이그레이션 히스토리 충돌
+
+**해결 방법:**
+- `prisma migrate deploy` 대신 `prisma db push --accept-data-loss` 사용
+- 프로덕션에서는 마이그레이션 히스토리를 무시하고 스키마를 직접 동기화
+- 로컬과 프로덕션의 마이그레이션을 분리하여 관리
+
+**관련 파일:**
+- `apps/backend/package.json` → `railway-start` 스크립트
+
+---
+
+### 4. TypeScript 컴파일 경로 문제
+
+**오류 메시지:**
+```
+Error: Cannot find module '/app/apps/backend/dist/server.js'
+```
+
+**원인:**
+- `tsc`가 모노레포 구조를 반영하여 `dist/apps/backend/src/server.js`로 컴파일됨
+- `railway-start` 스크립트가 `dist/server.js`를 찾으려고 시도
+
+**해결 과정:**
+1. `tsconfig.json`에서 `rootDir` 제거 (TypeScript가 자동으로 공통 루트 감지)
+2. `railway-start` 스크립트의 경로를 실제 출력 경로로 수정: `dist/apps/backend/src/server.js`
+
+**관련 파일:**
+- `apps/backend/tsconfig.json`
+- `apps/backend/package.json` → `railway-start` 스크립트
+
+---
+
+### 5. 모노레포 빌드 순서 문제
+
+**오류 메시지:**
+```
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /app/packages/shared/src/index.ts
+```
+
+**원인:**
+- `packages/shared`가 컴파일되지 않은 상태에서 백엔드가 빌드됨
+- 백엔드가 `@side-project/shared`의 TypeScript 파일을 직접 import 시도
+- 수동 빌드 스크립트에서 빌드 순서가 보장되지 않음
+
+**해결 방법:**
+- 터보레포 방식으로 전환
+- `packages/shared/package.json`에 `build` 스크립트 추가: `"build": "tsc"`
+- `apps/backend/package.json`의 `railway-build`를 터보레포 명령으로 변경:
+  ```json
+  "railway-build": "cd ../.. && turbo run build --filter=@side-project/backend"
+  ```
+- 터보레포가 `turbo.json`의 `dependsOn: ["^build"]` 설정에 따라 자동으로 `packages/shared`를 먼저 빌드
+
+**관련 파일:**
+- `packages/shared/package.json`
+- `apps/backend/package.json`
+- `turbo.json`
+
+---
+
+### 6. ES 모듈 Import 문제
+
+**오류 메시지:**
+```
+Error [ERR_UNSUPPORTED_DIR_IMPORT]: Directory import '/app/packages/shared/dist/types' is not supported resolving ES modules
+```
+
+**원인:**
+- ES 모듈에서는 디렉토리 import가 지원되지 않음
+- `./types` 같은 경로로 import 시도
+- `packages/shared/package.json`에 `"type": "module"`이 없어서 모듈 타입이 불명확
+
+**해결 방법:**
+1. `packages/shared/package.json`에 `"type": "module"` 추가
+2. 모든 import 경로에 확장자 추가:
+   - `'./types'` → `'./types/index.js'`
+   - `'./utils'` → `'./utils/index.js'`
+   - `'./validations'` → `'./validations/index.js'`
+3. `validations/index.ts`의 import도 확장자 추가:
+   - `'./user.schema'` → `'./user.schema.js'`
+
+**주의사항:**
+- TypeScript에서 ES 모듈을 사용할 때는 import 경로에 `.js` 확장자를 사용해야 함
+- TypeScript는 컴파일 시 `.ts`를 `.js`로 변환하므로, 소스 코드에서도 `.js`를 사용해야 런타임에서 올바르게 해석됨
+
+**관련 파일:**
+- `packages/shared/package.json`
+- `packages/shared/src/index.ts`
+- `packages/shared/src/validations/index.ts`
+
+---
+
+### 7. 테스트 파일 컴파일 오류
+
+**오류 메시지:**
+```
+error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner?
+```
+
+**원인:**
+- `packages/shared/tsconfig.json`에서 테스트 파일이 제외되지 않음
+- 빌드 시 테스트 파일(`__tests__/index.test.ts`)까지 컴파일 시도
+- Jest 타입 정의가 없어서 `describe`, `it`, `expect` 등을 인식하지 못함
+
+**해결 방법:**
+- `packages/shared/tsconfig.json`의 `exclude`에 추가:
+  ```json
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/__tests__/**"]
+  ```
+
+**관련 파일:**
+- `packages/shared/tsconfig.json`
+
+---
+
+## 📚 핵심 교훈
+
+### 1. 모노레포 환경에서의 빌드 순서 관리
+- 터보레포의 `dependsOn` 설정을 활용하여 의존성 패키지를 자동으로 먼저 빌드
+- 수동 빌드 스크립트보다 터보레포를 통한 빌드가 더 안정적
+
+### 2. ES 모듈 사용 시 주의사항
+- 디렉토리 import 불가: `'./types'` ❌ → `'./types/index.js'` ✅
+- 모든 import에 확장자 필요: `.js` 확장자 사용
+- `package.json`에 `"type": "module"` 명시
+
+### 3. 개발/프로덕션 환경 분리
+- `setup-prisma.js` 스크립트로 provider 자동 전환
+- 로컬: SQLite, 프로덕션: PostgreSQL
+
+### 4. TypeScript 컴파일 경로
+- 모노레포에서는 `rootDir` 제거 권장 (자동 감지)
+- 실제 출력 경로에 맞춰 실행 경로 설정
+
+### 5. 마이그레이션 관리
+- 로컬과 프로덕션의 마이그레이션을 분리
+- 프로덕션에서는 `prisma db push` 사용 고려 (초기 배포 시)
+
+---
+
+## ✅ 최종 해결된 상태
+
+- ✅ 서버 정상 시작
+- ✅ Prisma PostgreSQL 연결 성공
+- ✅ 데이터베이스 스키마 동기화 완료
+- ✅ 터보레포를 통한 빌드 순서 자동 관리
+- ✅ ES 모듈 import 문제 해결
+- ⚠️ Cloudinary 환경 변수 설정 필요 (선택사항)
+
 ## 📝 주의사항
 
 ### SQLite → PostgreSQL 전환

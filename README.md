@@ -101,6 +101,11 @@ import { User, ApiResponse, createApiResponse } from '@side-project/shared';
 - [프론트엔드](./apps/frontend/README.md)
 - [백엔드](./apps/backend/README.md)
 
+## 배포 가이드
+
+- [Railway 배포 가이드](./RAILWAY_DEPLOYMENT.md) - 백엔드 배포 및 트러블슈팅 포함
+- [Vercel 배포 가이드](./VERCEL_DEPLOYMENT.md) - 프론트엔드 배포
+
 ## 라이선스
 
 MIT
