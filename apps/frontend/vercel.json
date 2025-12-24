@@ -6,3 +6,4 @@
   "devCommand": "cd ../.. && pnpm --filter @side-project/frontend dev"
 }
 
+

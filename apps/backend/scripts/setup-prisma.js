@@ -34,3 +34,4 @@ if (databaseUrl.startsWith('postgresql://') || databaseUrl.startsWith('postgres:
   console.log('🔍 SQLite detected, keeping schema.prisma provider as sqlite');
 }
 
+
