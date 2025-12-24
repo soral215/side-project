@@ -15,7 +15,7 @@
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
-    "railway-build": "node scripts/setup-prisma.js && prisma generate && echo '🔨 Starting TypeScript compilation...' && echo '📍 Current directory:' && pwd && echo '📋 TypeScript config:' && cat tsconfig.json | grep -A 2 outDir && tsc --project . --listFiles 2>&1 | head -20 && echo '✅ TypeScript compilation complete!' && echo '📁 Checking if dist exists...' && (test -d dist && echo '✅ dist folder exists' || echo '❌ dist folder does not exist') && echo '📁 Contents of current directory:' && ls -la | grep -E '^d|dist' && echo '📁 Looking for server.js...' && find . -name 'server.js' -type f 2>/dev/null | head -10",
+    "railway-build": "node scripts/setup-prisma.js && prisma generate && echo '🔨 Starting TypeScript compilation...' && echo '📍 Current directory:' && pwd && echo '📋 Checking src/server.ts exists...' && test -f src/server.ts && echo '✅ src/server.ts found' || echo '❌ src/server.ts not found' && echo '📋 Running tsc with verbose output...' && tsc --listEmittedFiles 2>&1 | grep -E '\\.js$|\\.ts$' | head -20 && echo '✅ TypeScript compilation complete!' && echo '📁 Checking dist folder structure...' && (test -f dist/server.js && echo '✅ dist/server.js found!' || (echo '⚠️ dist/server.js not found, checking dist structure...' && find dist -name '*.js' -type f 2>/dev/null | head -10))",
     "railway-start": "node scripts/setup-prisma.js && prisma db push --accept-data-loss && node dist/server.js"
   },
   "dependencies": {
