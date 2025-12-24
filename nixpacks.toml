@@ -7,7 +7,9 @@ cmds = ["pnpm install --frozen-lockfile"]
 [phases.build]
 cmds = [
   "cd apps/backend",
+  "node scripts/setup-prisma.js",
   "prisma generate",
+  "prisma migrate deploy",
   "tsc"
 ]
 
