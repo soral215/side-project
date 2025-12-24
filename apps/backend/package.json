@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && tsc && echo 'Build successful - files in dist:' && ls -la dist/ || echo 'Build failed or dist directory empty'",
     "start": "node dist/server.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",

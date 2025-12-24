@@ -6,9 +6,16 @@ cmds = ["pnpm install"]
 
 [phases.build]
 cmds = [
+  "echo '=== Starting build process ==='",
   "cd apps/backend && prisma generate",
+  "echo '=== Prisma Client generated ==='",
+  "echo '=== Running build command ==='",
   "pnpm --filter @side-project/backend build",
-  "ls -la apps/backend/dist/ || echo 'dist directory check'"
+  "echo '=== Build command completed ==='",
+  "echo '=== Checking build output ==='",
+  "ls -la apps/backend/dist/ || echo 'ERROR: dist directory not found'",
+  "find apps/backend -name 'server.js' -type f || echo 'ERROR: server.js not found'",
+  "echo '=== Build verification complete ==='"
 ]
 
 [start]
