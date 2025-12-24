@@ -7,8 +7,9 @@ cmds = ["pnpm install"]
 [phases.build]
 cmds = [
   "cd apps/backend && prisma generate",
-  "pnpm --filter @side-project/backend build"
+  "pnpm --filter @side-project/backend build",
+  "ls -la apps/backend/dist/ || echo 'dist directory check'"
 ]
 
 [start]
-cmd = "node apps/backend/dist/server.js"
+cmd = "cd apps/backend && node dist/server.js"
