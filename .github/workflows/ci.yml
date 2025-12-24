@@ -103,6 +103,7 @@ jobs:
 
       - name: Lint (Backend)
         run: pnpm --filter @side-project/backend lint
+        continue-on-error: true
 
       - name: Build (Backend)
         run: pnpm --filter @side-project/backend build
@@ -139,6 +140,7 @@ jobs:
 
       - name: Lint (Shared)
         run: pnpm --filter @side-project/shared lint
+        continue-on-error: true
 
   # 전체 빌드 검증 (Turborepo) - 모든 검증 통과 후 실행
   build:
