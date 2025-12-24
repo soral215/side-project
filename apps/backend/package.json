@@ -14,7 +14,8 @@
     "test:watch": "jest --watch",
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
-    "migrate:dev": "prisma migrate dev"
+    "migrate:dev": "prisma migrate dev",
+    "railway-build": "cd ../.. && pnpm install && pnpm --filter @side-project/backend build"
   },
   "dependencies": {
     "@prisma/client": "5.19.0",

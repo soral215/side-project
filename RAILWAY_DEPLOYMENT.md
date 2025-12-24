@@ -29,8 +29,10 @@
 3. 같은 저장소 선택
 4. 서비스 설정:
    - **Root Directory**: `apps/backend`
-   - **Build Command**: (자동 감지되거나 수동 설정)
+   - **Build Command**: `cd ../.. && pnpm install && pnpm --filter @side-project/backend build`
    - **Start Command**: `node dist/server.js`
+   
+   > ⚠️ **중요**: 모노레포 구조이므로 빌드 명령어는 루트 디렉토리에서 실행해야 합니다.
 
 ### 4단계: 환경 변수 설정
 
@@ -145,12 +147,22 @@ railway run pnpm migrate
 1. **모노레포 의존성 문제**:
    - Root Directory가 `apps/backend`로 설정되었는지 확인
    - 빌드 명령어가 루트에서 실행되도록 설정
+   - Railway 대시보드 → Settings → Build에서 Build Command 확인:
+     ```
+     cd ../.. && pnpm install && pnpm --filter @side-project/backend build
+     ```
 
-2. **Prisma Client 생성 실패**:
+2. **`dist/server.js`를 찾을 수 없음**:
+   - 빌드가 실행되지 않았을 가능성
+   - Railway 대시보드 → Settings → Build에서 Build Command 확인
+   - 빌드 로그에서 `tsc` 명령어가 실행되었는지 확인
+   - `railway.json`의 `buildCommand`가 올바른지 확인
+
+3. **Prisma Client 생성 실패**:
    - `postinstall` 스크립트 확인
    - `DATABASE_URL` 환경 변수 확인
 
-3. **마이그레이션 실패**:
+4. **마이그레이션 실패**:
    - PostgreSQL 서비스가 실행 중인지 확인
    - `DATABASE_URL`이 올바른지 확인
 
