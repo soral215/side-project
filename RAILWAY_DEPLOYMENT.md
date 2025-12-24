@@ -28,11 +28,11 @@
 2. "GitHub Repo" 선택
 3. 같은 저장소 선택
 4. 서비스 설정:
-   - **Root Directory**: `apps/backend`
-   - **Build Command**: `cd ../.. && pnpm install && pnpm --filter @side-project/backend build`
-   - **Start Command**: `node dist/server.js`
+   - **Root Directory**: (비워두거나 루트 디렉토리로 설정)
+   - **Build Command**: `pnpm --filter @side-project/backend build`
+   - **Start Command**: `cd apps/backend && node dist/server.js`
    
-   > ⚠️ **중요**: 모노레포 구조이므로 빌드 명령어는 루트 디렉토리에서 실행해야 합니다.
+   > ⚠️ **중요**: Railway Railpack이 루트 디렉토리에서 빌드를 시작하므로, Root Directory는 비워두거나 루트로 설정해야 합니다.
 
 ### 4단계: 환경 변수 설정
 
@@ -145,18 +145,25 @@ railway run pnpm migrate
 ### 빌드 실패
 
 1. **모노레포 의존성 문제**:
-   - Root Directory가 `apps/backend`로 설정되었는지 확인
-   - 빌드 명령어가 루트에서 실행되도록 설정
+   - Root Directory를 비워두거나 루트 디렉토리로 설정
    - Railway 대시보드 → Settings → Build에서 Build Command 확인:
      ```
-     cd ../.. && pnpm install && pnpm --filter @side-project/backend build
+     pnpm --filter @side-project/backend build
+     ```
+   - Start Command 확인:
+     ```
+     cd apps/backend && node dist/server.js
      ```
 
 2. **`dist/server.js`를 찾을 수 없음**:
    - 빌드가 실행되지 않았을 가능성
-   - Railway 대시보드 → Settings → Build에서 Build Command 확인
+   - **해결 방법 1**: Railway 대시보드 → Settings → Build에서 Build Command 명시적으로 설정:
+     ```
+     cd ../.. && pnpm install && pnpm --filter @side-project/backend build
+     ```
+   - **해결 방법 2**: `nixpacks.toml` 파일이 `apps/backend/` 디렉토리에 있는지 확인
    - 빌드 로그에서 `tsc` 명령어가 실행되었는지 확인
-   - `railway.json`의 `buildCommand`가 올바른지 확인
+   - 빌드 단계가 완료되었는지 확인 (빌드 로그에서 "Build completed" 메시지 확인)
 
 3. **Prisma Client 생성 실패**:
    - `postinstall` 스크립트 확인
