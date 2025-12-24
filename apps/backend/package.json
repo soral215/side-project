@@ -16,7 +16,7 @@
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
     "railway-build": "node scripts/setup-prisma.js && prisma generate && tsc",
-    "railway-start": "node scripts/setup-prisma.js && prisma migrate deploy && node dist/server.js"
+    "railway-start": "node scripts/setup-prisma.js && prisma db push --accept-data-loss && node dist/server.js"
   },
   "dependencies": {
     "@prisma/client": "5.19.0",
