@@ -15,7 +15,7 @@
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
-    "railway-build": "node scripts/setup-prisma.js && prisma generate && echo '🔨 Starting TypeScript compilation...' && echo '📍 Current directory:' && pwd && (tsc 2>&1 || (echo '❌ TypeScript compilation failed!' && exit 1)) && echo '✅ TypeScript compilation complete!' && echo '📁 Checking dist folder...' && (ls -la dist/ || echo '⚠️ dist folder not found') && echo '📁 Looking for server.js...' && (find . -name 'server.js' -type f || echo '⚠️ server.js not found')",
+    "railway-build": "node scripts/setup-prisma.js && prisma generate && echo '🔨 Starting TypeScript compilation...' && echo '📍 Current directory:' && pwd && tsc --project . && echo '✅ TypeScript compilation complete!' && echo '📁 Checking dist folder...' && ls -la dist/ && echo '📁 Looking for server.js...' && ls -la dist/server.js || echo '⚠️ dist/server.js not found'",
     "railway-start": "node scripts/setup-prisma.js && prisma db push --accept-data-loss && node dist/server.js"
   },
   "dependencies": {
