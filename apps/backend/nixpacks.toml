@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs-20_x", "pnpm"]
+nixPkgs = ["nodejs-20", "pnpm"]
 
 [phases.install]
 cmds = ["pnpm install --frozen-lockfile"]
@@ -7,7 +7,9 @@ cmds = ["pnpm install --frozen-lockfile"]
 [phases.build]
 cmds = [
   "cd apps/backend",
+  "node scripts/setup-prisma.js",
   "prisma generate",
+  "prisma migrate deploy",
   "tsc"
 ]
 
