@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "echo '=== Building backend ===' && echo 'Current directory:' && pwd && prisma generate && echo '=== Prisma Client generated ===' && tsc && echo '=== TypeScript compilation completed ===' && echo '=== Build output files ===' && ls -la dist/ && echo '=== Checking server.js ===' && test -f dist/server.js && echo 'server.js exists' || echo 'server.js NOT FOUND' && echo '=== Build successful ==='",
+    "build": "prisma generate && tsc",
     "start": "node dist/server.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
@@ -15,7 +15,7 @@
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
-    "railway-build": "cd ../.. && pnpm install && pnpm --filter @side-project/backend build"
+    "railway-build": "prisma generate && prisma migrate deploy && tsc"
   },
   "dependencies": {
     "@prisma/client": "5.19.0",

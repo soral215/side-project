@@ -1,26 +1,16 @@
 [phases.setup]
-nixPkgs = ["nodejs-18_x", "pnpm"]
+nixPkgs = ["nodejs-20_x", "pnpm"]
 
 [phases.install]
-cmds = ["pnpm install"]
+cmds = ["pnpm install --frozen-lockfile"]
 
 [phases.build]
 cmds = [
-  "echo '=== Starting build process ==='",
-  "cd apps/backend && prisma generate",
-  "echo '=== Prisma Client generated ==='",
-  "echo '=== Running build command ==='",
-  "pnpm --filter @side-project/backend build",
-  "echo '=== Build command completed ==='",
-  "echo '=== Checking build output ==='",
-  "pwd",
-  "ls -la apps/backend/dist/ || echo 'ERROR: dist directory not found'",
-  "find apps/backend -name 'server.js' -type f || echo 'ERROR: server.js not found'",
-  "echo '=== Verifying files exist ==='",
-  "test -f apps/backend/dist/server.js && echo 'server.js exists' || echo 'server.js NOT FOUND'",
-  "echo '=== Build verification complete ==='"
+  "cd apps/backend",
+  "prisma generate",
+  "tsc"
 ]
 
 [start]
-cmd = "cd apps/backend && pwd && ls -la dist/ && node dist/server.js"
+cmd = "cd apps/backend && node dist/server.js"
 
