@@ -8,5 +8,4 @@ cmds = ["pnpm install"]
 cmds = ["pnpm --filter @side-project/backend build"]
 
 [start]
-cmd = "cd apps/backend && node dist/server.js"
-
+cmd = "node apps/backend/dist/server.js"
