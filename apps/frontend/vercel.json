@@ -1,9 +1,9 @@
 {
-  "buildCommand": "cd ../.. && pnpm install && pnpm --filter @side-project/frontend build",
+  "buildCommand": "cd ../.. && turbo run build --filter=@side-project/frontend",
   "outputDirectory": ".next",
   "installCommand": "cd ../.. && pnpm install",
   "framework": "nextjs",
-  "devCommand": "cd ../.. && pnpm --filter @side-project/frontend dev"
+  "devCommand": "cd ../.. && turbo run dev --filter=@side-project/frontend"
 }
 
 
