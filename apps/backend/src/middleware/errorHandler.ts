@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from '@side-project/shared';
-import { Prisma } from '@prisma/client';
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { createErrorResponse, formatZodError } from '@side-project/shared';
 import logger from '../lib/logger.js';
 
@@ -10,7 +10,7 @@ export interface AppError extends Error {
 }
 
 export const errorHandler = (
-  err: AppError | ZodError | Prisma.PrismaClientKnownRequestError | Error,
+  err: AppError | ZodError | PrismaClientKnownRequestError | PrismaClientValidationError | Error,
   req: Request,
   res: Response,
   next: NextFunction
@@ -21,7 +21,7 @@ export const errorHandler = (
   }
 
   // Prisma 에러
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  if (err instanceof PrismaClientKnownRequestError) {
     switch (err.code) {
       case 'P2002':
         // Unique constraint violation
@@ -47,7 +47,7 @@ export const errorHandler = (
   }
 
   // Prisma validation error
-  if (err instanceof Prisma.PrismaClientValidationError) {
+  if (err instanceof PrismaClientValidationError) {
     return res.status(400).json(
       createErrorResponse('잘못된 데이터 형식입니다', 'VALIDATION_ERROR')
     );

@@ -1,6 +1,7 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from 'express';
 import { createApiResponse, createErrorResponse, updateUserSchema, type PaginatedResponse, type User } from '@side-project/shared';
 import prisma from '../lib/prisma.js';
+import type { User as PrismaUser } from '@prisma/client';
 
 const router: IRouter = Router();
 
@@ -57,7 +58,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const totalPages = Math.ceil(total / limit);
 
     // Date를 string으로 변환
-    const formattedUsers: User[] = users.map((user) => ({
+    const formattedUsers: User[] = users.map((user: PrismaUser) => ({
       id: user.id,
       name: user.name,
       email: user.email,
