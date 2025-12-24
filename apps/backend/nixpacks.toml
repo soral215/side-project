@@ -5,7 +5,10 @@ nixPkgs = ["nodejs-18_x", "pnpm"]
 cmds = ["pnpm install"]
 
 [phases.build]
-cmds = ["pnpm --filter @side-project/backend build"]
+cmds = [
+  "cd apps/backend && prisma generate",
+  "pnpm --filter @side-project/backend build"
+]
 
 [start]
 cmd = "node apps/backend/dist/server.js"
