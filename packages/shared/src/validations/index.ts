@@ -1,5 +1,5 @@
-export * from './user.schema';
-export * from './auth.schema';
-export * from './post.schema';
+export * from './user.schema.js';
+export * from './auth.schema.js';
+export * from './post.schema.js';
 export { ZodError } from 'zod';
 
