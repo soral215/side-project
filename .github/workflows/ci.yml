@@ -1,0 +1,172 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ['*']
+  push:
+    branches: ['main', 'master', 'develop']
+
+jobs:
+  # 공통 설정을 위한 설치 job
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+  # 프론트엔드 검증
+  frontend:
+    name: Frontend - Test, Lint, Type Check, Build
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests (Frontend)
+        run: pnpm --filter @side-project/frontend test -- --run
+
+      - name: Type check (Frontend)
+        run: pnpm --filter @side-project/frontend type-check
+
+      - name: Lint (Frontend)
+        run: pnpm --filter @side-project/frontend lint
+
+      - name: Build (Frontend)
+        run: pnpm --filter @side-project/frontend build
+
+  # 백엔드 검증
+  backend:
+    name: Backend - Test, Lint, Type Check, Build
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests (Backend)
+        run: pnpm --filter @side-project/backend test
+
+      - name: Type check (Backend)
+        run: pnpm --filter @side-project/backend type-check
+
+      - name: Lint (Backend)
+        run: pnpm --filter @side-project/backend lint
+
+      - name: Build (Backend)
+        run: pnpm --filter @side-project/backend build
+
+  # 공유 패키지 검증
+  shared:
+    name: Shared Packages - Lint, Type Check
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check (Shared)
+        run: pnpm --filter @side-project/shared type-check
+
+      - name: Lint (Shared)
+        run: pnpm --filter @side-project/shared lint
+
+  # 전체 빌드 검증 (Turborepo) - 모든 검증 통과 후 실행
+  build:
+    name: Build All (Turborepo)
+    runs-on: ubuntu-latest
+    needs: [frontend, backend, shared]
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
