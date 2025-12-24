@@ -3,6 +3,7 @@ import { verifyToken, type JwtPayload } from '../lib/jwt.js';
 import { createErrorResponse } from '@side-project/shared';
 
 // Express Request에 user 속성 추가
+// eslint-disable-next-line @typescript-eslint/no-namespace
 declare global {
   namespace Express {
     interface Request {

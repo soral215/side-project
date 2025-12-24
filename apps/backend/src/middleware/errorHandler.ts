@@ -13,7 +13,7 @@ export const errorHandler = (
   err: AppError | ZodError | PrismaClientKnownRequestError | PrismaClientValidationError | Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   // Zod 검증 에러
   if (err instanceof ZodError) {

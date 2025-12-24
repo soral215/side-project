@@ -11,12 +11,16 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "clean": "turbo run clean",
     "type-check": "turbo run type-check",
     "deploy:frontend": "cd apps/frontend && vercel --prod",
     "deploy:frontend:preview": "cd apps/frontend && vercel"
   },
   "devDependencies": {
+    "prettier": "^3.2.5",
     "turbo": "^2.0.0",
     "typescript": "^5.3.0"
   },

@@ -23,7 +23,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const skip = (page - 1) * limit;
 
     // 검색 조건 구성
-    const where = search
+    const _where = search
       ? {
           OR: [
             { name: { contains: search, mode: 'insensitive' as const } },
