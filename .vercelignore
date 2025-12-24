@@ -1,0 +1,71 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+
+# Next.js
+.next
+out
+build
+dist
+
+# Production
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# Turbo
+.turbo
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# TypeScript
+*.tsbuildinfo
+
+# Backend (배포하지 않음)
+apps/backend
+apps/backend/**
+
+# Design System Storybook
+packages/design-system/.storybook
+storybook-static
+
+# Database
+**/*.db
+**/*.sqlite
+**/prisma/dev.db
+**/prisma/migrations
+
+# Logs
+**/logs
+**/*.log
+
+# Uploads
+**/uploads
+

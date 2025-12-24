@@ -12,7 +12,9 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "type-check": "turbo run type-check"
+    "type-check": "turbo run type-check",
+    "deploy:frontend": "cd apps/frontend && vercel --prod",
+    "deploy:frontend:preview": "cd apps/frontend && vercel"
   },
   "devDependencies": {
     "turbo": "^2.0.0",
