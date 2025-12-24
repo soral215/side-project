@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "prisma generate && tsc",
+    "build": "node scripts/setup-prisma.js && prisma generate && tsc",
     "start": "node dist/server.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
@@ -15,7 +15,7 @@
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
-    "railway-build": "node scripts/setup-prisma.js && prisma generate && echo '🔨 Building shared package...' && cd ../../packages/shared && tsc && echo '✅ Shared package compiled' && cd ../../apps/backend && echo '🔨 Starting TypeScript compilation...' && echo '📍 Current directory:' && pwd && echo '📋 Running tsc...' && tsc && echo '✅ TypeScript compilation complete!' && echo '📁 Looking for server.js...' && (test -f dist/apps/backend/src/server.js && echo '✅ dist/apps/backend/src/server.js found!' || (echo '⚠️ server.js not found' && find dist -name 'server.js' -type f 2>/dev/null | head -5))",
+    "railway-build": "cd ../.. && turbo run build --filter=@side-project/backend",
     "railway-start": "node scripts/setup-prisma.js && prisma db push --accept-data-loss && node dist/apps/backend/src/server.js"
   },
   "dependencies": {
