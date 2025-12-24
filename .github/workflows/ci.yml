@@ -72,6 +72,16 @@ jobs:
       - name: Build (Frontend)
         run: pnpm --filter @side-project/frontend build
 
+      - name: Install Playwright browsers
+        run: pnpm --filter @side-project/frontend exec playwright install --with-deps chromium
+        continue-on-error: true
+
+      - name: Run E2E tests (Frontend)
+        run: pnpm --filter @side-project/frontend test:e2e
+        env:
+          SKIP_E2E_WITH_SERVER: 'true'
+        continue-on-error: true
+
   # 백엔드 검증
   backend:
     name: Backend - Test, Lint, Type Check, Build
