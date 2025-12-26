@@ -1,3 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 디자인 시스템 스타일 import */
+@import '@side-project/design-system/styles';
