@@ -56,6 +56,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build shared package (required for type-check)
+        run: pnpm --filter @side-project/shared build
+
       - name: Run tests (Frontend)
         run: pnpm --filter @side-project/frontend test -- --run
 

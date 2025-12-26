@@ -17,10 +17,10 @@ export default function LoginPage() {
     try {
       const validatedData = loginSchema.parse({ email, password });
       await loginMutation.mutateAsync(validatedData);
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
-        error.errors.forEach((err) => {
+        error.errors.forEach((err: { path: (string | number)[]; message: string }) => {
           const field = err.path[0] as string;
           fieldErrors[field] = err.message;
         });

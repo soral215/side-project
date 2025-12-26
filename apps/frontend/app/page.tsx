@@ -75,10 +75,10 @@ export default function Home() {
       setEditName('');
       setEditEmail('');
       setEditErrors({});
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
-        error.errors.forEach((err) => {
+        error.errors.forEach((err: { path: (string | number)[]; message: string }) => {
           const field = err.path[0] as string;
           fieldErrors[field] = err.message;
         });
@@ -99,7 +99,7 @@ export default function Home() {
     try {
       await deleteUserMutation.mutateAsync(deleteConfirm);
       setDeleteConfirm(null);
-    } catch (error) {
+    } catch (error: unknown) {
       alert(error instanceof Error ? error.message : '사용자 삭제에 실패했습니다.');
     }
   };
@@ -183,7 +183,7 @@ export default function Home() {
           ) : (
             <>
               <div className="space-y-3 mb-4">
-                {usersData.data.map((user) => (
+                {usersData.data.map((user: { id: string; name: string; email: string; createdAt: string }) => (
                   <div
                     key={user.id}
                     className="p-4 border border-gray-200 rounded-md hover:bg-gray-50"

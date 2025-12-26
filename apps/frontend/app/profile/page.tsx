@@ -93,10 +93,10 @@ export default function ProfilePage() {
       await updateProfileMutation.mutateAsync(validatedData);
       setEditMode(false);
       alert('프로필이 성공적으로 수정되었습니다.');
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
-        error.errors.forEach((err) => {
+        error.errors.forEach((err: { path: (string | number)[]; message: string }) => {
           const field = err.path[0] as string;
           fieldErrors[field] = err.message;
         });
@@ -133,7 +133,7 @@ export default function ProfilePage() {
       } else {
         alert(data.error?.message || '이미지 업로드에 실패했습니다.');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to upload image:', error);
       alert('이미지 업로드에 실패했습니다.');
     } finally {
@@ -161,10 +161,10 @@ export default function ProfilePage() {
       setNewPassword('');
       setConfirmPassword('');
       setShowPasswordChange(false);
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
-        error.errors.forEach((err) => {
+        error.errors.forEach((err: { path: (string | number)[]; message: string }) => {
           const field = err.path[0] as string;
           fieldErrors[field] = err.message;
         });
@@ -189,7 +189,7 @@ export default function ProfilePage() {
       await deleteAccountMutation.mutateAsync(deletePassword);
       alert('계정이 삭제되었습니다.');
       router.push('/login');
-    } catch (error) {
+    } catch (error: unknown) {
       alert(error instanceof Error ? error.message : '계정 삭제에 실패했습니다.');
     }
   };
