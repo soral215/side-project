@@ -7,6 +7,7 @@ import { useAuthStore } from '../src/stores/authStore';
 import { useServerStatus } from '../src/hooks/useServerStatus';
 import { updateUserSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../src/contexts/ToastContext';
+import { useFeatureFlag } from '../src/contexts/FeatureFlagContext';
 import { Button, Input, Card, Modal } from '@side-project/design-system';
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
   const deleteUserMutation = useDeleteUser();
   const { data: isServerOnline = false } = useServerStatus();
   const { showError, showSuccess, showInfo } = useToast();
+  const { isEnabled } = useFeatureFlag();
 
   useEffect(() => {
     setMounted(true);
@@ -127,9 +129,16 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
-            <h1 className="text-3xl font-bold text-gray-900">
-              모노레포 사이드 프로젝트
-            </h1>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                모노레포 사이드 프로젝트
+              </h1>
+              {isEnabled('newDashboard') && (
+                <p className="text-sm text-gray-500 mt-1">
+                  💡 <a href="/dashboard" className="text-blue-600 hover:underline">새 대시보드</a>를 사용해보세요
+                </p>
+              )}
+            </div>
             {/* 서버 상태 표시 */}
             <div className="flex items-center gap-2">
               <div
@@ -177,11 +186,16 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <Input
                 type="text"
-                placeholder="검색 (이름 또는 이메일)"
+                placeholder={isEnabled('advancedSearch') ? '고급 검색 (이름, 이메일, 역할 등)' : '검색 (이름 또는 이메일)'}
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="text-sm"
               />
+              {isEnabled('advancedSearch') && (
+                <Button variant="secondary" size="sm">
+                  필터
+                </Button>
+              )}
             </div>
           </div>
           {isLoading ? (
