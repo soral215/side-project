@@ -16,6 +16,13 @@ export default defineConfig({
     setupFiles: ['./src/__tests__/setup.ts'],
     globals: true,
     css: true,
+    // Playwright E2E 테스트 파일 제외
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.next/**',
+      '**/e2e/**', // Playwright 테스트 제외
+    ],
   },
   resolve: {
     alias: {
