@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const loginMutation = useLogin();
-  const { showError } = useToast();
+  const { showError, showSuccess } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +20,7 @@ export default function LoginPage() {
     try {
       const validatedData = loginSchema.parse({ email, password });
       await loginMutation.mutateAsync(validatedData);
+      showSuccess('로그인에 성공했습니다!');
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};

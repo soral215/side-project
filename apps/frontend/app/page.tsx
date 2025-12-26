@@ -26,7 +26,7 @@ export default function Home() {
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
   const { data: isServerOnline = false } = useServerStatus();
-  const { showError } = useToast();
+  const { showError, showSuccess, showInfo } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -43,6 +43,9 @@ export default function Home() {
   const handleSearchChange = (value: string) => {
     setSearch(value);
     setCurrentPage(1);
+    if (value && usersData && usersData.data.length > 0) {
+      showInfo(`${usersData.data.length}개의 검색 결과를 찾았습니다.`);
+    }
   };
 
   const handleLogout = () => {
@@ -78,6 +81,7 @@ export default function Home() {
       setEditName('');
       setEditEmail('');
       setEditErrors({});
+      showSuccess('사용자 정보가 수정되었습니다.');
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
@@ -102,6 +106,7 @@ export default function Home() {
     try {
       await deleteUserMutation.mutateAsync(deleteConfirm);
       setDeleteConfirm(null);
+      showSuccess('사용자가 삭제되었습니다.');
     } catch (error: unknown) {
       showError(error instanceof Error ? error.message : '사용자 삭제에 실패했습니다.');
     }

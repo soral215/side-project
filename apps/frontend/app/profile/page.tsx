@@ -44,7 +44,7 @@ export default function ProfilePage() {
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
   const deleteAccountMutation = useDeleteAccount();
-  const { showSuccess, showError, showWarning } = useToast();
+  const { showSuccess, showError, showWarning, showInfo } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -62,6 +62,17 @@ export default function ProfilePage() {
       setEditEmail(profile.email);
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (mounted && profile && !isLoading) {
+      // 프로필 로드 완료 시 한 번만 표시
+      const hasShownWelcome = sessionStorage.getItem('profileWelcomeShown');
+      if (!hasShownWelcome) {
+        showInfo(`${profile.name}님, 프로필 페이지에 오신 것을 환영합니다.`);
+        sessionStorage.setItem('profileWelcomeShown', 'true');
+      }
+    }
+  }, [mounted, profile, isLoading, showInfo]);
 
   const handleEdit = () => {
     if (profile) {

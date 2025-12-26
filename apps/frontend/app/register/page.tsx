@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
   const registerMutation = useRegister();
-  const { showError } = useToast();
+  const { showError, showSuccess } = useToast();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +21,7 @@ export default function RegisterPage() {
     try {
       const validatedData = registerSchema.parse({ name, email, password });
       await registerMutation.mutateAsync(validatedData);
+      showSuccess('회원가입에 성공했습니다! 환영합니다.');
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
