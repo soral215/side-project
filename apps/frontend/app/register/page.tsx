@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRegister } from '../../src/hooks/useAuth';
 import { registerSchema, ZodError } from '@side-project/shared';
+import { useToast } from '../../src/contexts/ToastContext';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -10,6 +11,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
   const registerMutation = useRegister();
+  const { showError } = useToast();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ export default function RegisterPage() {
         });
         setErrors(fieldErrors);
       } else {
-        alert(error instanceof Error ? error.message : '회원가입에 실패했습니다.');
+        showError(error instanceof Error ? error.message : '회원가입에 실패했습니다.');
       }
     }
   };

@@ -7,6 +7,7 @@ import { useProfile, useUpdateProfile, useChangePassword, useDeleteAccount } fro
 import { useAuthStore } from '../../src/stores/authStore';
 import { apiClient } from '../../src/lib/api';
 import { updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
+import { useToast } from '../../src/contexts/ToastContext';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://side-projectbackend-production-1e9c.up.railway.app';
 
@@ -42,6 +43,7 @@ export default function ProfilePage() {
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
   const deleteAccountMutation = useDeleteAccount();
+  const { showSuccess, showError, showWarning } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -92,7 +94,7 @@ export default function ProfilePage() {
 
       await updateProfileMutation.mutateAsync(validatedData);
       setEditMode(false);
-      alert('프로필이 성공적으로 수정되었습니다.');
+      showSuccess('프로필이 성공적으로 수정되었습니다.');
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const fieldErrors: { [key: string]: string } = {};
@@ -102,7 +104,7 @@ export default function ProfilePage() {
         });
         setEditErrors(fieldErrors);
       } else {
-        alert(error instanceof Error ? error.message : '프로필 수정에 실패했습니다.');
+        showError(error instanceof Error ? error.message : '프로필 수정에 실패했습니다.');
       }
     }
   };
@@ -112,12 +114,12 @@ export default function ProfilePage() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드 가능합니다.');
+      showWarning('이미지 파일만 업로드 가능합니다.');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('파일 크기는 5MB 이하여야 합니다.');
+      showWarning('파일 크기는 5MB 이하여야 합니다.');
       return;
     }
 
@@ -129,13 +131,13 @@ export default function ProfilePage() {
       if (data.success && data.data) {
         // 프로필 쿼리 무효화하여 다시 로드
         queryClient.invalidateQueries({ queryKey: ['profile'] });
-        alert('프로필 이미지가 업로드되었습니다.');
+        showSuccess('프로필 이미지가 업로드되었습니다.');
       } else {
-        alert(data.error?.message || '이미지 업로드에 실패했습니다.');
+        showError(data.error?.message || '이미지 업로드에 실패했습니다.');
       }
     } catch (error: unknown) {
       console.error('Failed to upload image:', error);
-      alert('이미지 업로드에 실패했습니다.');
+      showError('이미지 업로드에 실패했습니다.');
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -156,7 +158,7 @@ export default function ProfilePage() {
       });
 
       await changePasswordMutation.mutateAsync(validatedData);
-      alert('비밀번호가 성공적으로 변경되었습니다.');
+      showSuccess('비밀번호가 성공적으로 변경되었습니다.');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -170,14 +172,14 @@ export default function ProfilePage() {
         });
         setPasswordErrors(fieldErrors);
       } else {
-        alert(error instanceof Error ? error.message : '비밀번호 변경에 실패했습니다.');
+        showError(error instanceof Error ? error.message : '비밀번호 변경에 실패했습니다.');
       }
     }
   };
 
   const handleDeleteAccount = async () => {
     if (!deletePassword) {
-      alert('비밀번호를 입력해주세요.');
+      showWarning('비밀번호를 입력해주세요.');
       return;
     }
 
@@ -187,10 +189,10 @@ export default function ProfilePage() {
 
     try {
       await deleteAccountMutation.mutateAsync(deletePassword);
-      alert('계정이 삭제되었습니다.');
+      showSuccess('계정이 삭제되었습니다.');
       router.push('/login');
     } catch (error: unknown) {
-      alert(error instanceof Error ? error.message : '계정 삭제에 실패했습니다.');
+      showError(error instanceof Error ? error.message : '계정 삭제에 실패했습니다.');
     }
   };
 

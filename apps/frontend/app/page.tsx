@@ -6,6 +6,7 @@ import { useUsers, useUpdateUser, useDeleteUser } from '../src/hooks/useUsers';
 import { useAuthStore } from '../src/stores/authStore';
 import { useServerStatus } from '../src/hooks/useServerStatus';
 import { updateUserSchema, ZodError } from '@side-project/shared';
+import { useToast } from '../src/contexts/ToastContext';
 
 export default function Home() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function Home() {
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
   const { data: isServerOnline = false } = useServerStatus();
+  const { showError } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -84,7 +86,7 @@ export default function Home() {
         });
         setEditErrors(fieldErrors);
       } else {
-        alert(error instanceof Error ? error.message : '사용자 수정에 실패했습니다.');
+        showError(error instanceof Error ? error.message : '사용자 수정에 실패했습니다.');
       }
     }
   };
@@ -100,7 +102,7 @@ export default function Home() {
       await deleteUserMutation.mutateAsync(deleteConfirm);
       setDeleteConfirm(null);
     } catch (error: unknown) {
-      alert(error instanceof Error ? error.message : '사용자 삭제에 실패했습니다.');
+      showError(error instanceof Error ? error.message : '사용자 삭제에 실패했습니다.');
     }
   };
 

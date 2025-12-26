@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useLogin } from '../../src/hooks/useAuth';
 import { loginSchema, ZodError } from '@side-project/shared';
+import { useToast } from '../../src/contexts/ToastContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const loginMutation = useLogin();
+  const { showError } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ export default function LoginPage() {
         });
         setErrors(fieldErrors);
       } else {
-        alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
+        showError(error instanceof Error ? error.message : '로그인에 실패했습니다.');
       }
     }
   };
