@@ -52,8 +52,7 @@ pnpm-debug.log*
 apps/backend
 apps/backend/**
 
-# Design System Storybook
-packages/design-system/.storybook
+# Design System Storybook (빌드 결과물만 제외, 설정 파일은 포함)
 storybook-static
 
 # Database

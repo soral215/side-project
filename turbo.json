@@ -6,6 +6,9 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "storybook-static/**"]
     },
+    "//packages/design-system#build": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true

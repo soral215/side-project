@@ -15,7 +15,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
     "dev": "storybook dev -p 6006",
-    "build": "storybook build"
+    "build": "echo 'No build needed for design-system library'"
   },
   "dependencies": {
     "clsx": "^2.1.0",
