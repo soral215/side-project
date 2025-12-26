@@ -7,6 +7,7 @@ import { useAuthStore } from '../src/stores/authStore';
 import { useServerStatus } from '../src/hooks/useServerStatus';
 import { updateUserSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../src/contexts/ToastContext';
+import { Button, Input } from '@side-project/design-system';
 
 export default function Home() {
   const router = useRouter();
@@ -145,18 +146,20 @@ export default function Home() {
                 {user.name} ({user.email})
               </span>
             )}
-            <button
+            <Button
               onClick={() => router.push('/profile')}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
+              variant="secondary"
+              size="sm"
             >
               프로필
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm"
+              variant="danger"
+              size="sm"
             >
               로그아웃
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -167,12 +170,12 @@ export default function Home() {
               사용자 목록
             </h2>
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 type="text"
                 placeholder="검색 (이름 또는 이메일)"
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="text-sm"
               />
             </div>
           </div>
@@ -199,18 +202,20 @@ export default function Home() {
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <button
+                        <Button
                           onClick={() => handleEditClick(user)}
-                          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                          variant="primary"
+                          size="sm"
                         >
                           수정
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => handleDeleteClick(user.id)}
-                          className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                          variant="danger"
+                          size="sm"
                         >
                           삭제
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -225,13 +230,14 @@ export default function Home() {
                     {Math.min(currentPage * usersData.pagination.limit, usersData.pagination.total)}명 표시
                   </div>
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      variant="secondary"
+                      size="sm"
                     >
                       이전
-                    </button>
+                    </Button>
                     {Array.from({ length: Math.min(5, usersData.pagination.totalPages) }, (_, i) => {
                       let pageNum;
                       if (usersData.pagination.totalPages <= 5) {
@@ -244,26 +250,24 @@ export default function Home() {
                         pageNum = currentPage - 2 + i;
                       }
                       return (
-                        <button
+                        <Button
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
-                          className={`px-3 py-1 text-sm border rounded ${
-                            currentPage === pageNum
-                              ? 'bg-blue-600 text-white border-blue-600'
-                              : 'border-gray-300 hover:bg-gray-50'
-                          }`}
+                          variant={currentPage === pageNum ? 'primary' : 'secondary'}
+                          size="sm"
                         >
                           {pageNum}
-                        </button>
+                        </Button>
                       );
                     })}
-                    <button
+                    <Button
                       onClick={() => setCurrentPage(Math.min(usersData.pagination.totalPages, currentPage + 1))}
                       disabled={currentPage === usersData.pagination.totalPages}
-                      className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      variant="secondary"
+                      size="sm"
                     >
                       다음
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -278,46 +282,30 @@ export default function Home() {
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">사용자 수정</h2>
             <form onSubmit={handleUpdateUser} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => {
-                    setEditName(e.target.value);
-                    if (editErrors.name) setEditErrors({ ...editErrors, name: undefined });
-                  }}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                    editErrors.name
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:ring-blue-500'
-                  }`}
-                />
-                {editErrors.name && (
-                  <p className="mt-1 text-sm text-red-600">{editErrors.name}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
-                <input
-                  type="email"
-                  value={editEmail}
-                  onChange={(e) => {
-                    setEditEmail(e.target.value);
-                    if (editErrors.email) setEditErrors({ ...editErrors, email: undefined });
-                  }}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                    editErrors.email
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:ring-blue-500'
-                  }`}
-                />
-                {editErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">{editErrors.email}</p>
-                )}
-              </div>
+              <Input
+                type="text"
+                label="이름"
+                value={editName}
+                onChange={(e) => {
+                  setEditName(e.target.value);
+                  if (editErrors.name) setEditErrors({ ...editErrors, name: undefined });
+                }}
+                error={editErrors.name}
+                fullWidth
+              />
+              <Input
+                type="email"
+                label="이메일"
+                value={editEmail}
+                onChange={(e) => {
+                  setEditEmail(e.target.value);
+                  if (editErrors.email) setEditErrors({ ...editErrors, email: undefined });
+                }}
+                error={editErrors.email}
+                fullWidth
+              />
               <div className="flex gap-2 justify-end">
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     setEditingUser(null);
@@ -325,17 +313,16 @@ export default function Home() {
                     setEditEmail('');
                     setEditErrors({});
                   }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  variant="secondary"
                 >
                   취소
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  disabled={updateUserMutation.isPending}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  isLoading={updateUserMutation.isPending}
                 >
                   {updateUserMutation.isPending ? '저장 중...' : '저장'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -351,19 +338,19 @@ export default function Home() {
               정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-2 justify-end">
-              <button
+              <Button
                 onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                variant="secondary"
               >
                 취소
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleDeleteConfirm}
-                disabled={deleteUserMutation.isPending}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
+                isLoading={deleteUserMutation.isPending}
+                variant="danger"
               >
                 {deleteUserMutation.isPending ? '삭제 중...' : '삭제'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

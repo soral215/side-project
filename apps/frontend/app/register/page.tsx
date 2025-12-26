@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRegister } from '../../src/hooks/useAuth';
 import { registerSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../../src/contexts/ToastContext';
+import { Button, Input } from '@side-project/design-system';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -39,64 +40,46 @@ export default function RegisterPage() {
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-gray-900 text-center">회원가입</h1>
         <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                if (errors.name) setErrors({ ...errors, name: undefined });
-              }}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                errors.name
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
-            />
-            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (errors.email) setErrors({ ...errors, email: undefined });
-              }}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                errors.email
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (errors.password) setErrors({ ...errors, password: undefined });
-              }}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                errors.password
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
-              }`}
-            />
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-          </div>
-          <button
+          <Input
+            type="text"
+            label="이름"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors({ ...errors, name: undefined });
+            }}
+            error={errors.name}
+            fullWidth
+          />
+          <Input
+            type="email"
+            label="이메일"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors({ ...errors, email: undefined });
+            }}
+            error={errors.email}
+            fullWidth
+          />
+          <Input
+            type="password"
+            label="비밀번호"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) setErrors({ ...errors, password: undefined });
+            }}
+            error={errors.password}
+            fullWidth
+          />
+          <Button
             type="submit"
-            disabled={registerMutation.isPending}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            isLoading={registerMutation.isPending}
+            fullWidth
           >
             {registerMutation.isPending ? '가입 중...' : '회원가입'}
-          </button>
+          </Button>
         </form>
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">

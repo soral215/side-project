@@ -8,6 +8,7 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { apiClient } from '../../src/lib/api';
 import { updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../../src/contexts/ToastContext';
+import { Button, Input } from '@side-project/design-system';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://side-projectbackend-production-1e9c.up.railway.app';
 
@@ -224,12 +225,14 @@ export default function ProfilePage() {
     <main className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
-          <button
+          <Button
             onClick={() => router.push('/')}
-            className="text-blue-600 hover:text-blue-700 text-sm"
+            variant="secondary"
+            size="sm"
+            className="!bg-transparent !text-primary-600 hover:!text-primary-700 !p-0 !font-normal"
           >
             ← 홈으로
-          </button>
+          </Button>
         </div>
 
         <h1 className="text-3xl font-bold mb-8 text-gray-900">프로필 관리</h1>
@@ -285,68 +288,51 @@ export default function ProfilePage() {
                   <p className="text-sm text-gray-500">
                     가입일: {new Date(profile.createdAt).toLocaleDateString('ko-KR')}
                   </p>
-                  <button
+                  <Button
                     onClick={handleEdit}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    className="mt-4"
                   >
                     프로필 수정
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <form onSubmit={handleUpdateProfile} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
-                    <input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => {
-                        setEditName(e.target.value);
-                        if (editErrors.name) setEditErrors({ ...editErrors, name: undefined });
-                      }}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                        editErrors.name
-                          ? 'border-red-500 focus:ring-red-500'
-                          : 'border-gray-300 focus:ring-blue-500'
-                      }`}
-                    />
-                    {editErrors.name && (
-                      <p className="mt-1 text-sm text-red-600">{editErrors.name}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
-                    <input
-                      type="email"
-                      value={editEmail}
-                      onChange={(e) => {
-                        setEditEmail(e.target.value);
-                        if (editErrors.email) setEditErrors({ ...editErrors, email: undefined });
-                      }}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                        editErrors.email
-                          ? 'border-red-500 focus:ring-red-500'
-                          : 'border-gray-300 focus:ring-blue-500'
-                      }`}
-                    />
-                    {editErrors.email && (
-                      <p className="mt-1 text-sm text-red-600">{editErrors.email}</p>
-                    )}
-                  </div>
+                  <Input
+                    type="text"
+                    label="이름"
+                    value={editName}
+                    onChange={(e) => {
+                      setEditName(e.target.value);
+                      if (editErrors.name) setEditErrors({ ...editErrors, name: undefined });
+                    }}
+                    error={editErrors.name}
+                    fullWidth
+                  />
+                  <Input
+                    type="email"
+                    label="이메일"
+                    value={editEmail}
+                    onChange={(e) => {
+                      setEditEmail(e.target.value);
+                      if (editErrors.email) setEditErrors({ ...editErrors, email: undefined });
+                    }}
+                    error={editErrors.email}
+                    fullWidth
+                  />
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       type="submit"
-                      disabled={updateProfileMutation.isPending}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                      isLoading={updateProfileMutation.isPending}
                     >
                       {updateProfileMutation.isPending ? '저장 중...' : '저장'}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={handleCancelEdit}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                      variant="secondary"
                     >
                       취소
-                    </button>
+                    </Button>
                   </div>
                 </form>
               )}
@@ -358,7 +344,7 @@ export default function ProfilePage() {
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-800">비밀번호 변경</h2>
-            <button
+            <Button
               onClick={() => {
                 setShowPasswordChange(!showPasswordChange);
                 setCurrentPassword('');
@@ -366,77 +352,54 @@ export default function ProfilePage() {
                 setConfirmPassword('');
                 setPasswordErrors({});
               }}
-              className="text-blue-600 hover:text-blue-700 text-sm"
+              variant="secondary"
+              size="sm"
+              className="!bg-transparent !text-primary-600 hover:!text-primary-700 !p-0 !font-normal"
             >
               {showPasswordChange ? '취소' : '변경하기'}
-            </button>
+            </Button>
           </div>
           {showPasswordChange && (
             <form onSubmit={handleChangePassword} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">현재 비밀번호</label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => {
-                    setCurrentPassword(e.target.value);
-                    if (passwordErrors.currentPassword) setPasswordErrors({ ...passwordErrors, currentPassword: undefined });
-                  }}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                    passwordErrors.currentPassword
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:ring-blue-500'
-                  }`}
-                />
-                {passwordErrors.currentPassword && (
-                  <p className="mt-1 text-sm text-red-600">{passwordErrors.currentPassword}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">새 비밀번호</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                    if (passwordErrors.newPassword) setPasswordErrors({ ...passwordErrors, newPassword: undefined });
-                  }}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                    passwordErrors.newPassword
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:ring-blue-500'
-                  }`}
-                />
-                {passwordErrors.newPassword && (
-                  <p className="mt-1 text-sm text-red-600">{passwordErrors.newPassword}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">새 비밀번호 확인</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    if (passwordErrors.confirmPassword) setPasswordErrors({ ...passwordErrors, confirmPassword: undefined });
-                  }}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                    passwordErrors.confirmPassword
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:ring-blue-500'
-                  }`}
-                />
-                {passwordErrors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">{passwordErrors.confirmPassword}</p>
-                )}
-              </div>
-              <button
+              <Input
+                type="password"
+                label="현재 비밀번호"
+                value={currentPassword}
+                onChange={(e) => {
+                  setCurrentPassword(e.target.value);
+                  if (passwordErrors.currentPassword) setPasswordErrors({ ...passwordErrors, currentPassword: undefined });
+                }}
+                error={passwordErrors.currentPassword}
+                fullWidth
+              />
+              <Input
+                type="password"
+                label="새 비밀번호"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  if (passwordErrors.newPassword) setPasswordErrors({ ...passwordErrors, newPassword: undefined });
+                }}
+                error={passwordErrors.newPassword}
+                fullWidth
+              />
+              <Input
+                type="password"
+                label="새 비밀번호 확인"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (passwordErrors.confirmPassword) setPasswordErrors({ ...passwordErrors, confirmPassword: undefined });
+                }}
+                error={passwordErrors.confirmPassword}
+                fullWidth
+              />
+              <Button
                 type="submit"
-                disabled={changePasswordMutation.isPending}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                isLoading={changePasswordMutation.isPending}
               >
                 {changePasswordMutation.isPending ? '변경 중...' : '비밀번호 변경'}
-              </button>
+              </Button>
             </form>
           )}
         </div>
@@ -448,41 +411,40 @@ export default function ProfilePage() {
             계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
           </p>
           {!showDeleteConfirm ? (
-            <button
+            <Button
               onClick={() => setShowDeleteConfirm(true)}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+              variant="danger"
             >
               계정 삭제
-            </button>
+            </Button>
           ) : (
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">비밀번호 확인</label>
-                <input
-                  type="password"
-                  value={deletePassword}
-                  onChange={(e) => setDeletePassword(e.target.value)}
-                  placeholder="계정 삭제를 위해 비밀번호를 입력하세요"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-              </div>
+              <Input
+                type="password"
+                label="비밀번호 확인"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                placeholder="계정 삭제를 위해 비밀번호를 입력하세요"
+                fullWidth
+              />
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={handleDeleteAccount}
                   disabled={deleteAccountMutation.isPending || !deletePassword}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
+                  isLoading={deleteAccountMutation.isPending}
+                  variant="danger"
                 >
                   {deleteAccountMutation.isPending ? '삭제 중...' : '확인 및 삭제'}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => {
                     setShowDeleteConfirm(false);
                     setDeletePassword('');
                   }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                  variant="secondary"
                 >
                   취소
-                </button>
+                </Button>
               </div>
             </div>
           )}
