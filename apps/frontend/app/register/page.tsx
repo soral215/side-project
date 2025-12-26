@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRegister } from '../../src/hooks/useAuth';
 import { registerSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../../src/contexts/ToastContext';
-import { Button, Input } from '@side-project/design-system';
+import { Button, Input, Card } from '@side-project/design-system';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -37,7 +37,7 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+      <Card variant="elevated" padding="lg" className="w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-gray-900 text-center">회원가입</h1>
         <form onSubmit={handleRegister} className="space-y-4">
           <Input
@@ -89,7 +89,7 @@ export default function RegisterPage() {
             </a>
           </p>
         </div>
-      </div>
+      </Card>
     </main>
   );
 }

@@ -8,7 +8,7 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { apiClient } from '../../src/lib/api';
 import { updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../../src/contexts/ToastContext';
-import { Button, Input } from '@side-project/design-system';
+import { Button, Input, Card } from '@side-project/design-system';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://side-projectbackend-production-1e9c.up.railway.app';
 
@@ -238,7 +238,7 @@ export default function ProfilePage() {
         <h1 className="text-3xl font-bold mb-8 text-gray-900">프로필 관리</h1>
 
         {/* 프로필 정보 카드 */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <Card variant="default" padding="md" className="mb-6">
           <div className="flex items-start gap-6 mb-6">
             {/* 프로필 이미지 */}
             <div className="relative">
@@ -338,10 +338,10 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* 비밀번호 변경 카드 */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <Card variant="default" padding="md" className="mb-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-800">비밀번호 변경</h2>
             <Button
@@ -402,10 +402,10 @@ export default function ProfilePage() {
               </Button>
             </form>
           )}
-        </div>
+        </Card>
 
         {/* 계정 삭제 카드 */}
-        <div className="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+        <Card variant="default" padding="md" className="border-l-4 border-red-500">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">계정 삭제</h2>
           <p className="text-sm text-gray-600 mb-4">
             계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
@@ -448,7 +448,7 @@ export default function ProfilePage() {
               </div>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </main>
   );

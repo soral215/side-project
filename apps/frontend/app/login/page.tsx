@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useLogin } from '../../src/hooks/useAuth';
 import { loginSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../../src/contexts/ToastContext';
-import { Button, Input } from '@side-project/design-system';
+import { Button, Input, Card } from '@side-project/design-system';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -36,7 +36,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+      <Card variant="elevated" padding="lg" className="w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-gray-900 text-center">로그인</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <Input
@@ -77,7 +77,7 @@ export default function LoginPage() {
             </a>
           </p>
         </div>
-      </div>
+      </Card>
     </main>
   );
 }

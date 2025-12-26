@@ -7,7 +7,7 @@ import { useAuthStore } from '../src/stores/authStore';
 import { useServerStatus } from '../src/hooks/useServerStatus';
 import { updateUserSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../src/contexts/ToastContext';
-import { Button, Input } from '@side-project/design-system';
+import { Button, Input, Card, Modal } from '@side-project/design-system';
 
 export default function Home() {
   const router = useRouter();
@@ -164,7 +164,7 @@ export default function Home() {
         </div>
 
         {/* 사용자 목록 */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card variant="default" padding="md">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-800">
               사용자 목록
@@ -273,88 +273,93 @@ export default function Home() {
               )}
             </>
           )}
-        </div>
+        </Card>
       </div>
 
       {/* 수정 모달 */}
-      {editingUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">사용자 수정</h2>
-            <form onSubmit={handleUpdateUser} className="space-y-4">
-              <Input
-                type="text"
-                label="이름"
-                value={editName}
-                onChange={(e) => {
-                  setEditName(e.target.value);
-                  if (editErrors.name) setEditErrors({ ...editErrors, name: undefined });
-                }}
-                error={editErrors.name}
-                fullWidth
-              />
-              <Input
-                type="email"
-                label="이메일"
-                value={editEmail}
-                onChange={(e) => {
-                  setEditEmail(e.target.value);
-                  if (editErrors.email) setEditErrors({ ...editErrors, email: undefined });
-                }}
-                error={editErrors.email}
-                fullWidth
-              />
-              <div className="flex gap-2 justify-end">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setEditingUser(null);
-                    setEditName('');
-                    setEditEmail('');
-                    setEditErrors({});
-                  }}
-                  variant="secondary"
-                >
-                  취소
-                </Button>
-                <Button
-                  type="submit"
-                  isLoading={updateUserMutation.isPending}
-                >
-                  {updateUserMutation.isPending ? '저장 중...' : '저장'}
-                </Button>
-              </div>
-            </form>
+      <Modal
+        isOpen={!!editingUser}
+        onClose={() => {
+          setEditingUser(null);
+          setEditName('');
+          setEditEmail('');
+          setEditErrors({});
+        }}
+        title="사용자 수정"
+        size="md"
+      >
+        <form onSubmit={handleUpdateUser} className="space-y-4">
+          <Input
+            type="text"
+            label="이름"
+            value={editName}
+            onChange={(e) => {
+              setEditName(e.target.value);
+              if (editErrors.name) setEditErrors({ ...editErrors, name: undefined });
+            }}
+            error={editErrors.name}
+            fullWidth
+          />
+          <Input
+            type="email"
+            label="이메일"
+            value={editEmail}
+            onChange={(e) => {
+              setEditEmail(e.target.value);
+              if (editErrors.email) setEditErrors({ ...editErrors, email: undefined });
+            }}
+            error={editErrors.email}
+            fullWidth
+          />
+          <div className="flex gap-2 justify-end">
+            <Button
+              type="button"
+              onClick={() => {
+                setEditingUser(null);
+                setEditName('');
+                setEditEmail('');
+                setEditErrors({});
+              }}
+              variant="secondary"
+            >
+              취소
+            </Button>
+            <Button
+              type="submit"
+              isLoading={updateUserMutation.isPending}
+            >
+              {updateUserMutation.isPending ? '저장 중...' : '저장'}
+            </Button>
           </div>
-        </div>
-      )}
+        </form>
+      </Modal>
 
       {/* 삭제 확인 다이얼로그 */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">사용자 삭제</h2>
-            <p className="text-gray-600 mb-6">
-              정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-            </p>
-            <div className="flex gap-2 justify-end">
-              <Button
-                onClick={() => setDeleteConfirm(null)}
-                variant="secondary"
-              >
-                취소
-              </Button>
-              <Button
-                onClick={handleDeleteConfirm}
-                isLoading={deleteUserMutation.isPending}
-                variant="danger"
-              >
-                {deleteUserMutation.isPending ? '삭제 중...' : '삭제'}
-              </Button>
-            </div>
-          </div>
+      <Modal
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        title="사용자 삭제"
+        size="md"
+      >
+        <p className="text-gray-600 mb-6">
+          정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+        </p>
+        <div className="flex gap-2 justify-end">
+          <Button
+            onClick={() => setDeleteConfirm(null)}
+            variant="secondary"
+          >
+            취소
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            isLoading={deleteUserMutation.isPending}
+            variant="danger"
+          >
+            {deleteUserMutation.isPending ? '삭제 중...' : '삭제'}
+          </Button>
         </div>
-      )}
+      </Modal>
     </main>
   );
 }
