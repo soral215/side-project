@@ -8,7 +8,7 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { apiClient } from '../../src/lib/api';
 import { updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../../src/contexts/ToastContext';
-import { Button, Input, Card } from '@side-project/design-system';
+import { Button, Input, Card, Skeleton, SkeletonText } from '@side-project/design-system';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://side-projectbackend-production-1e9c.up.railway.app';
 
@@ -211,15 +211,49 @@ export default function ProfilePage() {
   if (!mounted || !isAuthenticated) {
     return (
       <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">로딩 중...</p>
+        <div className="text-center">
+          <Skeleton variant="circular" width={48} height={48} className="mx-auto mb-4" />
+          <SkeletonText lines={2} />
+        </div>
       </main>
     );
   }
 
   if (isLoading) {
     return (
-      <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">로딩 중...</p>
+      <main className="min-h-screen p-8 bg-gray-50">
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-6">
+            <Skeleton width={100} height={24} />
+          </div>
+          <Card variant="elevated" padding="lg">
+            <div className="space-y-6">
+              {/* 프로필 이미지 스켈레톤 */}
+              <div className="flex flex-col items-center">
+                <Skeleton variant="circular" width={120} height={120} />
+                <Skeleton width={150} height={20} className="mt-4" />
+              </div>
+              
+              {/* 프로필 정보 스켈레톤 */}
+              <div className="space-y-4">
+                <div>
+                  <Skeleton width={80} height={16} className="mb-2" />
+                  <Skeleton width="100%" height={40} />
+                </div>
+                <div>
+                  <Skeleton width={80} height={16} className="mb-2" />
+                  <Skeleton width="100%" height={40} />
+                </div>
+              </div>
+              
+              {/* 버튼 스켈레톤 */}
+              <div className="flex gap-2">
+                <Skeleton width={120} height={40} />
+                <Skeleton width={120} height={40} />
+              </div>
+            </div>
+          </Card>
+        </div>
       </main>
     );
   }

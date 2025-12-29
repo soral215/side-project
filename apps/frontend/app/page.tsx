@@ -8,7 +8,7 @@ import { useServerStatus } from '../src/hooks/useServerStatus';
 import { updateUserSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../src/contexts/ToastContext';
 import { useFeatureFlag } from '../src/contexts/FeatureFlagContext';
-import { Button, Input, Card, Modal } from '@side-project/design-system';
+import { Button, Input, Card, Modal, SkeletonCard, Skeleton, SkeletonText } from '@side-project/design-system';
 
 export default function Home() {
   const router = useRouter();
@@ -117,7 +117,10 @@ export default function Home() {
   if (!mounted || !isAuthenticated) {
     return (
       <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">로딩 중...</p>
+        <div className="text-center">
+          <Skeleton variant="circular" width={48} height={48} className="mx-auto mb-4" />
+          <SkeletonText lines={2} />
+        </div>
       </main>
     );
   }
@@ -199,7 +202,17 @@ export default function Home() {
             </div>
           </div>
           {isLoading ? (
-            <p className="text-gray-600">로딩 중...</p>
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <SkeletonCard
+                  key={index}
+                  showAvatar={false}
+                  showTitle={true}
+                  showText={true}
+                  showButton={true}
+                />
+              ))}
+            </div>
           ) : error ? (
             <p className="text-red-600">에러: {error instanceof Error ? error.message : '알 수 없는 오류'}</p>
           ) : !usersData || usersData.data.length === 0 ? (
