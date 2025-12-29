@@ -115,6 +115,21 @@ router.put('/', async (req: Request, res: Response, next: NextFunction) => {
       },
     });
 
+    // 실시간 알림 전송
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('notification', {
+        type: 'profile_updated',
+        message: `${updatedUser.name}님이 프로필을 업데이트했습니다`,
+        data: {
+          userId: updatedUser.id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     res.json(
       createApiResponse({
         id: updatedUser.id,

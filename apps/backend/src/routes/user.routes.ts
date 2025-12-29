@@ -146,6 +146,21 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
       updatedAt: updatedUser.updatedAt.toISOString(),
     };
 
+    // 실시간 알림 전송
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('notification', {
+        type: 'user_updated',
+        message: `${formattedUser.name}님의 정보가 업데이트되었습니다`,
+        data: {
+          userId: formattedUser.id,
+          name: formattedUser.name,
+          email: formattedUser.email,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     res.json(createApiResponse(formattedUser));
   } catch (error: any) {
     next(error); // 에러 미들웨어로 전달
@@ -155,9 +170,35 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 // DELETE /api/users/:id - 사용자 삭제
 router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // 삭제 전에 사용자 정보 가져오기 (알림용)
+    const userToDelete = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
     await prisma.user.delete({
       where: { id: req.params.id },
     });
+
+    // 실시간 알림 전송
+    const io = req.app.get('io');
+    if (io && userToDelete) {
+      io.emit('notification', {
+        type: 'user_deleted',
+        message: `${userToDelete.name}님이 삭제되었습니다`,
+        data: {
+          userId: userToDelete.id,
+          name: userToDelete.name,
+          email: userToDelete.email,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     res.json(createApiResponse({ message: 'User deleted successfully' }));
   } catch (error: any) {
     next(error); // 에러 미들웨어로 전달

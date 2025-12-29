@@ -85,14 +85,11 @@ io.on('connection', (socket) => {
     logger.info(`Socket disconnected: ${socket.id}`);
   });
 
-  // 사용자 목록 업데이트 알림
-  socket.on('user:updated', (data: any) => {
-    socket.broadcast.emit('user:updated', data);
-  });
-
-  // 새 사용자 생성 알림
-  socket.on('user:created', (data: any) => {
-    socket.broadcast.emit('user:created', data);
+  // 인증 처리 (선택사항 - 향후 사용자별 타겟팅을 위해)
+  socket.on('authenticate', (token: string) => {
+    // JWT 토큰 검증 후 사용자 ID 저장
+    // 현재는 기본 연결만 처리
+    logger.info(`Socket authenticated: ${socket.id}`);
   });
 });
 

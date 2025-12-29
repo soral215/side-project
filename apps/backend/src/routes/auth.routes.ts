@@ -65,6 +65,21 @@ router.post('/register', async (req: Request, res: Response, next: NextFunction)
       email: newUser.email,
     });
 
+    // 실시간 알림 전송
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('notification', {
+        type: 'user_created',
+        message: `${newUser.name}님이 가입했습니다`,
+        data: {
+          userId: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     res.status(201).json(
       createApiResponse({
         user: {

@@ -6,6 +6,7 @@ import { ToastProvider } from '../src/contexts/ToastContext';
 import { FeatureFlagProvider } from '../src/contexts/FeatureFlagContext';
 import { FeatureFlagDevTools } from '../src/components/FeatureFlagDevTools';
 import { ServerInfo } from '../src/components/ServerInfo';
+import { NotificationListener } from '../src/components/NotificationListener';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -26,6 +27,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <FeatureFlagProvider>
         <ToastProvider>
           {children}
+          <NotificationListener />
           <FeatureFlagDevTools />
           <ServerInfo />
         </ToastProvider>
