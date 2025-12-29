@@ -9,6 +9,7 @@ import { apiClient } from '../../src/lib/api';
 import { updateProfileSchema, changePasswordSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../../src/contexts/ToastContext';
 import { Button, Input, Card, Skeleton, SkeletonText } from '@side-project/design-system';
+import { ThemeToggle } from '../../src/components/ThemeToggle';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://side-projectbackend-production-1e9c.up.railway.app';
 
@@ -210,7 +211,7 @@ export default function ProfilePage() {
 
   if (!mounted || !isAuthenticated) {
     return (
-      <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
+      <main className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <Skeleton variant="circular" width={48} height={48} className="mx-auto mb-4" />
           <SkeletonText lines={2} />
@@ -221,7 +222,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen p-8 bg-gray-50">
+      <main className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
             <Skeleton width={100} height={24} />
@@ -260,34 +261,35 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <main className="min-h-screen p-8 bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">프로필을 불러올 수 없습니다.</p>
+      <main className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <p className="text-gray-600 dark:text-gray-400">프로필을 불러올 수 없습니다.</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen p-8 bg-gray-50">
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
-          <Button
-            onClick={() => router.push('/')}
-            variant="secondary"
-            size="sm"
-            className="!bg-transparent !text-primary-600 hover:!text-primary-700 !p-0 !font-normal"
-          >
-            ← 홈으로
-          </Button>
-        </div>
+      <main className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-6 flex items-center justify-between">
+            <Button
+              onClick={() => router.push('/')}
+              variant="secondary"
+              size="sm"
+              className="!bg-transparent !text-primary-600 dark:!text-primary-400 hover:!text-primary-700 dark:hover:!text-primary-500 !p-0 !font-normal"
+            >
+              ← 홈으로
+            </Button>
+            <ThemeToggle />
+          </div>
 
-        <h1 className="text-3xl font-bold mb-8 text-gray-900">프로필 관리</h1>
+          <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">프로필 관리</h1>
 
         {/* 프로필 정보 카드 */}
         <Card variant="default" padding="md" className="mb-6">
           <div className="flex items-start gap-6 mb-6">
             {/* 프로필 이미지 */}
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+              <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                 {profile.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -296,7 +298,7 @@ export default function ProfilePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-3xl text-gray-400">
+                  <span className="text-3xl text-gray-400 dark:text-gray-500">
                     {profile.name.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -304,7 +306,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="absolute bottom-0 right-0 bg-blue-600 dark:bg-blue-500 text-white rounded-full p-2 hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors disabled:opacity-50"
                 title="이미지 변경"
               >
                 {uploading ? (
@@ -328,9 +330,9 @@ export default function ProfilePage() {
             <div className="flex-1">
               {!editMode ? (
                 <>
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-2">{profile.name}</h2>
-                  <p className="text-gray-600 mb-4">{profile.email}</p>
-                  <p className="text-sm text-gray-500">
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{profile.name}</h2>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">{profile.email}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-500">
                     가입일: {new Date(profile.createdAt).toLocaleDateString('ko-KR')}
                   </p>
                   <Button
@@ -388,7 +390,7 @@ export default function ProfilePage() {
         {/* 비밀번호 변경 카드 */}
         <Card variant="default" padding="md" className="mb-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">비밀번호 변경</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">비밀번호 변경</h2>
             <Button
               onClick={() => {
                 setShowPasswordChange(!showPasswordChange);
@@ -450,9 +452,9 @@ export default function ProfilePage() {
         </Card>
 
         {/* 계정 삭제 카드 */}
-        <Card variant="default" padding="md" className="border-l-4 border-red-500">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">계정 삭제</h2>
-          <p className="text-sm text-gray-600 mb-4">
+        <Card variant="default" padding="md" className="border-l-4 border-red-500 dark:border-red-600">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">계정 삭제</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
           </p>
           {!showDeleteConfirm ? (

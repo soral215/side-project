@@ -53,7 +53,7 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
       <div
         ref={ref}
         className={clsx(
-          'bg-gray-200',
+          'bg-gray-200 dark:bg-gray-700',
           getVariantStyles(),
           animate && 'animate-pulse',
           className

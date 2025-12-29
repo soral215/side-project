@@ -37,9 +37,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <Card variant="elevated" padding="lg" className="w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-gray-900 text-center">회원가입</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">회원가입</h1>
         <form onSubmit={handleRegister} className="space-y-4">
           <Input
             type="text"
@@ -83,9 +83,9 @@ export default function RegisterPage() {
           </Button>
         </form>
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             이미 계정이 있으신가요?{' '}
-            <a href="/login" className="text-blue-600 hover:underline">
+            <a href="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
               로그인
             </a>
           </p>

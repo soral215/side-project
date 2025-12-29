@@ -36,9 +36,9 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <Card variant="elevated" padding="lg" className="w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-gray-900 text-center">로그인</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100 text-center">로그인</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <Input
             type="email"
@@ -71,9 +71,9 @@ export default function LoginPage() {
           </Button>
         </form>
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             계정이 없으신가요?{' '}
-            <a href="/register" className="text-blue-600 hover:underline">
+            <a href="/register" className="text-blue-600 dark:text-blue-400 hover:underline">
               회원가입
             </a>
           </p>

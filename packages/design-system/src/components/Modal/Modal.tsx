@@ -61,19 +61,19 @@ export const Modal: React.FC<ModalProps> = ({
       />
       <div
         className={clsx(
-          'relative bg-white rounded-lg shadow-xl w-full',
+          'relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full',
           sizeStyles[size],
           'max-h-[90vh] overflow-y-auto'
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 aria-label="Close"
               >
                 <svg

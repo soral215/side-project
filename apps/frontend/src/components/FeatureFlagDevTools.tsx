@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useFeatureFlag, type FeatureFlags } from '../contexts/FeatureFlagContext';
-import { Button, Card } from '@side-project/design-system';
+import { Button, Card, Toggle } from '@side-project/design-system';
 
 /**
  * Feature Flag 개발자 도구
@@ -22,7 +22,12 @@ export const FeatureFlagDevTools: React.FC = () => {
   };
 
   // 개발 모드가 아니면 표시하지 않음
-  if (process.env.NODE_ENV !== 'development') {
+  // Next.js에서는 NODE_ENV가 빌드 타임에 결정되므로, 클라이언트에서는 항상 'production'으로 보일 수 있음
+  // 따라서 개발 서버에서 실행 중인지 확인하는 다른 방법 사용
+  const isDevelopment = process.env.NODE_ENV === 'development' || 
+                        (typeof window !== 'undefined' && window.location.hostname === 'localhost');
+  
+  if (!isDevelopment) {
     return null;
   }
 
@@ -44,7 +49,7 @@ export const FeatureFlagDevTools: React.FC = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 z-[9998] bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition-colors"
+        className="fixed bottom-4 right-4 z-[9999] bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition-colors"
         title="Feature Flag 개발자 도구 열기"
         aria-label="Feature Flag 개발자 도구 열기"
       >
@@ -73,24 +78,24 @@ export const FeatureFlagDevTools: React.FC = () => {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-[9998] transition-all duration-300 ${
+      className={`fixed bottom-4 right-4 z-[9999] transition-all duration-300 ${
         isMinimized ? 'w-80' : 'w-96'
       }`}
     >
       <Card variant="elevated" padding="md" className="shadow-2xl">
         {/* 헤더 */}
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <h3 className="font-semibold text-gray-900">Feature Flags</h3>
-            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Feature Flags</h3>
+            <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
               Dev Mode
             </span>
           </div>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+              className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
               title={isMinimized ? '확장' : '최소화'}
               aria-label={isMinimized ? '확장' : '최소화'}
             >
@@ -106,7 +111,7 @@ export const FeatureFlagDevTools: React.FC = () => {
             </button>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+              className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
               title="닫기"
               aria-label="닫기"
             >
@@ -130,56 +135,47 @@ export const FeatureFlagDevTools: React.FC = () => {
                     key={flag}
                     className={`p-3 rounded-lg border ${
                       isOverridden
-                        ? 'border-purple-300 bg-purple-50'
-                        : 'border-gray-200 bg-gray-50'
+                        ? 'border-purple-300 dark:border-purple-600 bg-purple-50 dark:bg-purple-900/30'
+                        : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-sm text-gray-900">
+                          <span className="font-medium text-sm text-gray-900 dark:text-gray-100">
                             {flagLabels[flag]}
                           </span>
                           {isOverridden && (
-                            <span className="text-xs text-purple-600 bg-purple-100 px-1.5 py-0.5 rounded">
+                            <span className="text-xs text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/50 px-1.5 py-0.5 rounded">
                               오버라이드
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-600 mb-2">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
                           {flagDescriptions[flag]}
                         </p>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             기본값: {defaultFlags[flag] ? 'ON' : 'OFF'}
                           </span>
                           {isOverridden && (
-                            <span className="text-xs text-purple-600">
+                            <span className="text-xs text-purple-600 dark:text-purple-400">
                               → 현재: {enabled ? 'ON' : 'OFF'}
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => toggleFlag(flag)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            enabled ? 'bg-purple-600' : 'bg-gray-300'
-                          }`}
-                          role="switch"
-                          aria-checked={enabled}
+                        <Toggle
+                          checked={enabled}
+                          onChange={() => toggleFlag(flag)}
                           aria-label={`${flagLabels[flag]} ${enabled ? '비활성화' : '활성화'}`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              enabled ? 'translate-x-6' : 'translate-x-1'
-                            }`}
-                          />
-                        </button>
+                          size="md"
+                        />
                         {isOverridden && (
                           <button
                             onClick={() => resetFlag(flag)}
-                            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                             title="오버라이드 초기화"
                             aria-label="오버라이드 초기화"
                           >
@@ -215,8 +211,8 @@ export const FeatureFlagDevTools: React.FC = () => {
             )}
 
             {/* 정보 */}
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <p className="text-xs text-gray-500">
+            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 💡 세션 스토리지에 저장되며, 새로고침 시 유지됩니다.
                 <br />
                 다른 탭에서도 변경사항이 동기화됩니다.

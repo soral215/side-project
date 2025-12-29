@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../../src/stores/authStore';
 import { useFeatureFlag } from '../../src/contexts/FeatureFlagContext';
 import { Card, Button } from '@side-project/design-system';
+import { ThemeToggle } from '../../src/components/ThemeToggle';
 
 /**
  * 새 대시보드 페이지 (Feature Flag로 제어)
@@ -22,16 +23,17 @@ export default function NewDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen p-8 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <main className="min-h-screen p-8 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">새 대시보드</h1>
-            <p className="text-gray-600">실험적인 새 대시보드 UI입니다</p>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">새 대시보드</h1>
+            <p className="text-gray-600 dark:text-gray-400">실험적인 새 대시보드 UI입니다</p>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {user && (
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
                 {user.name} ({user.email})
               </span>
             )}
@@ -57,26 +59,26 @@ export default function NewDashboardPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card variant="elevated" padding="lg">
-            <h2 className="text-xl font-semibold mb-4">통계</h2>
+            <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">통계</h2>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">총 사용자</span>
-                <span className="font-bold">1,234</span>
+                <span className="text-gray-600 dark:text-gray-400">총 사용자</span>
+                <span className="font-bold dark:text-gray-100">1,234</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">활성 사용자</span>
-                <span className="font-bold">892</span>
+                <span className="text-gray-600 dark:text-gray-400">활성 사용자</span>
+                <span className="font-bold dark:text-gray-100">892</span>
               </div>
             </div>
           </Card>
 
           <Card variant="elevated" padding="lg">
-            <h2 className="text-xl font-semibold mb-4">최근 활동</h2>
-            <p className="text-gray-600 text-sm">최근 활동 내역이 여기에 표시됩니다.</p>
+            <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">최근 활동</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">최근 활동 내역이 여기에 표시됩니다.</p>
           </Card>
 
           <Card variant="elevated" padding="lg">
-            <h2 className="text-xl font-semibold mb-4">빠른 액션</h2>
+            <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">빠른 액션</h2>
             <div className="space-y-2">
               <Button variant="primary" size="sm" fullWidth>
                 새 사용자 추가
@@ -92,8 +94,8 @@ export default function NewDashboardPage() {
           <Card variant="default" padding="md">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-2">기존 대시보드로 돌아가기</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="text-lg font-semibold mb-2 dark:text-gray-100">기존 대시보드로 돌아가기</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   이 실험적 기능을 비활성화하고 기존 대시보드를 사용하세요.
                 </p>
               </div>

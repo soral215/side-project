@@ -9,6 +9,7 @@ import { updateUserSchema, ZodError } from '@side-project/shared';
 import { useToast } from '../src/contexts/ToastContext';
 import { useFeatureFlag } from '../src/contexts/FeatureFlagContext';
 import { Button, Input, Card, Modal, SkeletonCard, Skeleton, SkeletonText } from '@side-project/design-system';
+import { ThemeToggle } from '../src/components/ThemeToggle';
 
 export default function Home() {
   const router = useRouter();
@@ -128,17 +129,17 @@ export default function Home() {
   const serverStatus = isServerOnline ? 'online' : 'offline';
 
   return (
-    <main className="min-h-screen p-8 bg-gray-50">
+    <main className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 모노레포 사이드 프로젝트
               </h1>
               {isEnabled('newDashboard') && (
-                <p className="text-sm text-gray-500 mt-1">
-                  💡 <a href="/dashboard" className="text-blue-600 hover:underline">새 대시보드</a>를 사용해보세요
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  💡 <a href="/dashboard" className="text-blue-600 dark:text-blue-400 hover:underline">새 대시보드</a>를 사용해보세요
                 </p>
               )}
             </div>
@@ -152,14 +153,15 @@ export default function Home() {
                 }`}
                 title={serverStatus === 'online' ? '서버 정상 작동 중' : '서버 연결 실패'}
               />
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {serverStatus === 'online' ? '서버 정상' : '서버 오프라인'}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {user && (
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
                 {user.name} ({user.email})
               </span>
             )}
@@ -183,7 +185,7 @@ export default function Home() {
         {/* 사용자 목록 */}
         <Card variant="default" padding="md">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
               사용자 목록
             </h2>
             <div className="flex items-center gap-2">
@@ -214,22 +216,22 @@ export default function Home() {
               ))}
             </div>
           ) : error ? (
-            <p className="text-red-600">에러: {error instanceof Error ? error.message : '알 수 없는 오류'}</p>
+            <p className="text-red-600 dark:text-red-400">에러: {error instanceof Error ? error.message : '알 수 없는 오류'}</p>
           ) : !usersData || usersData.data.length === 0 ? (
-            <p className="text-gray-600">사용자가 없습니다.</p>
+            <p className="text-gray-600 dark:text-gray-400">사용자가 없습니다.</p>
           ) : (
             <>
               <div className="space-y-3 mb-4">
                 {usersData.data.map((user: { id: string; name: string; email: string; createdAt: string }) => (
                   <div
                     key={user.id}
-                    className="p-4 border border-gray-200 rounded-md hover:bg-gray-50"
+                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-600">{user.email}</p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                           생성일: {new Date(user.createdAt).toLocaleDateString('ko-KR')}
                         </p>
                       </div>
@@ -256,7 +258,7 @@ export default function Home() {
               {/* 페이지네이션 */}
               {usersData.pagination.totalPages > 1 && (
                 <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
                     총 {usersData.pagination.total}명 중{' '}
                     {(currentPage - 1) * usersData.pagination.limit + 1}-
                     {Math.min(currentPage * usersData.pagination.limit, usersData.pagination.total)}명 표시
@@ -373,7 +375,7 @@ export default function Home() {
         title="사용자 삭제"
         size="md"
       >
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
         </p>
         <div className="flex gap-2 justify-end">

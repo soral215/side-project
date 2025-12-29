@@ -4,3 +4,20 @@
 
 /* 디자인 시스템 스타일 import */
 @import '@side-project/design-system/styles';
+
+/* 다크모드 기본 색상 설정 */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+  }
+
+  body {
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200;
+  }
+}

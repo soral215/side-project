@@ -7,9 +7,9 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles = {
-  default: 'bg-white shadow',
-  outlined: 'bg-white border border-gray-200',
-  elevated: 'bg-white shadow-lg',
+  default: 'bg-white dark:bg-gray-800 shadow dark:shadow-gray-900/50',
+  outlined: 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+  elevated: 'bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/50',
 };
 
 const paddingStyles = {

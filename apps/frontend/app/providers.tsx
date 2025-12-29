@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ToastProvider } from '../src/contexts/ToastContext';
 import { FeatureFlagProvider } from '../src/contexts/FeatureFlagContext';
+import { ThemeProvider } from '../src/contexts/ThemeContext';
 import { FeatureFlagDevTools } from '../src/components/FeatureFlagDevTools';
 import { ServerInfo } from '../src/components/ServerInfo';
 import { NotificationListener } from '../src/components/NotificationListener';
@@ -25,12 +26,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <FeatureFlagProvider>
-        <ToastProvider>
-          {children}
-          <NotificationListener />
-          <FeatureFlagDevTools />
-          <ServerInfo />
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            {children}
+            <NotificationListener />
+            <FeatureFlagDevTools />
+            <ServerInfo />
+          </ToastProvider>
+        </ThemeProvider>
       </FeatureFlagProvider>
     </QueryClientProvider>
   );

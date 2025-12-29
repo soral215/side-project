@@ -5,4 +5,5 @@ export * from './components/Card';
 export * from './components/Modal';
 export * from './components/Toast';
 export * from './components/Skeleton';
+export * from './components/Toggle';
 
