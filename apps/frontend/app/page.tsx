@@ -22,6 +22,7 @@ export default function Home() {
   const [editErrors, setEditErrors] = useState<{ name?: string; email?: string }>({});
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [triggerError, setTriggerError] = useState(false);
 
   // React Query hooks
   const { data: usersData, isLoading, error } = useUsers(currentPage, 10, search);
@@ -165,6 +166,16 @@ export default function Home() {
                 {user.name} ({user.email})
               </span>
             )}
+            {process.env.NODE_ENV === 'development' && (
+              <Button
+                onClick={() => setTriggerError(true)}
+                variant="warning"
+                size="sm"
+                title="Error Boundary 테스트 (개발 모드만 표시)"
+              >
+                🧪 에러 테스트
+              </Button>
+            )}
             <Button
               onClick={() => router.push('/profile')}
               variant="secondary"
@@ -181,6 +192,16 @@ export default function Home() {
             </Button>
           </div>
         </div>
+
+        {/* Error Boundary 테스트 (개발 모드만) */}
+        {triggerError && (
+          <div>
+            {/* 이 컴포넌트는 렌더링 시 에러를 발생시킵니다 */}
+            {(() => {
+              throw new Error('🧪 Error Boundary 테스트: 의도적으로 발생시킨 에러입니다!');
+            })()}
+          </div>
+        )}
 
         {/* 사용자 목록 */}
         <Card variant="default" padding="md">

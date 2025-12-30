@@ -8,6 +8,7 @@ import { ThemeProvider } from '../src/contexts/ThemeContext';
 import { FeatureFlagDevTools } from '../src/components/FeatureFlagDevTools';
 import { ServerInfo } from '../src/components/ServerInfo';
 import { NotificationListener } from '../src/components/NotificationListener';
+import ErrorBoundary from '../src/components/ErrorBoundary';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -24,18 +25,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <FeatureFlagProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            {children}
-            <NotificationListener />
-            <FeatureFlagDevTools />
-            <ServerInfo />
-          </ToastProvider>
-        </ThemeProvider>
-      </FeatureFlagProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <FeatureFlagProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              {children}
+              <NotificationListener />
+              <FeatureFlagDevTools />
+              <ServerInfo />
+            </ToastProvider>
+          </ThemeProvider>
+        </FeatureFlagProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
