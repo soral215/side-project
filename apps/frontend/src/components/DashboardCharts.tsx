@@ -55,7 +55,6 @@ export const UserActivityChart: React.FC = () => {
               border: '1px solid var(--tw-color-gray-300)',
               borderRadius: '0.5rem',
             }}
-            className="dark:bg-gray-700 dark:border-gray-600"
           />
           <Legend />
           <Line 
@@ -96,11 +95,11 @@ export const UserTypeChart: React.FC = () => {
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
-            data={userTypeData || []}
+            data={(userTypeData || []) as Array<{ name: string; value: number; [key: string]: any }>}
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+            label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
             outerRadius={80}
             fill="#8884d8"
             dataKey="value"
@@ -149,7 +148,6 @@ export const HourlyActivityChart: React.FC = () => {
               border: '1px solid var(--tw-color-gray-300)',
               borderRadius: '0.5rem',
             }}
-            className="dark:bg-gray-700 dark:border-gray-600"
           />
           <Bar dataKey="count" fill="#8b5cf6" name="활동 수" />
         </BarChart>
