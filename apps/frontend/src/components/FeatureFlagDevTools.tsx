@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFeatureFlag, type FeatureFlags } from '../contexts/FeatureFlagContext';
 import { Button, Card, Toggle } from '@side-project/design-system';
 
@@ -12,6 +12,7 @@ export const FeatureFlagDevTools: React.FC = () => {
   const { flags, isEnabled, toggleFlag, resetFlags, resetFlag, overrides } = useFeatureFlag();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isDevelopment, setIsDevelopment] = useState(false);
 
   // 기본값 계산 (환경 변수에서)
   const defaultFlags: FeatureFlags = {
@@ -21,11 +22,20 @@ export const FeatureFlagDevTools: React.FC = () => {
     realtimeNotifications: process.env.NEXT_PUBLIC_FEATURE_REALTIME_NOTIFICATIONS === 'true',
   };
 
-  // 개발 모드가 아니면 표시하지 않음
-  // Next.js에서는 NODE_ENV가 빌드 타임에 결정되므로, 클라이언트에서는 항상 'production'으로 보일 수 있음
-  // 따라서 개발 서버에서 실행 중인지 확인하는 다른 방법 사용
-  const isDevelopment = process.env.NODE_ENV === 'development' || 
-                        (typeof window !== 'undefined' && window.location.hostname === 'localhost');
+  // 개발 모드 체크는 클라이언트 사이드에서만 수행
+  useEffect(() => {
+    const checkDevelopment = () => {
+      if (process.env.NODE_ENV === 'development') {
+        setIsDevelopment(true);
+        return;
+      }
+      // 클라이언트 사이드에서만 window.location 접근
+      if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        setIsDevelopment(true);
+      }
+    };
+    checkDevelopment();
+  }, []);
   
   if (!isDevelopment) {
     return null;

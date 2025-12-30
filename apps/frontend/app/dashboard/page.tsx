@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../../src/stores/authStore';
 import { useFeatureFlag } from '../../src/contexts/FeatureFlagContext';
@@ -16,10 +17,16 @@ export default function NewDashboardPage() {
   const { user, clearAuth } = useAuthStore();
   const { isEnabled } = useFeatureFlag();
 
-  // Feature Flag 체크
+  // Feature Flag 체크 - 클라이언트 사이드에서만 리다이렉트
+  useEffect(() => {
+    if (!isEnabled('newDashboard')) {
+      // 플래그가 비활성화되어 있으면 홈으로 리다이렉트
+      router.push('/');
+    }
+  }, [isEnabled, router]);
+
+  // Feature Flag가 비활성화되어 있으면 로딩 표시
   if (!isEnabled('newDashboard')) {
-    // 플래그가 비활성화되어 있으면 홈으로 리다이렉트
-    router.push('/');
     return null;
   }
 
