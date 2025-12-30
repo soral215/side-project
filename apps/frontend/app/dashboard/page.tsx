@@ -5,6 +5,7 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { useFeatureFlag } from '../../src/contexts/FeatureFlagContext';
 import { Card, Button } from '@side-project/design-system';
 import { ThemeToggle } from '../../src/components/ThemeToggle';
+import { StatsOverview, UserActivityChart, UserTypeChart, HourlyActivityChart } from '../../src/components/DashboardCharts';
 
 /**
  * 새 대시보드 페이지 (Feature Flag로 제어)
@@ -57,27 +58,18 @@ export default function NewDashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card variant="elevated" padding="lg">
-            <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">통계</h2>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">총 사용자</span>
-                <span className="font-bold dark:text-gray-100">1,234</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">활성 사용자</span>
-                <span className="font-bold dark:text-gray-100">892</span>
-              </div>
-            </div>
-          </Card>
+        {/* 통계 개요 */}
+        <StatsOverview />
 
-          <Card variant="elevated" padding="lg">
-            <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">최근 활동</h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">최근 활동 내역이 여기에 표시됩니다.</p>
-          </Card>
+        {/* 차트 섹션 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <UserActivityChart />
+          <HourlyActivityChart />
+        </div>
 
-          <Card variant="elevated" padding="lg">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <UserTypeChart />
+          <Card variant="elevated" padding="lg" className="dark:bg-gray-800">
             <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">빠른 액션</h2>
             <div className="space-y-2">
               <Button variant="primary" size="sm" fullWidth>
@@ -85,6 +77,9 @@ export default function NewDashboardPage() {
               </Button>
               <Button variant="secondary" size="sm" fullWidth>
                 리포트 생성
+              </Button>
+              <Button variant="success" size="sm" fullWidth>
+                데이터 내보내기
               </Button>
             </div>
           </Card>
