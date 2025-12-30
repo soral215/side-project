@@ -71,3 +71,4 @@ Github Actions CI에서 자동으로 린트와 포맷팅을 검사합니다:
 3. 포맷팅 적용: `pnpm format`
 4. 커밋 전 최종 확인: `pnpm lint && pnpm format:check`
 
+

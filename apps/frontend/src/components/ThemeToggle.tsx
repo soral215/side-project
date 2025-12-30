@@ -53,18 +53,6 @@ export const ThemeToggle: React.FC = () => {
           </svg>
         )}
       </Button>
-
-      {/* 고급 옵션: 시스템/라이트/다크 선택 */}
-      {/* <select
-        value={theme}
-        onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
-        className="text-sm px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
-        aria-label="테마 선택"
-      >
-        <option value="light">라이트</option>
-        <option value="dark">다크</option>
-        <option value="system">시스템</option>
-      </select> */}
     </div>
   );
 };

@@ -24,3 +24,4 @@ vi.mock('next/navigation', () => ({
 // 환경 변수 mock
 process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3001';
 
+

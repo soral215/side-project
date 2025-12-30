@@ -49,3 +49,4 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
   );
 };
 
+
