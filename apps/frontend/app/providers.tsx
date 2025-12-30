@@ -9,6 +9,7 @@ import { FeatureFlagDevTools } from '../src/components/FeatureFlagDevTools';
 import { ServerInfo } from '../src/components/ServerInfo';
 import { NotificationListener } from '../src/components/NotificationListener';
 import ErrorBoundary from '../src/components/ErrorBoundary';
+import { AIChatbot } from '../src/components/AIChatbot';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -32,6 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <ToastProvider>
               {children}
               <NotificationListener />
+              <AIChatbot />
               <FeatureFlagDevTools />
               <ServerInfo />
             </ToastProvider>

@@ -4,22 +4,36 @@ import { apiClient } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 
 // 사용자 목록 조회
-export const useUsers = (page: number = 1, limit: number = 10, search: string = '') => {
+export const useUsers = (page: number = 1, limit: number = 10, search: string = '', useAiSearch: boolean = false) => {
   const token = useAuthStore((state) => state.token);
 
   return useQuery({
-    queryKey: ['users', page, limit, search],
+    queryKey: ['users', page, limit, search, useAiSearch],
     queryFn: async () => {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-        ...(search && { search }),
-      });
-      const data = await apiClient.get<PaginatedResponse<User>>(`/api/users?${params}`, token);
-      if (!data.success || !data.data) {
-        throw new Error(data.error?.message || '사용자 목록을 불러오는데 실패했습니다');
+      if (useAiSearch && search) {
+        // AI 검색 사용
+        const data = await apiClient.post<PaginatedResponse<User>>(
+          '/api/users/ai-search',
+          { query: search, page, limit },
+          token
+        );
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message || 'AI 검색에 실패했습니다');
+        }
+        return data.data;
+      } else {
+        // 기본 검색
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: limit.toString(),
+          ...(search && { search }),
+        });
+        const data = await apiClient.get<PaginatedResponse<User>>(`/api/users?${params}`, token);
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message || '사용자 목록을 불러오는데 실패했습니다');
+        }
+        return data.data;
       }
-      return data.data;
     },
     enabled: !!token,
   });

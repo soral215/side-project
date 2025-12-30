@@ -23,9 +23,10 @@ export default function Home() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [triggerError, setTriggerError] = useState(false);
+  const [useAiSearch, setUseAiSearch] = useState(false);
 
   // React Query hooks
-  const { data: usersData, isLoading, error } = useUsers(currentPage, 10, search);
+  const { data: usersData, isLoading, error } = useUsers(currentPage, 10, search, useAiSearch && isEnabled('aiSearch'));
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
   const { data: isServerOnline = false } = useServerStatus();
@@ -210,13 +211,47 @@ export default function Home() {
               사용자 목록
             </h2>
             <div className="flex items-center gap-2">
-              <Input
-                type="text"
-                placeholder={isEnabled('advancedSearch') ? '고급 검색 (이름, 이메일, 역할 등)' : '검색 (이름 또는 이메일)'}
-                value={search}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="text-sm"
-              />
+              <div className="relative flex-1">
+                <Input
+                  type="text"
+                  placeholder={
+                    useAiSearch && isEnabled('aiSearch')
+                      ? 'AI 검색: "이번 주에 가입한 사용자", "gmail 사용자" 등'
+                      : isEnabled('advancedSearch')
+                      ? '고급 검색 (이름, 이메일, 역할 등)'
+                      : '검색 (이름 또는 이메일)'
+                  }
+                  value={search}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="text-sm pr-10"
+                />
+                {isEnabled('aiSearch') && (
+                  <button
+                    onClick={() => setUseAiSearch(!useAiSearch)}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded transition-colors ${
+                      useAiSearch
+                        ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400'
+                        : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                    }`}
+                    title={useAiSearch ? 'AI 검색 활성화됨 - 클릭하여 일반 검색으로 전환' : 'AI 검색 활성화 - 클릭하여 자연어 검색 사용'}
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
               {isEnabled('advancedSearch') && (
                 <Button variant="secondary" size="sm">
                   필터

@@ -2,6 +2,7 @@ import { Router, type IRouter, type Request, type Response, type NextFunction } 
 import { createApiResponse, createErrorResponse, updateUserSchema, type PaginatedResponse, type User } from '@side-project/shared';
 import prisma from '../lib/prisma.js';
 import type { User as PrismaUser } from '@prisma/client';
+import { parseSearchQuery } from '../lib/openai.js';
 
 const router: IRouter = Router();
 
@@ -202,6 +203,70 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
     res.json(createApiResponse({ message: 'User deleted successfully' }));
   } catch (error: any) {
     next(error); // 에러 미들웨어로 전달
+  }
+});
+
+// POST /api/users/ai-search - AI 기반 스마트 검색
+router.post('/ai-search', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { query, page = 1, limit = 10 } = req.body;
+
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json(createErrorResponse('검색 쿼리가 필요합니다', 'INVALID_QUERY'));
+    }
+
+    const pageNum = parseInt(String(page)) || 1;
+    const limitNum = parseInt(String(limit)) || 10;
+
+    if (pageNum < 1) {
+      return res.status(400).json(createErrorResponse('Page must be greater than 0', 'INVALID_PAGE'));
+    }
+    if (limitNum < 1 || limitNum > 100) {
+      return res.status(400).json(createErrorResponse('Limit must be between 1 and 100', 'INVALID_LIMIT'));
+    }
+
+    const skip = (pageNum - 1) * limitNum;
+
+    // OpenAI를 사용하여 자연어 쿼리를 Prisma 조건으로 변환
+    const whereCondition = await parseSearchQuery(query);
+
+    // 전체 개수 조회
+    const total = await prisma.user.count({
+      where: whereCondition,
+    });
+
+    // 사용자 목록 조회
+    const users = await prisma.user.findMany({
+      where: whereCondition,
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limitNum,
+    });
+
+    const totalPages = Math.ceil(total / limitNum);
+
+    // Date를 string으로 변환
+    const formattedUsers: User[] = users.map((user: PrismaUser) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
+    }));
+
+    const response: PaginatedResponse<User> = {
+      data: formattedUsers,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages,
+      },
+    };
+
+    res.json(createApiResponse(response));
+  } catch (error) {
+    next(error);
   }
 });
 

@@ -18,8 +18,10 @@ export const FeatureFlagDevTools: React.FC = () => {
   const defaultFlags: FeatureFlags = {
     newDashboard: process.env.NEXT_PUBLIC_FEATURE_NEW_DASHBOARD === 'true',
     advancedSearch: process.env.NEXT_PUBLIC_FEATURE_ADVANCED_SEARCH === 'true',
+    aiSearch: process.env.NEXT_PUBLIC_FEATURE_AI_SEARCH === 'true',
     darkMode: process.env.NEXT_PUBLIC_FEATURE_DARK_MODE === 'true',
     realtimeNotifications: process.env.NEXT_PUBLIC_FEATURE_REALTIME_NOTIFICATIONS === 'true',
+    aiChatbot: process.env.NEXT_PUBLIC_FEATURE_AI_CHATBOT === 'true',
   };
 
   // 개발 모드 체크는 클라이언트 사이드에서만 수행
@@ -44,15 +46,19 @@ export const FeatureFlagDevTools: React.FC = () => {
   const flagLabels: Record<keyof FeatureFlags, string> = {
     newDashboard: '새 대시보드',
     advancedSearch: '고급 검색',
+    aiSearch: 'AI 스마트 검색',
     darkMode: '다크 모드',
     realtimeNotifications: '실시간 알림',
+    aiChatbot: 'AI 챗봇',
   };
 
   const flagDescriptions: Record<keyof FeatureFlags, string> = {
     newDashboard: '실험적인 새 대시보드 UI',
     advancedSearch: '고급 검색 및 필터 기능',
+    aiSearch: 'OpenAI 기반 자연어 검색',
     darkMode: '다크 모드 테마',
     realtimeNotifications: '실시간 알림 기능',
+    aiChatbot: 'OpenAI 기반 AI 챗봇',
   };
 
   if (!isOpen) {

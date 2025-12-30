@@ -11,10 +11,14 @@ export interface FeatureFlags {
   newDashboard: boolean;
   /** 고급 검색 기능 */
   advancedSearch: boolean;
+  /** AI 스마트 검색 */
+  aiSearch: boolean;
   /** 다크 모드 */
   darkMode: boolean;
   /** 실시간 알림 */
   realtimeNotifications: boolean;
+  /** AI 챗봇 */
+  aiChatbot: boolean;
 }
 
 /**
@@ -25,8 +29,10 @@ const getDefaultFlags = (): FeatureFlags => {
   return {
     newDashboard: process.env.NEXT_PUBLIC_FEATURE_NEW_DASHBOARD === 'true',
     advancedSearch: process.env.NEXT_PUBLIC_FEATURE_ADVANCED_SEARCH === 'true',
+    aiSearch: process.env.NEXT_PUBLIC_FEATURE_AI_SEARCH === 'true',
     darkMode: process.env.NEXT_PUBLIC_FEATURE_DARK_MODE === 'true',
     realtimeNotifications: process.env.NEXT_PUBLIC_FEATURE_REALTIME_NOTIFICATIONS === 'true',
+    aiChatbot: process.env.NEXT_PUBLIC_FEATURE_AI_CHATBOT === 'true',
   };
 };
 
