@@ -25,14 +25,18 @@ const getSystemTheme = (): 'light' | 'dark' => {
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isEnabled } = useFeatureFlag();
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'system';
+    if (typeof window === 'undefined') {
+      return 'system';
+    }
     const stored = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
     return stored || 'system';
   });
 
+  // hydration 에러 방지: 서버와 클라이언트 모두에서 동일한 초기값 사용
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'light';
-    return getSystemTheme();
+    // 서버와 클라이언트 모두에서 'light'로 시작하여 hydration 일치 보장
+    // 실제 테마는 useEffect에서 계산하여 적용
+    return 'light';
   });
 
   // 실제 적용될 테마 계산
@@ -43,7 +47,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return currentTheme;
   }, []);
 
-  // Feature Flag 체크 및 테마 적용
+  // Feature Flag 체크 및 테마 적용 (클라이언트에서만 실행)
   useEffect(() => {
     const darkModeEnabled = isEnabled('darkMode');
     

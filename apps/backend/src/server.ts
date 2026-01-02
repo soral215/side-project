@@ -18,10 +18,6 @@ import { swaggerSpec } from './swagger.js';
 
 dotenv.config();
 
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/1b3b423a-82ed-4e82-abfd-69a32e3af630',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.ts:17',message:'dotenv.config() 실행 후 DATABASE_URL 확인',data:{databaseUrl:process.env.DATABASE_URL,nodeEnv:process.env.NODE_ENV,cwd:process.cwd()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-// #endregion
-
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {

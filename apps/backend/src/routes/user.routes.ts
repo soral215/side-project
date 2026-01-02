@@ -8,9 +8,6 @@ const router: IRouter = Router();
 
 // GET /api/users - 모든 사용자 조회 (페이징 및 검색 지원)
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/1b3b423a-82ed-4e82-abfd-69a32e3af630',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'user.routes.ts:9',message:'GET /api/users 라우트 핸들러 진입',data:{query:req.query},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-  // #endregion
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
@@ -46,18 +43,10 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         }
       : {};
 
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1b3b423a-82ed-4e82-abfd-69a32e3af630',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'user.routes.ts:45',message:'prisma.user.count() 호출 전 상태 확인',data:{databaseUrl:process.env.DATABASE_URL,cwd:process.cwd(),whereForSqlite},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
-    
     // 전체 개수 조회
     const total = await prisma.user.count({
       where: whereForSqlite,
     });
-    
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1b3b423a-82ed-4e82-abfd-69a32e3af630',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'user.routes.ts:50',message:'prisma.user.count() 호출 완료',data:{total},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
 
     // 사용자 목록 조회
     const users = await prisma.user.findMany({
@@ -90,9 +79,6 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
     res.json(createApiResponse(response));
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1b3b423a-82ed-4e82-abfd-69a32e3af630',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'user.routes.ts:81',message:'에러 발생',data:{errorMessage:error instanceof Error?error.message:String(error),errorStack:error instanceof Error?error.stack:undefined},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
     next(error); // 에러 미들웨어로 전달
   }
 });

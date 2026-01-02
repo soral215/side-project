@@ -26,23 +26,26 @@ export const AIChatbot: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Feature Flag 체크
-  if (!isEnabled('aiChatbot')) {
-    return null;
-  }
+  // hydration 에러 방지: 클라이언트에서만 마운트
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // 메시지 스크롤
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (isMounted && isEnabled('aiChatbot')) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isMounted, isEnabled]);
 
   // 입력창 포커스
   useEffect(() => {
-    if (isOpen && !isMinimized) {
+    if (isMounted && isEnabled('aiChatbot') && isOpen && !isMinimized) {
       inputRef.current?.focus();
     }
-  }, [isOpen, isMinimized]);
+  }, [isOpen, isMinimized, isMounted, isEnabled]);
 
   // 스트리밍 메시지 전송
   const handleSendMessage = async () => {
@@ -139,6 +142,11 @@ export const AIChatbot: React.FC = () => {
   const handleClear = () => {
     setMessages([]);
   };
+
+  // hydration 에러 방지: 마운트되지 않았거나 Feature Flag가 비활성화된 경우 null 반환
+  if (!isMounted || !isEnabled('aiChatbot')) {
+    return null;
+  }
 
   if (!isOpen) {
     return (
