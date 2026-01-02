@@ -7,6 +7,7 @@ const config: Config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}', // src 디렉토리 추가
     // 디자인 시스템 소스도 스캔하여 사용된 클래스 생성
     '../../packages/design-system/src/**/*.{js,ts,jsx,tsx,mdx}',
   ],

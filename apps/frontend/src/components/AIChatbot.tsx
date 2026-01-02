@@ -33,6 +33,15 @@ export const AIChatbot: React.FC = () => {
     setIsMounted(true);
   }, []);
 
+  // 디버깅: Feature Flag 상태 확인
+  useEffect(() => {
+    if (isMounted) {
+      console.log('AIChatbot - Feature Flag 상태:', isEnabled('aiChatbot'));
+      console.log('AIChatbot - 마운트 상태:', isMounted);
+      console.log('AIChatbot - 토큰 상태:', !!token);
+    }
+  }, [isMounted, isEnabled, token]);
+
   // 메시지 스크롤
   useEffect(() => {
     if (isMounted && isEnabled('aiChatbot')) {
@@ -143,8 +152,12 @@ export const AIChatbot: React.FC = () => {
     setMessages([]);
   };
 
-  // hydration 에러 방지: 마운트되지 않았거나 Feature Flag가 비활성화된 경우 null 반환
-  if (!isMounted || !isEnabled('aiChatbot')) {
+  // 개발 모드에서는 Feature Flag와 관계없이 표시 (디버깅용)
+  const isDevelopment = typeof window !== 'undefined' && 
+    (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost');
+  
+  // hydration 에러 방지: 마운트되지 않았거나 (Feature Flag가 비활성화되고 개발 모드가 아닌 경우) null 반환
+  if (!isMounted || (!isEnabled('aiChatbot') && !isDevelopment)) {
     return null;
   }
 
@@ -152,7 +165,8 @@ export const AIChatbot: React.FC = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-20 right-4 z-[9998] bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        className="fixed bottom-[80px] right-4 z-[10000] bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        // style={{ bottom: '80px' }}
         title="AI 챗봇 열기"
       >
         <svg
@@ -175,7 +189,7 @@ export const AIChatbot: React.FC = () => {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-[9998] w-96 ${
+      className={`fixed bottom-4 right-4 z-[10000] w-96 ${
         isMinimized ? 'h-14' : 'h-[600px]'
       } transition-all duration-300`}
     >
