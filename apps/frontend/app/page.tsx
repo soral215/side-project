@@ -25,13 +25,15 @@ export default function Home() {
   const [triggerError, setTriggerError] = useState(false);
   const [useAiSearch, setUseAiSearch] = useState(false);
 
+  // Hooks
+  const { showError, showSuccess, showInfo } = useToast();
+  const { isEnabled } = useFeatureFlag();
+
   // React Query hooks
   const { data: usersData, isLoading, error } = useUsers(currentPage, 10, search, useAiSearch && isEnabled('aiSearch'));
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
   const { data: isServerOnline = false } = useServerStatus();
-  const { showError, showSuccess, showInfo } = useToast();
-  const { isEnabled } = useFeatureFlag();
 
   useEffect(() => {
     setMounted(true);
@@ -177,6 +179,13 @@ export default function Home() {
                 🧪 에러 테스트
               </Button>
             )}
+            <Button
+              onClick={() => router.push('/activity')}
+              variant="secondary"
+              size="sm"
+            >
+              활동 로그
+            </Button>
             <Button
               onClick={() => router.push('/profile')}
               variant="secondary"
