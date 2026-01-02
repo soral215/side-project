@@ -49,3 +49,20 @@ model Comment {
 
   @@map("comments")
 }
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?  // 활동한 사용자 (로그인 전에는 null)
+  action    String   // 활동 타입 (예: "user_login", "user_update", "user_delete")
+  entity    String?  // 대상 엔티티 (예: "user", "post")
+  entityId  String?  // 대상 엔티티 ID
+  details   String?  // 추가 정보 (JSON 문자열)
+  ipAddress String?  // IP 주소
+  userAgent String?  // User Agent
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("activity_logs")
+}

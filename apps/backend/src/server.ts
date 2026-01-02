@@ -11,6 +11,7 @@ import { uploadRoutes } from './routes/upload.routes.js';
 import { profileRoutes } from './routes/profile.routes.js';
 import { statsRoutes } from './routes/stats.routes.js';
 import { chatRoutes } from './routes/chat.routes.js';
+import { activityRoutes } from './routes/activity.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
 import logger from './lib/logger.js';
@@ -46,6 +47,7 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       profile: '/api/profile',
       stats: '/api/stats',
+      activity: '/api/activity',
     },
     timestamp: new Date().toISOString(),
   }));
@@ -66,6 +68,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/activity', activityRoutes);
 
 // 정적 파일 서빙 (로컬 업로드 이미지 - Cloudinary 사용 시 불필요하지만 호환성을 위해 유지)
 app.use('/uploads', express.static('uploads'));

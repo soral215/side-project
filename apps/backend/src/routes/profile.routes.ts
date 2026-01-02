@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { createApiResponse, createErrorResponse, updateProfileSchema, changePasswordSchema, formatZodError, ZodError } from '@side-project/shared';
 import prisma from '../lib/prisma.js';
 import { authenticate } from '../middleware/auth.js';
+import { logActivity } from '../lib/activityLogger.js';
 
 const router: IRouter = Router();
 
@@ -102,6 +103,15 @@ router.put('/', async (req: Request, res: Response, next: NextFunction) => {
       return next(error);
     }
 
+    // 변경 전 사용자 정보 가져오기 (활동 로그용)
+    const oldUser = await prisma.user.findUnique({
+      where: { id: req.user!.userId },
+      select: {
+        name: true,
+        email: true,
+      },
+    });
+
     const updatedUser = await prisma.user.update({
       where: { id: req.user!.userId },
       data: validatedData,
@@ -129,6 +139,24 @@ router.put('/', async (req: Request, res: Response, next: NextFunction) => {
         timestamp: new Date().toISOString(),
       });
     }
+
+    // 활동 로그 저장
+    await logActivity({
+      userId: req.user!.userId,
+      action: 'profile_update',
+      entity: 'user',
+      entityId: updatedUser.id,
+      details: {
+        before: oldUser,
+        after: {
+          name: updatedUser.name,
+          email: updatedUser.email,
+        },
+        changedFields: Object.keys(validatedData),
+      },
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent'),
+    });
 
     res.json(
       createApiResponse({
@@ -228,6 +256,16 @@ router.put('/password', async (req: Request, res: Response, next: NextFunction) 
       data: { password: hashedPassword },
     });
 
+    // 활동 로그 저장
+    await logActivity({
+      userId: req.user!.userId,
+      action: 'password_change',
+      entity: 'user',
+      entityId: req.user!.userId,
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent'),
+    });
+
     res.json(
       createApiResponse({ message: '비밀번호가 성공적으로 변경되었습니다' })
     );
@@ -293,10 +331,38 @@ router.delete('/', async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
+    // 계정 삭제 전 사용자 정보 가져오기 (활동 로그용)
+    const userToDelete = await prisma.user.findUnique({
+      where: { id: req.user!.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
     // 계정 삭제 (Cascade로 관련 데이터도 삭제됨)
     await prisma.user.delete({
       where: { id: req.user!.userId },
     });
+
+    // 활동 로그 저장
+    if (userToDelete) {
+      await logActivity({
+        userId: req.user!.userId,
+        action: 'account_delete',
+        entity: 'user',
+        entityId: userToDelete.id,
+        details: {
+          deletedUser: {
+            name: userToDelete.name,
+            email: userToDelete.email,
+          },
+        },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+      });
+    }
 
     res.json(
       createApiResponse({ message: '계정이 성공적으로 삭제되었습니다' })

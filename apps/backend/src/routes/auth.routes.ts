@@ -4,6 +4,7 @@ import { createApiResponse, registerSchema, loginSchema } from '@side-project/sh
 import prisma from '../lib/prisma.js';
 import { generateToken } from '../lib/jwt.js';
 import { authenticate } from '../middleware/auth.js';
+import { logActivity } from '../lib/activityLogger.js';
 
 const router: IRouter = Router();
 
@@ -80,6 +81,20 @@ router.post('/register', async (req: Request, res: Response, next: NextFunction)
       });
     }
 
+    // 활동 로그 저장
+    await logActivity({
+      userId: newUser.id,
+      action: 'user_register',
+      entity: 'user',
+      entityId: newUser.id,
+      details: {
+        name: newUser.name,
+        email: newUser.email,
+      },
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent'),
+    });
+
     res.status(201).json(
       createApiResponse({
         user: {
@@ -154,6 +169,16 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     const token = generateToken({
       userId: user.id,
       email: user.email,
+    });
+
+    // 활동 로그 저장
+    await logActivity({
+      userId: user.id,
+      action: 'user_login',
+      entity: 'user',
+      entityId: user.id,
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent'),
     });
 
     res.json(

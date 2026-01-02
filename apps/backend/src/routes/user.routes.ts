@@ -3,6 +3,7 @@ import { createApiResponse, createErrorResponse, updateUserSchema, type Paginate
 import prisma from '../lib/prisma.js';
 import type { User as PrismaUser } from '@prisma/client';
 import { parseSearchQuery } from '../lib/openai.js';
+import { logActivity } from '../lib/activityLogger.js';
 
 const router: IRouter = Router();
 
@@ -119,6 +120,15 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
       return next(error); // ZodError를 미들웨어로 전달
     }
 
+    // 변경 전 사용자 정보 가져오기 (활동 로그용)
+    const oldUser = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      select: {
+        name: true,
+        email: true,
+      },
+    });
+
     const updatedUser = await prisma.user.update({
       where: { id: req.params.id },
       data: validatedData,
@@ -147,6 +157,25 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
         timestamp: new Date().toISOString(),
       });
     }
+
+    // 활동 로그 저장
+    const userId = (req as any).user?.userId || null;
+    await logActivity({
+      userId,
+      action: 'user_update',
+      entity: 'user',
+      entityId: updatedUser.id,
+      details: {
+        before: oldUser,
+        after: {
+          name: updatedUser.name,
+          email: updatedUser.email,
+        },
+        changedFields: Object.keys(validatedData),
+      },
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent'),
+    });
 
     res.json(createApiResponse(formattedUser));
   } catch (error: any) {
@@ -183,6 +212,25 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
           email: userToDelete.email,
         },
         timestamp: new Date().toISOString(),
+      });
+    }
+
+    // 활동 로그 저장
+    const userId = (req as any).user?.userId || null;
+    if (userToDelete) {
+      await logActivity({
+        userId,
+        action: 'user_delete',
+        entity: 'user',
+        entityId: userToDelete.id,
+        details: {
+          deletedUser: {
+            name: userToDelete.name,
+            email: userToDelete.email,
+          },
+        },
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
       });
     }
 
