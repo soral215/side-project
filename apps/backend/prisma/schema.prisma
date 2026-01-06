@@ -22,6 +22,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   posts     Post[]
+  model3DJobs Model3DJob[]
 
   @@map("users")
 }
@@ -65,4 +66,37 @@ model ActivityLog {
   @@index([action])
   @@index([createdAt])
   @@map("activity_logs")
+}
+
+model Model3DJob {
+  id             String           @id @default(uuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // SQLite 커넥터 제약(이 프로젝트 설정)으로 enum/Json을 쓰지 않고 문자열(JSON 문자열)로 저장합니다.
+  // status 값은 "PENDING" | "PROCESSING" | "SUCCEEDED" | "FAILED" 중 하나로 사용합니다.
+  status         String           @default("PENDING")
+  provider       String           @default("mock")
+  providerJobId  String?
+
+  // JSON 문자열(예: ["https://...","https://..."])
+  inputImageUrls String
+  outputModelUrl String?
+  errorMessage   String?
+
+  // Meshy 텍스처 가이드(작업별)
+  texturePrompt  String?
+  textureImageUrl String?
+  enablePbr      Boolean          @default(false)
+  shouldRemesh   Boolean          @default(true)
+  targetPolycount Int?            // 선택: 폴리곤 목표(티어 범위는 Meshy 제한)
+  symmetryMode   String?          // off|auto|on
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("model_3d_jobs")
 }

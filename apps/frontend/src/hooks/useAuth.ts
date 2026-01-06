@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { type ApiResponse, loginSchema, registerSchema } from '@side-project/shared';
+import { type User, loginSchema, registerSchema } from '@side-project/shared';
 import { apiClient } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 
@@ -12,7 +12,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       const validatedData = loginSchema.parse(credentials);
-      const response = await apiClient.post<{ user: any; token: string }>(
+      const response = await apiClient.post<{ user: User; token: string }>(
         '/api/auth/login',
         validatedData
       );
@@ -36,7 +36,7 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: async (data: { name: string; email: string; password: string }) => {
       const validatedData = registerSchema.parse(data);
-      const response = await apiClient.post<{ user: any; token: string }>(
+      const response = await apiClient.post<{ user: User; token: string }>(
         '/api/auth/register',
         validatedData
       );

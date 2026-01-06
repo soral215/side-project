@@ -12,10 +12,12 @@ import { profileRoutes } from './routes/profile.routes.js';
 import { statsRoutes } from './routes/stats.routes.js';
 import { chatRoutes } from './routes/chat.routes.js';
 import { activityRoutes } from './routes/activity.routes.js';
+import { model3dRoutes } from './routes/model3d.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
 import logger from './lib/logger.js';
 import { swaggerSpec } from './swagger.js';
+import { verifyToken } from './lib/jwt.js';
 
 dotenv.config();
 
@@ -48,6 +50,7 @@ app.get('/', (req, res) => {
       profile: '/api/profile',
       stats: '/api/stats',
       activity: '/api/activity',
+      model3d: '/api/3d',
     },
     timestamp: new Date().toISOString(),
   }));
@@ -69,6 +72,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/activity', activityRoutes);
+app.use('/api/3d', model3dRoutes);
 
 // 정적 파일 서빙 (로컬 업로드 이미지 - Cloudinary 사용 시 불필요하지만 호환성을 위해 유지)
 app.use('/uploads', express.static('uploads'));
@@ -82,18 +86,31 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // Socket.io 연결 처리
+io.use((socket, next) => {
+  try {
+    // 클라이언트: io(url, { auth: { token } })
+    const token = (socket.handshake.auth as any)?.token as string | undefined;
+    if (!token) {
+      return next(new Error('인증 토큰이 필요합니다'));
+    }
+    const payload = verifyToken(token);
+    // socket.data에 사용자 정보 저장
+    (socket.data as any).userId = payload.userId;
+    return next();
+  } catch {
+    return next(new Error('유효하지 않거나 만료된 토큰입니다'));
+  }
+});
+
 io.on('connection', (socket) => {
+  const userId = (socket.data as any)?.userId as string | undefined;
+  if (userId) {
+    socket.join(`user:${userId}`);
+  }
   logger.info(`Socket connected: ${socket.id}`);
 
   socket.on('disconnect', () => {
     logger.info(`Socket disconnected: ${socket.id}`);
-  });
-
-  // 인증 처리 (선택사항 - 향후 사용자별 타겟팅을 위해)
-  socket.on('authenticate', (token: string) => {
-    // JWT 토큰 검증 후 사용자 ID 저장
-    // 현재는 기본 연결만 처리
-    logger.info(`Socket authenticated: ${socket.id}`);
   });
 });
 

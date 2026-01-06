@@ -11,7 +11,7 @@ export interface Notification {
     userId?: string;
     name?: string;
     email?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   timestamp: string;
 }

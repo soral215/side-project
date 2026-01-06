@@ -4,7 +4,6 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useLogin, useRegister } from '../useAuth';
 import * as apiClientModule from '../../lib/api';
-import * as authStoreModule from '../../stores/authStore';
 
 // apiClient mock
 vi.mock('../../lib/api', () => ({

@@ -8,6 +8,8 @@ import { ThemeProvider } from '../src/contexts/ThemeContext';
 import { FeatureFlagDevTools } from '../src/components/FeatureFlagDevTools';
 import { ServerInfo } from '../src/components/ServerInfo';
 import { NotificationListener } from '../src/components/NotificationListener';
+import { Model3DJobListener } from '../src/components/Model3DJobListener';
+import { Model3DJobStatusWidget } from '../src/components/Model3DJobStatusWidget';
 import ErrorBoundary from '../src/components/ErrorBoundary';
 import { AIChatbot } from '../src/components/AIChatbot';
 
@@ -33,6 +35,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <ToastProvider>
               {children}
               <NotificationListener />
+              <Model3DJobListener />
+              <Model3DJobStatusWidget />
               <AIChatbot />
               <FeatureFlagDevTools />
               <ServerInfo />

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../../src/stores/authStore';
 import { useActivityLogs, useActivityStats, type ActivityLog } from '../../src/hooks/useActivityLogs';
-import { useToast } from '../../src/contexts/ToastContext';
 import { Button, Input, Card, Modal, Skeleton, SkeletonText } from '@side-project/design-system';
 import { ThemeToggle } from '../../src/components/ThemeToggle';
 
@@ -27,7 +26,6 @@ const ENTITY_OPTIONS = [
 export default function ActivityPage() {
   const router = useRouter();
   const { user, isAuthenticated, clearAuth } = useAuthStore();
-  const { showError } = useToast();
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(20);
@@ -382,11 +380,13 @@ export default function ActivityPage() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">User Agent</label>
               <p className="text-sm text-gray-900 dark:text-gray-100 break-all">{selectedLog.userAgent || '-'}</p>
             </div>
-            {selectedLog.details && (
+            {selectedLog.details != null && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">상세 정보</label>
                 <pre className="text-xs bg-gray-50 dark:bg-gray-800 p-3 rounded-lg overflow-auto max-h-64">
-                  {JSON.stringify(selectedLog.details, null, 2)}
+                  {typeof selectedLog.details === 'string'
+                    ? selectedLog.details
+                    : JSON.stringify(selectedLog.details, null, 2)}
                 </pre>
               </div>
             )}

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { type PaginatedResponse, type ApiResponse } from '@side-project/shared';
+import { type PaginatedResponse } from '@side-project/shared';
 import { apiClient } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 
@@ -9,7 +9,7 @@ export interface ActivityLog {
   action: string;
   entity: string | null;
   entityId: string | null;
-  details: any;
+  details: unknown;
   ipAddress: string | null;
   userAgent: string | null;
   createdAt: string;

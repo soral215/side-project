@@ -95,7 +95,7 @@ export const UserTypeChart: React.FC = () => {
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
-            data={(userTypeData || []) as Array<{ name: string; value: number; [key: string]: any }>}
+            data={(userTypeData || []) as Array<{ name: string; value: number } & Record<string, unknown>>}
             cx="50%"
             cy="50%"
             labelLine={false}

@@ -5,7 +5,7 @@ import { useFeatureFlag } from '../contexts/FeatureFlagContext';
 import { Button } from '@side-project/design-system';
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, resolvedTheme, toggleTheme, setTheme } = useTheme();
+  const { resolvedTheme, toggleTheme } = useTheme();
   const { isEnabled } = useFeatureFlag();
 
   if (!isEnabled('darkMode')) {

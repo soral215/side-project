@@ -27,6 +27,36 @@ PORT=3001
 NODE_ENV=development
 ```
 
+## 2D → 3D 변환(상용 API 연동)
+
+현재 프로젝트는 `/api/3d/jobs`로 업로드한 이미지를 3D 모델로 변환하는 Job을 생성합니다.
+
+- 기본값은 **mock**(데모용)이며, 환경 변수로 **Meshy(상용)** 또는 Replicate로 전환할 수 있습니다.
+
+### Meshy(상용) 사용
+
+```
+MODEL3D_PROVIDER=meshy
+MESHY_API_KEY="YOUR_API_KEY"
+
+# (선택) Meshy API 설정 - 문서/플랜에 따라 다를 수 있어 조절 가능
+MESHY_API_BASE="https://api.meshy.ai"
+MESHY_CREATE_PATH="/openapi/v1/image-to-3d"
+MESHY_STATUS_PATH_TEMPLATE="/openapi/v1/image-to-3d/{id}"
+MESHY_IMAGE_FIELD="image_url"
+MESHY_MULTI_CREATE_PATH="/openapi/v1/multi-image-to-3d"
+MESHY_MULTI_STATUS_PATH_TEMPLATE="/openapi/v1/multi-image-to-3d/{id}"
+MESHY_MULTI_IMAGE_FIELD="image_urls"
+MESHY_RESULT_URL_FIELDS="model_urls.glb,model_urls.pre_remeshed_glb,model_urls.obj,model_urls.fbx,glb_url,gltf_url,model_url,output.glb,output.gltf"
+
+# (선택) 타임아웃/폴링
+MODEL3D_TIMEOUT_MS=300000
+MODEL3D_POLL_INTERVAL_MS=2000
+```
+
+> Meshy의 실제 엔드포인트/필드명은 계정 플랜/문서에 따라 다를 수 있습니다.  
+> Meshy 대시보드의 API 예시(curl)에서 **작업 생성 URL**, **상태 조회 URL**, **결과(GLB) URL 필드**를 확인한 뒤 위 값을 맞춰주세요.
+
 ## 데이터베이스 관리
 
 ### Prisma Studio (데이터베이스 GUI)

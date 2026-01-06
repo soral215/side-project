@@ -187,6 +187,13 @@ export default function Home() {
               활동 로그
             </Button>
             <Button
+              onClick={() => router.push('/model3d')}
+              variant="secondary"
+              size="sm"
+            >
+              2D→3D
+            </Button>
+            <Button
               onClick={() => router.push('/profile')}
               variant="secondary"
               size="sm"

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { type User, type PaginatedResponse, type ApiResponse, updateUserSchema } from '@side-project/shared';
+import { type User, type PaginatedResponse, updateUserSchema } from '@side-project/shared';
 import { apiClient } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 

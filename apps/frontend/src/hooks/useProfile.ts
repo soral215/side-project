@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { type ApiResponse, updateProfileSchema, changePasswordSchema } from '@side-project/shared';
+import { updateProfileSchema, changePasswordSchema } from '@side-project/shared';
 import { apiClient } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 

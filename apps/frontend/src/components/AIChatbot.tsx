@@ -298,7 +298,7 @@ export const AIChatbot: React.FC = () => {
                     />
                   </svg>
                   <p className="text-sm">안녕하세요! 무엇을 도와드릴까요?</p>
-                  <p className="text-xs mt-2">예: "총 사용자 수는?", "최근 가입한 사용자 보여줘"</p>
+                  <p className="text-xs mt-2">예: &quot;총 사용자 수는?&quot;, &quot;최근 가입한 사용자 보여줘&quot;</p>
                 </div>
               ) : (
                 messages.map((msg, index) => (
