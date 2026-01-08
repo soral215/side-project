@@ -24,11 +24,22 @@ import {
   getMeshyTask,
   isMeshyConfigured,
 } from '../lib/model3d/providers/meshy.js';
+import {
+  convertObjToGlb,
+  createNodeOdmTask,
+  downloadNodeOdmZip,
+  findFirstObj,
+  getNodeOdmTaskInfo,
+  isNodeOdmConfigured,
+  unzipToDir,
+} from '../lib/model3d/providers/nodeodm.js';
 
 const router: IRouter = Router();
 
-// Meshy Multi Image to 3D는 1~4장을 지원합니다.
-const MAX_IMAGES = 4;
+// 업로드는 넉넉히 받되, provider별로 사용하는 장수는 다를 수 있습니다.
+// - Meshy Multi: 1~4
+// - Photogrammetry(NodeODM): 20~80 권장 (여기서는 60으로 제한)
+const MAX_IMAGES = 60;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // Multer 설정 (메모리 저장소)
@@ -148,14 +159,71 @@ const parseInputUrls = (raw: string): string[] => {
   }
 };
 
+const normalizeProgressPercent = (raw: unknown): number | null => {
+  if (typeof raw !== 'number' || Number.isNaN(raw)) return null;
+  // NodeODM은 0~1 또는 0~100 형태로 올 수 있어 안전하게 정규화합니다.
+  const percent = raw <= 1 ? raw * 100 : raw;
+  const clamped = Math.max(0, Math.min(100, percent));
+  return Math.round(clamped);
+};
+
+const normalizeProviderStatusString = (raw: unknown): string => {
+  if (typeof raw === 'string') return raw.toUpperCase();
+  if (raw && typeof raw === 'object') {
+    const o = raw as any;
+    // 다양한 provider 응답 형태를 최대한 흡수합니다.
+    const candidate =
+      o.status ??
+      o.state ??
+      o.name ??
+      o.code ??
+      o.type ??
+      o.value;
+    if (typeof candidate === 'string') return candidate.toUpperCase();
+    if (typeof candidate === 'number') return String(candidate);
+  }
+  return String(raw ?? '').toUpperCase();
+};
+
+const normalizeNodeOdmStatus = (raw: unknown): string => {
+  // NodeODM /task/{id}/info는 status가 {"code": 40} 형태로 오기도 합니다.
+  // 이 경우 숫자 코드를 사람이 읽을 수 있는 상태 문자열로 매핑합니다.
+  if (raw && typeof raw === 'object') {
+    const code = (raw as any).code;
+    if (typeof code === 'number') {
+      switch (code) {
+        case 10:
+          return 'QUEUED';
+        case 20:
+          return 'RUNNING';
+        case 30:
+          return 'FAILED';
+        case 40:
+          return 'COMPLETED';
+        case 50:
+          return 'CANCELED';
+        default:
+          return `CODE_${code}`;
+      }
+    }
+  }
+  // 문자열/기타는 범용 정규화로 처리
+  return normalizeProviderStatusString(raw);
+};
+
 const formatJob = (job: any) => {
   return {
     id: job.id,
     status: job.status,
     provider: job.provider,
+    providerJobId: job.providerJobId ?? null,
+    providerStatus: typeof job.providerStatus === 'string' ? job.providerStatus : null,
+    providerLastError: typeof job.providerLastError === 'string' ? job.providerLastError : null,
+    lastCheckedAt: typeof job.lastCheckedAt === 'string' ? job.lastCheckedAt : null,
     inputImageUrls: parseInputUrls(job.inputImageUrls),
     outputModelUrl: job.outputModelUrl,
     errorMessage: job.errorMessage,
+    progress: typeof job.progress === 'number' ? job.progress : null,
     texturePrompt: job.texturePrompt,
     textureImageUrl: job.textureImageUrl,
     enablePbr: job.enablePbr,
@@ -185,6 +253,41 @@ const refreshJobIfNeeded = async (job: any, baseUrl: string, io?: SocketServerLi
   // 이미 완료된 작업은 갱신 불필요
   if (job.status === 'SUCCEEDED' || job.status === 'FAILED') return job;
 
+  const checkedAt = new Date().toISOString();
+
+  // providerJobId가 아직 없으면(방금 생성 직후), 상태 조회를 시도하지 않고 그대로 유지합니다.
+  // 백그라운드 startJobAsync가 providerJobId를 채운 뒤부터 provider 상태를 갱신합니다.
+  if (!job.providerJobId) {
+    // 진행중 상태에서 과거의 errorMessage가 남아있으면 제거(오판/이전 실패 메시지 잔존 방지)
+    if (job.errorMessage) {
+      const updated = await prisma.model3DJob.update({
+        where: { id: job.id },
+        data: { status: 'PROCESSING', errorMessage: null },
+      });
+      (updated as any).providerStatus = 'CREATING_TASK';
+      (updated as any).providerLastError = null;
+      (updated as any).lastCheckedAt = checkedAt;
+      emitJobUpdate(io, job.userId, updated);
+      return updated;
+    }
+    // status가 비어있거나 이상하면 PROCESSING으로 정리
+    if (job.status !== 'PROCESSING' && job.status !== 'PENDING') {
+      const updated = await prisma.model3DJob.update({
+        where: { id: job.id },
+        data: { status: 'PROCESSING', errorMessage: null },
+      });
+      (updated as any).providerStatus = 'CREATING_TASK';
+      (updated as any).providerLastError = null;
+      (updated as any).lastCheckedAt = checkedAt;
+      emitJobUpdate(io, job.userId, updated);
+      return updated;
+    }
+    (job as any).providerStatus = 'CREATING_TASK';
+    (job as any).providerLastError = null;
+    (job as any).lastCheckedAt = checkedAt;
+    return job;
+  }
+
   // mock은 백그라운드에서 바로 만들어도 되지만, 혹시 PROCESSING으로 남아있으면 즉시 완료 처리
   if (job.provider === 'mock') {
     await writeMockModelFile(job.id);
@@ -197,99 +300,223 @@ const refreshJobIfNeeded = async (job: any, baseUrl: string, io?: SocketServerLi
     return updated;
   }
 
-  // Meshy: providerJobId가 있어야 상태 조회 가능
-  if (job.provider === 'meshy' && job.providerJobId && isMeshyConfigured()) {
-    const inputUrls = parseInputUrls(job.inputImageUrls);
-    const taskType: 'single' | 'multi' = inputUrls.length >= 2 ? 'multi' : 'single';
-    const cur = await getMeshyTask(job.providerJobId, taskType);
-    const status = String(extractMeshyStatus(cur)).toLowerCase();
+  // Meshy
+  if (job.provider === 'meshy' && isMeshyConfigured()) {
+    try {
+      const inputUrls = parseInputUrls(job.inputImageUrls);
+      const taskType: 'single' | 'multi' = inputUrls.length >= 2 ? 'multi' : 'single';
+      const cur = await getMeshyTask(job.providerJobId, taskType);
+      const rawStatus = extractMeshyStatus(cur);
+      const status = String(rawStatus).toLowerCase();
 
-    if (status === 'failed' || status === 'error' || status === 'canceled' || status === 'cancelled') {
-      const updated = await prisma.model3DJob.update({
-        where: { id: job.id },
-        data: {
-          status: 'FAILED',
-          errorMessage: typeof (cur as any).message === 'string' ? (cur as any).message : '3D 생성에 실패했습니다(Meshy)',
-        },
-      });
-      emitJobUpdate(io, job.userId, updated);
-      return updated;
-    }
-
-    if (status === 'succeeded' || status === 'success' || status === 'completed' || status === 'done') {
-      // 이미 저장된 결과가 있으면 그대로
-      if (job.outputModelUrl) return job;
-
-      const modelSourceUrl = extractModelUrlFromMeshy(cur);
-      if (!modelSourceUrl) {
+      if (status === 'failed' || status === 'error' || status === 'canceled' || status === 'cancelled') {
         const updated = await prisma.model3DJob.update({
           where: { id: job.id },
-          data: { status: 'FAILED', errorMessage: `Meshy 결과 모델 URL을 찾지 못했습니다: ${JSON.stringify(cur)}` },
+          data: {
+            status: 'FAILED',
+            errorMessage: typeof (cur as any).message === 'string' ? (cur as any).message : '3D 생성에 실패했습니다(Meshy)',
+          },
         });
+        (updated as any).providerStatus = normalizeProviderStatusString(rawStatus);
+        (updated as any).providerLastError = null;
+        (updated as any).lastCheckedAt = checkedAt;
         emitJobUpdate(io, job.userId, updated);
         return updated;
       }
 
-      const { ext } = await downloadToLocalModels(job.id, modelSourceUrl);
-      const modelUrl = `${baseUrl}/uploads/models/${encodeURIComponent(job.id)}.${ext}`;
+      if (status === 'succeeded' || status === 'success' || status === 'completed' || status === 'done') {
+        // 이미 저장된 결과가 있으면 그대로
+        if (job.outputModelUrl) return job;
+
+        const modelSourceUrl = extractModelUrlFromMeshy(cur);
+        if (!modelSourceUrl) {
+          const updated = await prisma.model3DJob.update({
+            where: { id: job.id },
+            data: { status: 'FAILED', errorMessage: `Meshy 결과 모델 URL을 찾지 못했습니다: ${JSON.stringify(cur)}` },
+          });
+          (updated as any).providerStatus = normalizeProviderStatusString(rawStatus);
+          (updated as any).providerLastError = null;
+          (updated as any).lastCheckedAt = checkedAt;
+          emitJobUpdate(io, job.userId, updated);
+          return updated;
+        }
+
+        const { ext } = await downloadToLocalModels(job.id, modelSourceUrl);
+        const modelUrl = `${baseUrl}/uploads/models/${encodeURIComponent(job.id)}.${ext}`;
+        const updated = await prisma.model3DJob.update({
+          where: { id: job.id },
+          data: { status: 'SUCCEEDED', outputModelUrl: modelUrl, errorMessage: null },
+        });
+        (updated as any).providerStatus = normalizeProviderStatusString(rawStatus);
+        (updated as any).providerLastError = null;
+        (updated as any).lastCheckedAt = checkedAt;
+        emitJobUpdate(io, job.userId, updated);
+        return updated;
+      }
+
+      // 아직 진행 중이면 갱신
+      // Meshy 문서 상 status 값 예: PENDING, IN_PROGRESS, SUCCEEDED...
       const updated = await prisma.model3DJob.update({
         where: { id: job.id },
-        data: { status: 'SUCCEEDED', outputModelUrl: modelUrl, errorMessage: null },
+        data: { status: 'PROCESSING', errorMessage: null },
       });
+      (updated as any).providerStatus = normalizeProviderStatusString(rawStatus);
+      (updated as any).providerLastError = null;
+      (updated as any).lastCheckedAt = checkedAt;
       emitJobUpdate(io, job.userId, updated);
       return updated;
+    } catch (e: any) {
+      (job as any).providerStatus = 'POLLING_ERROR';
+      (job as any).providerLastError = e?.message || 'provider 상태 조회 중 오류가 발생했습니다';
+      (job as any).lastCheckedAt = checkedAt;
+      return job;
     }
-
-    // 아직 진행 중이면 갱신
-    // Meshy 문서 상 status 값 예: PENDING, IN_PROGRESS, SUCCEEDED...
-    const updated = await prisma.model3DJob.update({
-      where: { id: job.id },
-      data: { status: 'PROCESSING' },
-    });
-    emitJobUpdate(io, job.userId, updated);
-    return updated;
   }
 
-  // Replicate: providerJobId가 있어야 상태 조회 가능
-  if (job.provider === 'replicate' && job.providerJobId && isReplicateConfigured()) {
-    const cur = await getReplicatePrediction(job.providerJobId);
-    if (cur.status === 'failed' || cur.status === 'canceled') {
-      const updated = await prisma.model3DJob.update({
-        where: { id: job.id },
-        data: {
-          status: 'FAILED',
-          errorMessage: typeof cur.error === 'string' ? cur.error : '3D 생성에 실패했습니다(Replicate)',
-        },
-      });
-      emitJobUpdate(io, job.userId, updated);
-      return updated;
-    }
-    if (cur.status === 'succeeded') {
-      if (job.outputModelUrl) return job;
-      const modelSourceUrl = extractModelUrlFromOutput(cur.output);
-      if (!modelSourceUrl) {
+  // Photogrammetry(NodeODM)
+  if (job.provider === 'photogrammetry' && isNodeOdmConfigured()) {
+    try {
+      const info = await getNodeOdmTaskInfo(job.providerJobId);
+      const status = normalizeNodeOdmStatus((info as any).status);
+      const progress = normalizeProgressPercent((info as any).progress);
+
+      if (status === 'FAILED' || status === 'CANCELED' || status === 'CANCELLED') {
         const updated = await prisma.model3DJob.update({
           where: { id: job.id },
-          data: { status: 'FAILED', errorMessage: '결과 모델 URL을 찾지 못했습니다(Replicate output)' },
+          data: {
+            status: 'FAILED',
+            errorMessage: typeof (info as any).error === 'string' ? (info as any).error : 'Photogrammetry 처리에 실패했습니다(NodeODM)',
+          },
         });
+        (updated as any).progress = progress;
+        (updated as any).providerStatus = status;
+        (updated as any).providerLastError = null;
+        (updated as any).lastCheckedAt = checkedAt;
         emitJobUpdate(io, job.userId, updated);
         return updated;
       }
-      const { ext } = await downloadToLocalModels(job.id, modelSourceUrl);
-      const modelUrl = `${baseUrl}/uploads/models/${encodeURIComponent(job.id)}.${ext}`;
+
+      if (status === 'COMPLETED' || status === 'SUCCEEDED') {
+        if (job.outputModelUrl) return job;
+
+        const uploadsRoot = path.join(process.cwd(), 'uploads');
+        const tmpDir = path.join(uploadsRoot, 'photogrammetry', job.id);
+        ensureDir(tmpDir);
+        const zipPath = path.join(tmpDir, 'result.zip');
+        await downloadNodeOdmZip(job.providerJobId, zipPath);
+        const extractedDir = path.join(tmpDir, 'extracted');
+        await unzipToDir(zipPath, extractedDir);
+
+        const objPath = await findFirstObj(extractedDir);
+        if (!objPath) {
+          const updated = await prisma.model3DJob.update({
+            where: { id: job.id },
+            data: { status: 'FAILED', errorMessage: 'NodeODM 결과에서 OBJ 파일을 찾지 못했습니다' },
+          });
+          (updated as any).progress = progress;
+          (updated as any).providerStatus = status;
+          (updated as any).providerLastError = null;
+          (updated as any).lastCheckedAt = checkedAt;
+          emitJobUpdate(io, job.userId, updated);
+          return updated;
+        }
+
+        const modelsDir = path.join(uploadsRoot, 'models');
+        ensureDir(modelsDir);
+        const outGlbPath = path.join(modelsDir, `${job.id}.glb`);
+        await convertObjToGlb(objPath, outGlbPath);
+        const modelUrl = `${baseUrl}/uploads/models/${encodeURIComponent(job.id)}.glb`;
+
+        const updated = await prisma.model3DJob.update({
+          where: { id: job.id },
+          data: { status: 'SUCCEEDED', outputModelUrl: modelUrl, errorMessage: null },
+        });
+        (updated as any).progress = 100;
+        (updated as any).providerStatus = status;
+        (updated as any).providerLastError = null;
+        (updated as any).lastCheckedAt = checkedAt;
+        emitJobUpdate(io, job.userId, updated);
+        return updated;
+      }
+
       const updated = await prisma.model3DJob.update({
         where: { id: job.id },
-        data: { status: 'SUCCEEDED', outputModelUrl: modelUrl, errorMessage: null },
+        data: { status: 'PROCESSING', errorMessage: null },
       });
+      (updated as any).progress = progress;
+      (updated as any).providerStatus = status;
+      (updated as any).providerLastError = null;
+      (updated as any).lastCheckedAt = checkedAt;
       emitJobUpdate(io, job.userId, updated);
       return updated;
+    } catch (e: any) {
+      (job as any).providerStatus = 'POLLING_ERROR';
+      (job as any).providerLastError = e?.message || 'provider 상태 조회 중 오류가 발생했습니다';
+      (job as any).lastCheckedAt = checkedAt;
+      return job;
     }
-    const updated = await prisma.model3DJob.update({
-      where: { id: job.id },
-      data: { status: 'PROCESSING' },
-    });
-    emitJobUpdate(io, job.userId, updated);
-    return updated;
+  }
+
+  // Replicate
+  if (job.provider === 'replicate' && isReplicateConfigured()) {
+    try {
+      const cur = await getReplicatePrediction(job.providerJobId);
+      const providerStatus = normalizeProviderStatusString(cur.status);
+      if (cur.status === 'failed' || cur.status === 'canceled') {
+        const updated = await prisma.model3DJob.update({
+          where: { id: job.id },
+          data: {
+            status: 'FAILED',
+            errorMessage: typeof cur.error === 'string' ? cur.error : '3D 생성에 실패했습니다(Replicate)',
+          },
+        });
+        (updated as any).providerStatus = providerStatus;
+        (updated as any).providerLastError = null;
+        (updated as any).lastCheckedAt = checkedAt;
+        emitJobUpdate(io, job.userId, updated);
+        return updated;
+      }
+      if (cur.status === 'succeeded') {
+        if (job.outputModelUrl) return job;
+        const modelSourceUrl = extractModelUrlFromOutput(cur.output);
+        if (!modelSourceUrl) {
+          const updated = await prisma.model3DJob.update({
+            where: { id: job.id },
+            data: { status: 'FAILED', errorMessage: '결과 모델 URL을 찾지 못했습니다(Replicate output)' },
+          });
+          (updated as any).providerStatus = providerStatus;
+          (updated as any).providerLastError = null;
+          (updated as any).lastCheckedAt = checkedAt;
+          emitJobUpdate(io, job.userId, updated);
+          return updated;
+        }
+        const { ext } = await downloadToLocalModels(job.id, modelSourceUrl);
+        const modelUrl = `${baseUrl}/uploads/models/${encodeURIComponent(job.id)}.${ext}`;
+        const updated = await prisma.model3DJob.update({
+          where: { id: job.id },
+          data: { status: 'SUCCEEDED', outputModelUrl: modelUrl, errorMessage: null },
+        });
+        (updated as any).providerStatus = providerStatus;
+        (updated as any).providerLastError = null;
+        (updated as any).lastCheckedAt = checkedAt;
+        emitJobUpdate(io, job.userId, updated);
+        return updated;
+      }
+      const updated = await prisma.model3DJob.update({
+        where: { id: job.id },
+        data: { status: 'PROCESSING', errorMessage: null },
+      });
+      (updated as any).providerStatus = providerStatus;
+      (updated as any).providerLastError = null;
+      (updated as any).lastCheckedAt = checkedAt;
+      emitJobUpdate(io, job.userId, updated);
+      return updated;
+    } catch (e: any) {
+      (job as any).providerStatus = 'POLLING_ERROR';
+      (job as any).providerLastError = e?.message || 'provider 상태 조회 중 오류가 발생했습니다';
+      (job as any).lastCheckedAt = checkedAt;
+      return job;
+    }
   }
 
   // provider 설정이 불완전하면 실패 처리(안전)
@@ -297,6 +524,9 @@ const refreshJobIfNeeded = async (job: any, baseUrl: string, io?: SocketServerLi
     where: { id: job.id },
     data: { status: 'FAILED', errorMessage: '3D Provider 설정이 올바르지 않습니다' },
   });
+  (updated as any).providerStatus = 'MISCONFIGURED';
+  (updated as any).providerLastError = null;
+  (updated as any).lastCheckedAt = checkedAt;
   emitJobUpdate(io, job.userId, updated);
   return updated;
 };
@@ -346,7 +576,24 @@ const startJobAsync = async (jobId: string, baseUrl: string) => {
       if (!taskId) throw new Error(`Meshy 작업 ID를 찾지 못했습니다: ${JSON.stringify(task)}`);
       await prisma.model3DJob.update({
         where: { id: jobId },
-        data: { status: 'PROCESSING', providerJobId: taskId },
+        data: { status: 'PROCESSING', providerJobId: taskId, errorMessage: null },
+      });
+      return;
+    }
+
+    if (job.provider === 'photogrammetry') {
+      if (!isNodeOdmConfigured()) {
+        throw new Error('Photogrammetry 엔진(NodeODM) 설정이 필요합니다: NODEODM_URL');
+      }
+      const urls = inputUrls.slice(0, MAX_IMAGES);
+      // 실사용 권장치(대략): 20장 이상
+      if (urls.length < 8) {
+        throw new Error('Photogrammetry는 최소 8장 이상(권장 20장+) 이미지가 필요합니다');
+      }
+      const { taskId } = await createNodeOdmTask(urls);
+      await prisma.model3DJob.update({
+        where: { id: jobId },
+        data: { status: 'PROCESSING', providerJobId: taskId, errorMessage: null },
       });
       return;
     }
@@ -355,7 +602,7 @@ const startJobAsync = async (jobId: string, baseUrl: string) => {
       const prediction = await createReplicatePrediction(primaryImageUrl);
       await prisma.model3DJob.update({
         where: { id: jobId },
-        data: { status: 'PROCESSING', providerJobId: prediction.id },
+        data: { status: 'PROCESSING', providerJobId: prediction.id, errorMessage: null },
       });
       return;
     }
@@ -434,6 +681,8 @@ router.post(
           provider:
             process.env.MODEL3D_PROVIDER === 'meshy'
               ? 'meshy'
+              : process.env.MODEL3D_PROVIDER === 'photogrammetry'
+              ? 'photogrammetry'
               : process.env.MODEL3D_PROVIDER === 'replicate'
               ? 'replicate'
               : 'mock',

@@ -1,0 +1,1061 @@
+[INFO]    Initializing ODM 3.5.6 - Wed Jan 07 05:55:40  2026
+[INFO]    ==============
+[INFO]    3d_tiles: False
+[INFO]    align: None
+[INFO]    auto_boundary: False
+[INFO]    auto_boundary_distance: 0
+[INFO]    bg_removal: False
+[INFO]    boundary: {}
+[INFO]    build_overviews: False
+[INFO]    camera_lens: auto
+[INFO]    cameras: {}
+[INFO]    cog: True
+[INFO]    copy_to: None
+[INFO]    crop: 3
+[INFO]    dem_decimation: 1
+[INFO]    dem_euclidean_map: False
+[INFO]    dem_gapfill_steps: 3
+[INFO]    dem_resolution: 5
+[INFO]    dsm: False
+[INFO]    dtm: False
+[INFO]    end_with: odm_postprocess
+[INFO]    fast_orthophoto: False
+[INFO]    feature_quality: high
+[INFO]    feature_type: dspsift
+[INFO]    force_gps: False
+[INFO]    gcp: None
+[INFO]    geo: None
+[INFO]    gltf: True
+[INFO]    gps_accuracy: 3
+[INFO]    gps_z_offset: 0
+[INFO]    ignore_gsd: False
+[INFO]    matcher_neighbors: 0
+[INFO]    matcher_order: 0
+[INFO]    matcher_type: flann
+[INFO]    max_concurrency: 11
+[INFO]    merge: all
+[INFO]    merge_skip_blending: False
+[INFO]    mesh_octree_depth: 11
+[INFO]    mesh_size: 200000
+[INFO]    min_num_features: 10000
+[INFO]    name: b3ed2a92-8961-45fc-a62b-a98654fb7698
+[INFO]    no_gpu: False
+[INFO]    optimize_disk_space: False
+[INFO]    orthophoto_compression: DEFLATE
+[INFO]    orthophoto_cutline: False
+[INFO]    orthophoto_kmz: False
+[INFO]    orthophoto_no_tiled: False
+[INFO]    orthophoto_png: False
+[INFO]    orthophoto_resolution: 5
+[INFO]    pc_classify: False
+[INFO]    pc_copc: False
+[INFO]    pc_csv: False
+[INFO]    pc_ept: True
+[INFO]    pc_filter: 5
+[INFO]    pc_las: False
+[INFO]    pc_quality: medium
+[INFO]    pc_rectify: False
+[INFO]    pc_sample: 0
+[INFO]    pc_skip_geometric: False
+[INFO]    primary_band: auto
+[INFO]    project_path: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698
+[INFO]    radiometric_calibration: none
+[INFO]    rerun: None
+[INFO]    rerun_all: False
+[INFO]    rerun_from: None
+[INFO]    rolling_shutter: False
+[INFO]    rolling_shutter_readout: 0
+[INFO]    sfm_algorithm: incremental
+[INFO]    sfm_no_partial: False
+[INFO]    skip_3dmodel: False
+[INFO]    skip_band_alignment: False
+[INFO]    skip_orthophoto: False
+[INFO]    skip_report: False
+[INFO]    sky_removal: False
+[INFO]    sm_cluster: None
+[INFO]    sm_no_align: False
+[INFO]    smrf_scalar: 1.25
+[INFO]    smrf_slope: 0.15
+[INFO]    smrf_threshold: 0.5
+[INFO]    smrf_window: 18.0
+[INFO]    split: 999999
+[INFO]    split_image_groups: None
+[INFO]    split_overlap: 150
+[INFO]    texturing_keep_unseen_faces: False
+[INFO]    texturing_single_material: False
+[INFO]    texturing_skip_global_seam_leveling: False
+[INFO]    tiles: False
+[INFO]    use_3dmesh: False
+[INFO]    use_exif: False
+[INFO]    use_fixed_camera_params: False
+[INFO]    use_hybrid_bundle_adjustment: False
+[INFO]    video_limit: 500
+[INFO]    video_resolution: 4000
+[INFO]    ==============
+[INFO]    Running dataset stage
+[INFO]    Loading dataset from: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/images
+[INFO]    Loading 17 images
+[INFO]    Wrote images database: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/images.json
+[INFO]    Found 17 usable images
+[WARNING] GPS position not available for image_4.jpg
+[WARNING] GPS position not available for image_2.jpg
+[WARNING] GPS position not available for image_9.jpg
+[WARNING] GPS position not available for image_5.jpg
+[WARNING] GPS position not available for image_17.jpg
+[WARNING] GPS position not available for image_1.jpg
+[WARNING] GPS position not available for image_10.jpg
+[WARNING] GPS position not available for image_14.jpg
+[WARNING] GPS position not available for image_13.jpg
+[WARNING] GPS position not available for image_12.jpg
+[WARNING] GPS position not available for image_15.jpg
+[WARNING] GPS position not available for image_6.jpg
+[WARNING] GPS position not available for image_7.jpg
+[WARNING] GPS position not available for image_3.jpg
+[WARNING] GPS position not available for image_11.jpg
+[WARNING] GPS position not available for image_16.jpg
+[WARNING] GPS position not available for image_8.jpg
+[WARNING] Could not generate coordinates file. The orthophoto will not be georeferenced.
+[INFO]    Finished dataset stage
+[INFO]    Running split stage
+[INFO]    Normal dataset, will process all at once.
+[INFO]    Finished split stage
+[INFO]    Running merge stage
+[INFO]    Normal dataset, nothing to merge.
+[INFO]    Finished merge stage
+[INFO]    Running opensfm stage
+[INFO]    Maximum photo dimensions: 1440px
+[INFO]    Photo dimensions for feature extraction: 1440px
+[INFO]    No GPS information, using BOW matching by default (you can override this by setting --matcher-type explicitly)
+[WARNING] Using BOW matching, will use HAHOG feature type, not SIFT
+[INFO]    ['use_exif_size: no', 'flann_algorithm: KDTREE', 'feature_process_size: 1440', 'feature_min_frames: 10000', 'processes: 11', 'matching_gps_neighbors: 0', 'matching_gps_distance: 0', 'matching_graph_rounds: 50', 'optimize_camera_parameters: yes', 'reconstruction_algorithm: incremental', 'undistorted_image_format: tif', 'bundle_outlier_filtering_type: AUTO', 'sift_peak_threshold: 0.066', 'align_orientation_prior: vertical', 'triangulation_type: ROBUST', 'retriangulation_ratio: 2', 'matcher_type: WORDS', 'feature_type: HAHOG', 'align_method: orientation_prior', 'local_bundle_radius: 0']
+[INFO]    running "/code/SuperBuild/install/bin/opensfm/bin/opensfm" detect_features "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm"
+2026-01-07 05:55:40,798 INFO: Planning to use 13337.725781250001 MB of RAM for both processing queue and parallel processing.
+2026-01-07 05:55:40,798 INFO: Scale-space expected size of a single image : 47.09014892578125 MB
+2026-01-07 05:55:40,798 INFO: Expecting to queue at most 200 images while parallel processing of 11 images.
+2026-01-07 05:55:40,802 INFO: Reading data for image image_4.jpg (queue-size=0)
+2026-01-07 05:55:40,802 INFO: Reading data for image image_1.jpg (queue-size=0)
+2026-01-07 05:55:40,802 INFO: Reading data for image image_15.jpg (queue-size=0)
+2026-01-07 05:55:40,802 INFO: Reading data for image image_16.jpg (queue-size=0)
+2026-01-07 05:55:40,825 INFO: Reading data for image image_10.jpg (queue-size=1)
+2026-01-07 05:55:40,825 INFO: Extracting ROOT_HAHOG features for image image_1.jpg
+2026-01-07 05:55:40,825 INFO: Reading data for image image_2.jpg (queue-size=1)
+2026-01-07 05:55:40,825 INFO: Extracting ROOT_HAHOG features for image image_4.jpg
+2026-01-07 05:55:40,826 INFO: Reading data for image image_6.jpg (queue-size=1)
+2026-01-07 05:55:40,826 INFO: Extracting ROOT_HAHOG features for image image_15.jpg
+2026-01-07 05:55:40,827 INFO: Reading data for image image_8.jpg (queue-size=1)
+2026-01-07 05:55:40,827 INFO: Extracting ROOT_HAHOG features for image image_16.jpg
+2026-01-07 05:55:40,840 INFO: Reading data for image image_14.jpg (queue-size=1)
+2026-01-07 05:55:40,841 INFO: Extracting ROOT_HAHOG features for image image_10.jpg
+2026-01-07 05:55:40,842 INFO: Extracting ROOT_HAHOG features for image image_8.jpg
+2026-01-07 05:55:40,843 INFO: Reading data for image image_9.jpg (queue-size=1)
+2026-01-07 05:55:40,843 INFO: Extracting ROOT_HAHOG features for image image_2.jpg
+2026-01-07 05:55:40,844 INFO: Reading data for image image_7.jpg (queue-size=1)
+2026-01-07 05:55:40,844 INFO: Extracting ROOT_HAHOG features for image image_6.jpg
+2026-01-07 05:55:40,858 INFO: Reading data for image image_13.jpg (queue-size=1)
+2026-01-07 05:55:40,860 INFO: Reading data for image image_5.jpg (queue-size=2)
+2026-01-07 05:55:40,871 INFO: Reading data for image image_3.jpg (queue-size=3)
+2026-01-07 05:55:40,887 INFO: Reading data for image image_17.jpg (queue-size=4)
+2026-01-07 05:55:40,894 INFO: Reading data for image image_12.jpg (queue-size=5)
+2026-01-07 05:55:40,912 INFO: Reading data for image image_11.jpg (queue-size=6)
+2026-01-07 05:55:40,915 INFO: Extracting ROOT_HAHOG features for image image_14.jpg
+2026-01-07 05:55:40,924 INFO: Extracting ROOT_HAHOG features for image image_9.jpg
+2026-01-07 05:55:40,941 INFO: Finished reading images
+2026-01-07 05:55:40,941 INFO: Extracting ROOT_HAHOG features for image image_7.jpg
+2026-01-07 05:55:41,735 DEBUG: Found 8110 points in 0.8844327926635742s
+2026-01-07 05:55:41,749 DEBUG: Found 9017 points in 0.9193463325500488s
+2026-01-07 05:55:41,780 DEBUG: Found 7885 points in 0.8363687992095947s
+2026-01-07 05:55:41,787 DEBUG: Found 8705 points in 0.9590280055999756s
+2026-01-07 05:55:41,791 DEBUG: Found 8300 points in 0.9418697357177734s
+2026-01-07 05:55:41,797 DEBUG: Found 9403 points in 0.9671835899353027s
+2026-01-07 05:55:41,799 DEBUG: Found 8842 points in 0.9717621803283691s
+2026-01-07 05:55:41,799 DEBUG: Found 9098 points in 0.949146032333374s
+2026-01-07 05:55:41,810 DEBUG: Found 8473 points in 0.9629852771759033s
+2026-01-07 05:55:41,833 DEBUG: Found 8980 points in 0.9079885482788086s
+2026-01-07 05:55:41,837 DEBUG: Found 9230 points in 0.921118974685669s
+2026-01-07 05:55:43,030 INFO: Extracting ROOT_HAHOG features for image image_5.jpg
+2026-01-07 05:55:43,125 INFO: Extracting ROOT_HAHOG features for image image_13.jpg
+2026-01-07 05:55:43,186 INFO: Extracting ROOT_HAHOG features for image image_3.jpg
+2026-01-07 05:55:43,191 INFO: Extracting ROOT_HAHOG features for image image_17.jpg
+2026-01-07 05:55:43,235 INFO: Extracting ROOT_HAHOG features for image image_12.jpg
+2026-01-07 05:55:43,248 INFO: Extracting ROOT_HAHOG features for image image_11.jpg
+2026-01-07 05:55:43,728 DEBUG: Found 8618 points in 0.6983926296234131s
+2026-01-07 05:55:43,795 DEBUG: Found 9200 points in 0.6690011024475098s
+2026-01-07 05:55:43,820 DEBUG: Found 8375 points in 0.6338725090026855s
+2026-01-07 05:55:43,857 DEBUG: Found 8588 points in 0.6219537258148193s
+2026-01-07 05:55:43,868 DEBUG: Found 8580 points in 0.6198694705963135s
+2026-01-07 05:55:43,886 DEBUG: Found 9408 points in 0.6933114528656006s
+[INFO]    running "/code/SuperBuild/install/bin/opensfm/bin/opensfm" match_features "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm"
+2026-01-07 05:55:45,509 INFO: Matching 136 image pairs
+2026-01-07 05:55:45,511 INFO: Computing pair matching with 11 processes
+2026-01-07 05:55:45,629 DEBUG: Matching image_14.jpg and image_16.jpg.  Matcher: WORDS (symmetric) T-desc: 0.111 T-robust: 0.003 T-total: 0.115 Matches: 249 Robust: 156 Success: True
+2026-01-07 05:55:45,747 DEBUG: Matching image_16.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 0.201 T-robust: 0.029 T-total: 0.232 Matches: 197 Robust: 154 Success: True
+2026-01-07 05:55:45,801 DEBUG: Matching image_5.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.230 T-robust: 0.029 T-total: 0.286 Matches: 176 Robust: 133 Success: True
+2026-01-07 05:55:45,856 DEBUG: Matching image_14.jpg and image_7.jpg.  Matcher: WORDS (symmetric) T-desc: 0.341 T-robust: 0.001 T-total: 0.343 Matches: 227 Robust: 190 Success: True
+2026-01-07 05:55:45,856 DEBUG: Matching image_5.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.314 T-robust: 0.025 T-total: 0.340 Matches: 188 Robust: 152 Success: True
+2026-01-07 05:55:45,912 DEBUG: Matching image_10.jpg and image_14.jpg.  Matcher: WORDS (symmetric) T-desc: 0.281 T-robust: 0.001 T-total: 0.283 Matches: 182 Robust: 120 Success: True
+2026-01-07 05:55:45,998 DEBUG: Matching image_10.jpg and image_1.jpg.  Matcher: WORDS (symmetric) T-desc: 0.458 T-robust: 0.001 T-total: 0.484 Matches: 189 Robust: 140 Success: True
+2026-01-07 05:55:46,099 DEBUG: Matching image_5.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.219 T-robust: 0.001 T-total: 0.242 Matches: 191 Robust: 148 Success: True
+2026-01-07 05:55:46,099 DEBUG: Matching image_5.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 0.076 T-robust: 0.001 T-total: 0.101 Matches: 272 Robust: 206 Success: True
+2026-01-07 05:55:46,306 DEBUG: Matching image_7.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.449 T-robust: 0.001 T-total: 0.450 Matches: 249 Robust: 206 Success: True
+2026-01-07 05:55:46,395 DEBUG: Matching image_16.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.152 T-robust: 0.053 T-total: 0.296 Matches: 152 Robust: 112 Success: True
+2026-01-07 05:55:46,481 DEBUG: Matching image_7.jpg and image_6.jpg.  Matcher: WORDS (symmetric) T-desc: 0.849 T-robust: 0.115 T-total: 0.965 Matches: 501 Robust: 308 Success: True
+2026-01-07 05:55:46,581 DEBUG: Matching image_3.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.967 T-robust: 0.076 T-total: 1.068 Matches: 205 Robust: 156 Success: True
+2026-01-07 05:55:46,582 DEBUG: Matching image_6.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 0.112 T-robust: 0.049 T-total: 0.187 Matches: 209 Robust: 169 Success: True
+2026-01-07 05:55:46,610 DEBUG: Matching image_11.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.541 T-robust: 0.156 T-total: 0.697 Matches: 281 Robust: 187 Success: True
+2026-01-07 05:55:46,637 DEBUG: Matching image_11.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.149 T-robust: 0.127 T-total: 0.331 Matches: 191 Robust: 135 Success: True
+2026-01-07 05:55:46,715 DEBUG: Matching image_7.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 0.129 T-robust: 0.053 T-total: 0.234 Matches: 224 Robust: 189 Success: True
+2026-01-07 05:55:46,924 DEBUG: Matching image_10.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.153 T-robust: 0.358 T-total: 0.824 Matches: 455 Robust: 252 Success: True
+2026-01-07 05:55:46,924 DEBUG: Matching image_14.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.161 T-robust: 0.129 T-total: 0.342 Matches: 241 Robust: 175 Success: True
+2026-01-07 05:55:46,982 DEBUG: Matching image_9.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 1.305 T-robust: 0.103 T-total: 1.468 Matches: 196 Robust: 128 Success: True
+2026-01-07 05:55:46,983 DEBUG: Matching image_14.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.312 T-robust: 0.029 T-total: 0.372 Matches: 189 Robust: 136 Success: True
+2026-01-07 05:55:47,010 DEBUG: Matching image_1.jpg and image_6.jpg.  Matcher: WORDS (symmetric) T-desc: 1.280 T-robust: 0.188 T-total: 1.496 Matches: 316 Robust: 267 Success: True
+2026-01-07 05:55:47,040 DEBUG: Matching image_17.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 1.409 T-robust: 0.086 T-total: 1.526 Matches: 198 Robust: 167 Success: True
+2026-01-07 05:55:47,089 DEBUG: Matching image_11.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.105 T-robust: 0.321 T-total: 0.452 Matches: 503 Robust: 260 Success: True
+2026-01-07 05:55:47,090 DEBUG: Matching image_10.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.154 T-robust: 0.085 T-total: 0.347 Matches: 264 Robust: 180 Success: True
+2026-01-07 05:55:47,090 DEBUG: Matching image_10.jpg and image_16.jpg.  Matcher: WORDS (symmetric) T-desc: 0.057 T-robust: 0.050 T-total: 0.108 Matches: 168 Robust: 107 Success: True
+2026-01-07 05:55:47,091 DEBUG: Matching image_10.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.058 T-robust: 0.082 T-total: 0.167 Matches: 163 Robust: 116 Success: True
+2026-01-07 05:55:47,093 DEBUG: Matching image_6.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.081 T-robust: 0.003 T-total: 0.084 Matches: 193 Robust: 146 Success: True
+2026-01-07 05:55:47,214 DEBUG: Matching image_13.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.147 T-robust: 0.056 T-total: 0.204 Matches: 250 Robust: 178 Success: True
+2026-01-07 05:55:47,215 DEBUG: Matching image_9.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.123 T-robust: 0.002 T-total: 0.125 Matches: 195 Robust: 134 Success: True
+2026-01-07 05:55:47,378 DEBUG: Matching image_14.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 1.522 T-robust: 0.054 T-total: 1.631 Matches: 451 Robust: 241 Success: True
+2026-01-07 05:55:47,406 DEBUG: Matching image_7.jpg and image_1.jpg.  Matcher: WORDS (symmetric) T-desc: 0.134 T-robust: 0.056 T-total: 0.190 Matches: 267 Robust: 218 Success: True
+2026-01-07 05:55:47,458 DEBUG: Matching image_13.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.286 T-robust: 0.080 T-total: 0.366 Matches: 198 Robust: 152 Success: True
+2026-01-07 05:55:47,489 DEBUG: Matching image_5.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.081 T-robust: 0.002 T-total: 0.084 Matches: 203 Robust: 166 Success: True
+2026-01-07 05:55:47,490 DEBUG: Matching image_1.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 0.078 T-robust: 0.031 T-total: 0.111 Matches: 307 Robust: 211 Success: True
+2026-01-07 05:55:47,547 DEBUG: Matching image_9.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.055 T-robust: 0.002 T-total: 0.057 Matches: 157 Robust: 117 Success: True
+2026-01-07 05:55:47,602 DEBUG: Matching image_1.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.052 T-robust: 0.001 T-total: 0.054 Matches: 197 Robust: 152 Success: True
+2026-01-07 05:55:47,661 DEBUG: Matching image_16.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.055 T-robust: 0.002 T-total: 0.059 Matches: 189 Robust: 134 Success: True
+2026-01-07 05:55:47,763 DEBUG: Matching image_4.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.050 T-robust: 0.028 T-total: 0.101 Matches: 174 Robust: 127 Success: True
+2026-01-07 05:55:48,107 DEBUG: Matching image_14.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.932 T-robust: 0.081 T-total: 1.013 Matches: 188 Robust: 143 Success: True
+2026-01-07 05:55:48,107 DEBUG: Matching image_15.jpg and image_6.jpg.  Matcher: WORDS (symmetric) T-desc: 1.181 T-robust: 0.261 T-total: 1.525 Matches: 192 Robust: 143 Success: True
+2026-01-07 05:55:48,159 DEBUG: Matching image_11.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.130 T-robust: 0.161 T-total: 0.395 Matches: 281 Robust: 176 Success: True
+2026-01-07 05:55:48,159 DEBUG: Matching image_13.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.535 T-robust: 0.055 T-total: 0.669 Matches: 214 Robust: 162 Success: True
+2026-01-07 05:55:48,237 DEBUG: Matching image_15.jpg and image_1.jpg.  Matcher: WORDS (symmetric) T-desc: 1.102 T-robust: 0.133 T-total: 1.314 Matches: 192 Robust: 152 Success: True
+2026-01-07 05:55:48,349 DEBUG: Matching image_15.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.918 T-robust: 0.133 T-total: 1.135 Matches: 162 Robust: 128 Success: True
+2026-01-07 05:55:48,350 DEBUG: Matching image_14.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.934 T-robust: 0.056 T-total: 1.259 Matches: 216 Robust: 178 Success: True
+2026-01-07 05:55:48,438 DEBUG: Matching image_15.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.078 T-robust: 0.146 T-total: 0.279 Matches: 162 Robust: 106 Success: True
+2026-01-07 05:55:48,540 DEBUG: Matching image_1.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.140 T-robust: 0.049 T-total: 0.189 Matches: 189 Robust: 142 Success: True
+2026-01-07 05:55:48,564 DEBUG: Matching image_13.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 2.549 T-robust: 0.165 T-total: 2.762 Matches: 230 Robust: 177 Success: True
+2026-01-07 05:55:48,639 DEBUG: Matching image_15.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 1.069 T-robust: 0.455 T-total: 1.550 Matches: 196 Robust: 157 Success: True
+2026-01-07 05:55:48,719 DEBUG: Matching image_10.jpg and image_7.jpg.  Matcher: WORDS (symmetric) T-desc: 0.263 T-robust: 0.077 T-total: 0.370 Matches: 216 Robust: 165 Success: True
+2026-01-07 05:55:48,720 DEBUG: Matching image_9.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.105 T-robust: 0.378 T-total: 0.613 Matches: 532 Robust: 325 Success: True
+2026-01-07 05:55:48,747 DEBUG: Matching image_3.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.112 T-robust: 0.369 T-total: 0.509 Matches: 214 Robust: 160 Success: True
+2026-01-07 05:55:48,771 DEBUG: Matching image_16.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.369 T-robust: 0.002 T-total: 0.421 Matches: 160 Robust: 117 Success: True
+2026-01-07 05:55:48,771 DEBUG: Matching image_6.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.190 T-robust: 0.180 T-total: 0.422 Matches: 165 Robust: 124 Success: True
+2026-01-07 05:55:48,772 DEBUG: Matching image_7.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.175 T-robust: 0.105 T-total: 0.333 Matches: 247 Robust: 192 Success: True
+2026-01-07 05:55:49,033 DEBUG: Matching image_6.jpg and image_16.jpg.  Matcher: WORDS (symmetric) T-desc: 0.180 T-robust: 0.212 T-total: 0.493 Matches: 181 Robust: 139 Success: True
+2026-01-07 05:55:49,057 DEBUG: Matching image_5.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.157 T-robust: 0.185 T-total: 0.443 Matches: 289 Robust: 225 Success: True
+2026-01-07 05:55:49,213 DEBUG: Matching image_9.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.313 T-robust: 0.025 T-total: 0.493 Matches: 202 Robust: 163 Success: True
+2026-01-07 05:55:49,215 DEBUG: Matching image_5.jpg and image_16.jpg.  Matcher: WORDS (symmetric) T-desc: 0.212 T-robust: 0.182 T-total: 0.576 Matches: 214 Robust: 161 Success: True
+2026-01-07 05:55:49,359 DEBUG: Matching image_10.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.209 T-robust: 0.102 T-total: 0.612 Matches: 217 Robust: 152 Success: True
+2026-01-07 05:55:49,389 DEBUG: Matching image_1.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.528 T-robust: 0.059 T-total: 0.618 Matches: 204 Robust: 152 Success: True
+2026-01-07 05:55:49,419 DEBUG: Matching image_15.jpg and image_16.jpg.  Matcher: WORDS (symmetric) T-desc: 0.237 T-robust: 0.355 T-total: 0.622 Matches: 504 Robust: 267 Success: True
+2026-01-07 05:55:49,444 DEBUG: Matching image_16.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.158 T-robust: 0.204 T-total: 0.387 Matches: 922 Robust: 623 Success: True
+2026-01-07 05:55:49,469 DEBUG: Matching image_8.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 1.756 T-robust: 0.116 T-total: 2.012 Matches: 215 Robust: 174 Success: True
+2026-01-07 05:55:49,470 DEBUG: Matching image_14.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.313 T-robust: 0.326 T-total: 0.750 Matches: 218 Robust: 166 Success: True
+2026-01-07 05:55:49,606 DEBUG: Matching image_7.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.128 T-robust: 0.415 T-total: 0.573 Matches: 183 Robust: 149 Success: True
+2026-01-07 05:55:49,632 DEBUG: Matching image_16.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.177 T-robust: 0.055 T-total: 0.419 Matches: 149 Robust: 117 Success: True
+2026-01-07 05:55:49,708 DEBUG: Matching image_11.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.144 T-robust: 0.217 T-total: 0.493 Matches: 251 Robust: 183 Success: True
+2026-01-07 05:55:49,734 DEBUG: Matching image_10.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.266 T-robust: 0.078 T-total: 0.345 Matches: 332 Robust: 221 Success: True
+2026-01-07 05:55:49,736 DEBUG: Matching image_10.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.162 T-robust: 0.102 T-total: 0.291 Matches: 175 Robust: 129 Success: True
+2026-01-07 05:55:49,761 DEBUG: Matching image_5.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.185 T-robust: 0.081 T-total: 0.291 Matches: 174 Robust: 136 Success: True
+2026-01-07 05:55:49,866 DEBUG: Matching image_5.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.674 T-robust: 0.131 T-total: 1.094 Matches: 205 Robust: 162 Success: True
+2026-01-07 05:55:49,969 DEBUG: Matching image_6.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.187 T-robust: 0.180 T-total: 0.550 Matches: 203 Robust: 158 Success: True
+2026-01-07 05:55:49,971 DEBUG: Matching image_14.jpg and image_15.jpg.  Matcher: WORDS (symmetric) T-desc: 0.376 T-robust: 0.130 T-total: 0.612 Matches: 669 Robust: 382 Success: True
+2026-01-07 05:55:49,972 DEBUG: Matching image_11.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.261 T-robust: 0.002 T-total: 0.264 Matches: 210 Robust: 170 Success: True
+2026-01-07 05:55:50,074 DEBUG: Matching image_7.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.364 T-robust: 0.080 T-total: 0.468 Matches: 205 Robust: 151 Success: True
+2026-01-07 05:55:50,075 DEBUG: Matching image_7.jpg and image_15.jpg.  Matcher: WORDS (symmetric) T-desc: 2.853 T-robust: 0.079 T-total: 3.035 Matches: 196 Robust: 155 Success: True
+2026-01-07 05:55:50,175 DEBUG: Matching image_1.jpg and image_16.jpg.  Matcher: WORDS (symmetric) T-desc: 0.236 T-robust: 0.131 T-total: 0.441 Matches: 195 Robust: 146 Success: True
+2026-01-07 05:55:50,225 DEBUG: Matching image_17.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.237 T-robust: 0.203 T-total: 0.489 Matches: 183 Robust: 130 Success: True
+2026-01-07 05:55:50,334 DEBUG: Matching image_6.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.183 T-robust: 0.072 T-total: 0.364 Matches: 191 Robust: 145 Success: True
+2026-01-07 05:55:50,448 DEBUG: Matching image_10.jpg and image_5.jpg.  Matcher: WORDS (symmetric) T-desc: 0.109 T-robust: 0.088 T-total: 0.223 Matches: 157 Robust: 121 Success: True
+2026-01-07 05:55:50,449 DEBUG: Matching image_16.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.339 T-robust: 0.478 T-total: 0.817 Matches: 205 Robust: 156 Success: True
+2026-01-07 05:55:50,528 DEBUG: Matching image_6.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.151 T-robust: 0.197 T-total: 0.453 Matches: 297 Robust: 233 Success: True
+2026-01-07 05:55:50,528 DEBUG: Matching image_3.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.116 T-robust: 0.079 T-total: 0.223 Matches: 192 Robust: 151 Success: True
+2026-01-07 05:55:50,581 DEBUG: Matching image_15.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.154 T-robust: 0.348 T-total: 0.610 Matches: 268 Robust: 178 Success: True
+2026-01-07 05:55:50,687 DEBUG: Matching image_6.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.450 T-robust: 0.131 T-total: 0.715 Matches: 234 Robust: 167 Success: True
+2026-01-07 05:55:50,688 DEBUG: Matching image_7.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.132 T-robust: 0.054 T-total: 0.267 Matches: 220 Robust: 178 Success: True
+2026-01-07 05:55:50,844 DEBUG: Matching image_6.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.378 T-robust: 0.133 T-total: 0.668 Matches: 179 Robust: 135 Success: True
+2026-01-07 05:55:50,844 DEBUG: Matching image_15.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.159 T-robust: 0.128 T-total: 0.316 Matches: 175 Robust: 131 Success: True
+2026-01-07 05:55:50,844 DEBUG: Matching image_9.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.254 T-robust: 0.462 T-total: 0.872 Matches: 170 Robust: 134 Success: True
+2026-01-07 05:55:50,896 DEBUG: Matching image_14.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.474 T-robust: 0.371 T-total: 1.319 Matches: 205 Robust: 134 Success: True
+2026-01-07 05:55:51,076 DEBUG: Matching image_15.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.104 T-robust: 0.285 T-total: 0.416 Matches: 150 Robust: 95 Success: True
+2026-01-07 05:55:51,076 DEBUG: Matching image_3.jpg and image_9.jpg.  Matcher: WORDS (symmetric) T-desc: 0.205 T-robust: 0.027 T-total: 0.232 Matches: 211 Robust: 179 Success: True
+2026-01-07 05:55:51,126 DEBUG: Matching image_15.jpg and image_17.jpg.  Matcher: WORDS (symmetric) T-desc: 0.316 T-robust: 0.232 T-total: 0.598 Matches: 262 Robust: 172 Success: True
+2026-01-07 05:55:51,152 DEBUG: Matching image_4.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.342 T-robust: 0.284 T-total: 0.703 Matches: 192 Robust: 152 Success: True
+2026-01-07 05:55:51,200 DEBUG: Matching image_16.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.128 T-robust: 0.128 T-total: 0.356 Matches: 210 Robust: 172 Success: True
+2026-01-07 05:55:51,200 DEBUG: Matching image_1.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.380 T-robust: 0.411 T-total: 0.866 Matches: 206 Robust: 164 Success: True
+2026-01-07 05:55:51,201 DEBUG: Matching image_5.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.133 T-robust: 0.442 T-total: 0.753 Matches: 501 Robust: 315 Success: True
+2026-01-07 05:55:51,365 DEBUG: Matching image_14.jpg and image_5.jpg.  Matcher: WORDS (symmetric) T-desc: 0.232 T-robust: 0.049 T-total: 0.522 Matches: 201 Robust: 158 Success: True
+2026-01-07 05:55:51,367 DEBUG: Matching image_15.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.335 T-robust: 0.202 T-total: 0.679 Matches: 206 Robust: 163 Success: True
+2026-01-07 05:55:51,394 DEBUG: Matching image_7.jpg and image_16.jpg.  Matcher: WORDS (symmetric) T-desc: 0.362 T-robust: 0.345 T-total: 0.707 Matches: 203 Robust: 157 Success: True
+2026-01-07 05:55:51,423 DEBUG: Matching image_10.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.230 T-robust: 0.269 T-total: 0.527 Matches: 543 Robust: 267 Success: True
+2026-01-07 05:55:51,425 DEBUG: Matching image_4.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.098 T-robust: 0.175 T-total: 0.273 Matches: 324 Robust: 243 Success: True
+2026-01-07 05:55:51,425 DEBUG: Matching image_5.jpg and image_15.jpg.  Matcher: WORDS (symmetric) T-desc: 0.167 T-robust: 0.057 T-total: 0.225 Matches: 168 Robust: 133 Success: True
+2026-01-07 05:55:51,425 DEBUG: Matching image_1.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.124 T-robust: 0.225 T-total: 0.349 Matches: 191 Robust: 152 Success: True
+2026-01-07 05:55:51,509 DEBUG: Matching image_1.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.224 T-robust: 0.030 T-total: 0.309 Matches: 193 Robust: 147 Success: True
+2026-01-07 05:55:51,509 DEBUG: Matching image_3.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.290 T-robust: 0.116 T-total: 0.433 Matches: 482 Robust: 296 Success: True
+2026-01-07 05:55:51,717 DEBUG: Matching image_11.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.057 T-robust: 0.152 T-total: 0.292 Matches: 164 Robust: 119 Success: True
+2026-01-07 05:55:51,792 DEBUG: Matching image_1.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.270 T-robust: 0.215 T-total: 0.665 Matches: 706 Robust: 408 Success: True
+2026-01-07 05:55:51,921 DEBUG: Matching image_3.jpg and image_13.jpg.  Matcher: WORDS (symmetric) T-desc: 0.283 T-robust: 0.076 T-total: 0.360 Matches: 223 Robust: 168 Success: True
+2026-01-07 05:55:51,973 DEBUG: Matching image_16.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.282 T-robust: 0.105 T-total: 0.490 Matches: 161 Robust: 107 Success: True
+2026-01-07 05:55:52,053 DEBUG: Matching image_5.jpg and image_6.jpg.  Matcher: WORDS (symmetric) T-desc: 0.160 T-robust: 0.335 T-total: 0.627 Matches: 496 Robust: 298 Success: True
+2026-01-07 05:55:52,185 DEBUG: Matching image_14.jpg and image_1.jpg.  Matcher: WORDS (symmetric) T-desc: 0.335 T-robust: 0.342 T-total: 0.676 Matches: 220 Robust: 176 Success: True
+2026-01-07 05:55:52,186 DEBUG: Matching image_10.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.181 T-robust: 0.081 T-total: 0.394 Matches: 173 Robust: 125 Success: True
+2026-01-07 05:55:52,187 DEBUG: Matching image_7.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.463 T-robust: 0.081 T-total: 0.677 Matches: 254 Robust: 215 Success: True
+2026-01-07 05:55:52,237 DEBUG: Matching image_7.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.361 T-robust: 0.102 T-total: 0.728 Matches: 350 Robust: 217 Success: True
+2026-01-07 05:55:52,356 DEBUG: Matching image_17.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.442 T-robust: 0.027 T-total: 0.638 Matches: 186 Robust: 152 Success: True
+2026-01-07 05:55:52,237 DEBUG: Matching image_14.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 0.284 T-robust: 0.290 T-total: 0.574 Matches: 206 Robust: 165 Success: True
+2026-01-07 05:55:52,416 DEBUG: Matching image_13.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.159 T-robust: 0.144 T-total: 0.362 Matches: 468 Robust: 207 Success: True
+2026-01-07 05:55:52,324 DEBUG: Matching image_10.jpg and image_6.jpg.  Matcher: WORDS (symmetric) T-desc: 0.239 T-robust: 0.105 T-total: 0.377 Matches: 177 Robust: 125 Success: True
+2026-01-07 05:55:52,561 DEBUG: Matching image_12.jpg and image_2.jpg.  Matcher: WORDS (symmetric) T-desc: 0.228 T-robust: 0.094 T-total: 0.374 Matches: 175 Robust: 141 Success: True
+2026-01-07 05:55:52,588 DEBUG: Matching image_17.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.292 T-robust: 0.173 T-total: 0.667 Matches: 187 Robust: 143 Success: True
+2026-01-07 05:55:52,588 DEBUG: Matching image_6.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.439 T-robust: 0.442 T-total: 1.054 Matches: 297 Robust: 238 Success: True
+2026-01-07 05:55:52,588 DEBUG: Matching image_10.jpg and image_15.jpg.  Matcher: WORDS (symmetric) T-desc: 0.212 T-robust: 0.324 T-total: 0.615 Matches: 157 Robust: 100 Success: True
+2026-01-07 05:55:52,790 DEBUG: Matching image_10.jpg and image_3.jpg.  Matcher: WORDS (symmetric) T-desc: 0.384 T-robust: 0.050 T-total: 0.434 Matches: 196 Robust: 156 Success: True
+2026-01-07 05:55:52,817 DEBUG: Matching image_1.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.143 T-robust: 0.286 T-total: 0.605 Matches: 360 Robust: 283 Success: True
+2026-01-07 05:55:52,818 DEBUG: Matching image_15.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.338 T-robust: 0.000 T-total: 0.339 Matches: 195 Robust: 155 Success: True
+2026-01-07 05:55:52,818 DEBUG: Matching image_12.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.461 T-robust: 0.001 T-total: 0.463 Matches: 232 Robust: 176 Success: True
+2026-01-07 05:55:52,819 DEBUG: Matching image_14.jpg and image_6.jpg.  Matcher: WORDS (symmetric) T-desc: 0.147 T-robust: 0.053 T-total: 0.404 Matches: 201 Robust: 152 Success: True
+2026-01-07 05:55:52,819 DEBUG: Matching image_3.jpg and image_8.jpg.  Matcher: WORDS (symmetric) T-desc: 0.257 T-robust: 0.001 T-total: 0.258 Matches: 228 Robust: 183 Success: True
+2026-01-07 05:55:52,820 DEBUG: Matching image_7.jpg and image_11.jpg.  Matcher: WORDS (symmetric) T-desc: 0.203 T-robust: 0.028 T-total: 0.232 Matches: 204 Robust: 167 Success: True
+2026-01-07 05:55:52,820 DEBUG: Matching image_3.jpg and image_4.jpg.  Matcher: WORDS (symmetric) T-desc: 0.604 T-robust: 0.030 T-total: 0.634 Matches: 370 Robust: 234 Success: True
+2026-01-07 05:55:52,842 DEBUG: Matching image_5.jpg and image_1.jpg.  Matcher: WORDS (symmetric) T-desc: 0.228 T-robust: 0.004 T-total: 0.254 Matches: 317 Robust: 240 Success: True
+2026-01-07 05:55:52,867 DEBUG: Matching image_14.jpg and image_12.jpg.  Matcher: WORDS (symmetric) T-desc: 0.312 T-robust: 0.102 T-total: 0.415 Matches: 219 Robust: 134 Success: True
+2026-01-07 05:55:52,868 DEBUG: Matching image_7.jpg and image_5.jpg.  Matcher: WORDS (symmetric) T-desc: 0.047 T-robust: 0.001 T-total: 0.048 Matches: 262 Robust: 188 Success: True
+2026-01-07 05:55:52,880 INFO: Matched 136 pairs (brown-brown: 136) in 7.370590877999348 seconds (0.054195522999995825 seconds/pair).
+[INFO]    running "/code/SuperBuild/install/bin/opensfm/bin/opensfm" create_tracks "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm"
+2026-01-07 05:55:53,777 INFO: reading features
+2026-01-07 05:55:53,874 DEBUG: Merging features onto tracks
+2026-01-07 05:55:53,916 DEBUG: Good tracks: 4430
+[INFO]    running "/code/SuperBuild/install/bin/opensfm/bin/opensfm" reconstruct "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm"
+2026-01-07 05:55:54,633 INFO: Starting incremental reconstruction
+2026-01-07 05:55:54,708 INFO: Starting reconstruction with image_16.jpg and image_17.jpg
+2026-01-07 05:55:54,718 INFO: Two-view 5-points reconstruction inliers (transposed=False): 707 / 748
+2026-01-07 05:55:54,762 INFO: Triangulated: 723
+2026-01-07 05:55:54,844 DEBUG: Ceres Solver Report: Iterations: 21, Initial cost: 3.408160e+02, Final cost: 1.957835e+02, Termination: CONVERGENCE
+2026-01-07 05:55:54,846 INFO: Removed outliers: 20
+2026-01-07 05:55:54,849 INFO: -------------------------------------------------------
+2026-01-07 05:55:54,855 INFO: image_15.jpg resection inliers: 65 / 139
+2026-01-07 05:55:54,856 INFO: Adding image_15.jpg to the reconstruction
+2026-01-07 05:55:54,900 DEBUG: Ceres Solver Report: Iterations: 13, Initial cost: 2.711689e+02, Final cost: 2.564301e+02, Termination: CONVERGENCE
+2026-01-07 05:55:54,903 INFO: Removed outliers: 13
+2026-01-07 05:55:54,904 INFO: -------------------------------------------------------
+2026-01-07 05:55:54,906 INFO: image_14.jpg resection inliers: 117 / 148
+2026-01-07 05:55:54,907 INFO: Adding image_14.jpg to the reconstruction
+2026-01-07 05:55:54,921 INFO: -------------------------------------------------------
+2026-01-07 05:55:54,923 INFO: image_13.jpg resection inliers: 116 / 157
+2026-01-07 05:55:54,924 INFO: Adding image_13.jpg to the reconstruction
+2026-01-07 05:55:55,008 DEBUG: Ceres Solver Report: Iterations: 25, Initial cost: 4.544484e+02, Final cost: 3.889203e+02, Termination: CONVERGENCE
+2026-01-07 05:55:55,013 INFO: Removed outliers: 12
+2026-01-07 05:55:55,014 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,016 INFO: image_3.jpg resection inliers: 150 / 191
+2026-01-07 05:55:55,016 INFO: Adding image_3.jpg to the reconstruction
+2026-01-07 05:55:55,023 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,025 INFO: image_7.jpg resection inliers: 177 / 203
+2026-01-07 05:55:55,026 INFO: Adding image_7.jpg to the reconstruction
+2026-01-07 05:55:55,032 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,034 INFO: image_4.jpg resection inliers: 165 / 204
+2026-01-07 05:55:55,034 INFO: Adding image_4.jpg to the reconstruction
+2026-01-07 05:55:55,042 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,043 INFO: image_5.jpg resection inliers: 166 / 207
+2026-01-07 05:55:55,044 INFO: Adding image_5.jpg to the reconstruction
+2026-01-07 05:55:55,053 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,056 INFO: image_1.jpg resection inliers: 166 / 217
+2026-01-07 05:55:55,057 INFO: Adding image_1.jpg to the reconstruction
+2026-01-07 05:55:55,068 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,070 INFO: image_2.jpg resection inliers: 175 / 221
+2026-01-07 05:55:55,071 INFO: Adding image_2.jpg to the reconstruction
+2026-01-07 05:55:55,195 DEBUG: Ceres Solver Report: Iterations: 26, Initial cost: 6.981729e+02, Final cost: 5.666665e+02, Termination: CONVERGENCE
+2026-01-07 05:55:55,202 INFO: Removed outliers: 24
+2026-01-07 05:55:55,203 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,205 INFO: image_6.jpg resection inliers: 146 / 201
+2026-01-07 05:55:55,206 INFO: Adding image_6.jpg to the reconstruction
+2026-01-07 05:55:55,221 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,223 INFO: image_11.jpg resection inliers: 127 / 189
+2026-01-07 05:55:55,224 INFO: Adding image_11.jpg to the reconstruction
+2026-01-07 05:55:55,235 INFO: Re-triangulating
+2026-01-07 05:55:55,295 DEBUG: Ceres Solver Report: Iterations: 11, Initial cost: 6.353910e+02, Final cost: 5.994970e+02, Termination: CONVERGENCE
+2026-01-07 05:55:55,626 DEBUG: Ceres Solver Report: Iterations: 42, Initial cost: 1.162932e+03, Final cost: 7.999497e+02, Termination: CONVERGENCE
+2026-01-07 05:55:55,634 INFO: Removed outliers: 42
+2026-01-07 05:55:55,634 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,636 INFO: image_8.jpg resection inliers: 154 / 188
+2026-01-07 05:55:55,637 INFO: Adding image_8.jpg to the reconstruction
+2026-01-07 05:55:55,650 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,652 INFO: image_9.jpg resection inliers: 155 / 181
+2026-01-07 05:55:55,653 INFO: Adding image_9.jpg to the reconstruction
+2026-01-07 05:55:55,667 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,669 INFO: image_12.jpg resection inliers: 145 / 180
+2026-01-07 05:55:55,670 INFO: Adding image_12.jpg to the reconstruction
+2026-01-07 05:55:55,689 INFO: -------------------------------------------------------
+2026-01-07 05:55:55,691 INFO: image_10.jpg resection inliers: 164 / 225
+2026-01-07 05:55:55,692 INFO: Adding image_10.jpg to the reconstruction
+2026-01-07 05:55:55,999 DEBUG: Ceres Solver Report: Iterations: 48, Initial cost: 1.385504e+03, Final cost: 1.186321e+03, Termination: CONVERGENCE
+2026-01-07 05:55:56,009 INFO: Removed outliers: 47
+2026-01-07 05:55:56,010 INFO: -------------------------------------------------------
+2026-01-07 05:55:56,152 DEBUG: Ceres Solver Report: Iterations: 23, Initial cost: 1.060842e+03, Final cost: 1.049239e+03, Termination: CONVERGENCE
+2026-01-07 05:55:56,162 INFO: Removed outliers: 3
+2026-01-07 05:55:56,167 INFO: Reconstruction 0: 17 images, 1815 points
+2026-01-07 05:55:56,167 INFO: 1 partial reconstructions in total.
+[INFO]    Export reconstruction stats
+[INFO]    running "/code/SuperBuild/install/bin/opensfm/bin/opensfm" compute_statistics --diagram_max_points 100000 "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm"
+2026-01-07 05:55:57,627 DEBUG: Loaded backend agg version v2.2.
+2026-01-07 05:55:57,634 DEBUG: locator: <matplotlib.ticker.AutoLocator object at 0xffff3befaa80>
+2026-01-07 05:55:57,873 DEBUG: locator: <matplotlib.ticker.AutoLocator object at 0xffff37762d50>
+[WARNING] Will skip exporting /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/reconstruction.geocoords.json
+[INFO]    Updating /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/config.yaml
+[INFO]    undistorted_image_max_size: 1440
+[INFO]    Undistorting /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm ...
+2026-01-07 05:55:58,836 DEBUG: Undistorting image image_6.jpg
+2026-01-07 05:55:58,836 DEBUG: Undistorting image image_2.jpg
+2026-01-07 05:55:58,836 DEBUG: Undistorting image image_1.jpg
+2026-01-07 05:55:58,836 DEBUG: Undistorting image image_17.jpg
+2026-01-07 05:55:58,836 DEBUG: Undistorting image image_10.jpg
+2026-01-07 05:55:58,837 DEBUG: Undistorting image image_8.jpg
+2026-01-07 05:55:58,837 DEBUG: Undistorting image image_15.jpg
+2026-01-07 05:55:58,837 DEBUG: Undistorting image image_11.jpg
+2026-01-07 05:55:58,838 DEBUG: Undistorting image image_12.jpg
+2026-01-07 05:55:58,838 DEBUG: Undistorting image image_13.jpg
+2026-01-07 05:55:58,840 DEBUG: Undistorting image image_3.jpg
+2026-01-07 05:55:58,967 DEBUG: Undistorting image image_14.jpg
+2026-01-07 05:55:59,004 DEBUG: Undistorting image image_7.jpg
+2026-01-07 05:55:59,058 DEBUG: Undistorting image image_5.jpg
+2026-01-07 05:55:59,059 DEBUG: Undistorting image image_4.jpg
+2026-01-07 05:55:59,138 DEBUG: Undistorting image image_9.jpg
+2026-01-07 05:55:59,165 DEBUG: Undistorting image image_16.jpg
+[INFO]    running "/code/SuperBuild/install/bin/opensfm/bin/opensfm" export_visualsfm --points "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm"
+[INFO]    Finished opensfm stage
+[INFO]    Running openmvs stage
+[INFO]    running "/code/SuperBuild/install/bin/opensfm/bin/opensfm" export_openmvs "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm"
+[INFO]    Depthmap resolution set to: 360px
+[INFO]    Running dense reconstruction. This might take a while.
+[INFO]    Estimating depthmaps
+[INFO]    No nvidia-smi detected
+[INFO]    running "/code/SuperBuild/install/bin/OpenMVS/DensifyPointCloud" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/scene.mvs" --resolution-level 2 --dense-config-file "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/Densify.ini" --max-resolution 1440 --min-resolution 640 --max-threads 11 --number-views-fuse 2 --sub-resolution-levels 2 --archive-type 3 -w "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/depthmaps" -v 0 --cuda-device -2
+05:56:00 [App     ] OpenMVS x32 v2.2.0
+05:56:00 [App     ] Build date: Nov 11 2025, 07:35:21
+05:56:00 [App     ] CPU:  (11 cores)
+05:56:00 [App     ] RAM: 15.35GB Physical Memory 1024.00MB Virtual Memory
+05:56:00 [App     ] OS: Linux 6.12.54-linuxkit (aarch64)
+05:56:00 [App     ] Disk:
+05:56:00 [App     ] warning: no SSE compatible CPU or OS detected
+05:56:00 [App     ] Command line: DensifyPointCloud /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/scene.mvs --resolution-level 2 --dense-config-file /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/Densify.ini --max-resolution 1440 --min-resolution 640 --max-threads 11 --number-views-fuse 2 --sub-resolution-levels 2 --archive-type 3 -w /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/depthmaps -v 0 --cuda-device -2
+05:56:00 [App     ] The camera directions mean is unbalanced; the scene will be considered unbounded (no ROI)
+05:56:00 [App     ] Preparing images for dense reconstruction completed: 17 images (29ms)
+05:56:00 [App     ] Selecting images for dense reconstruction completed: 17 images (0ms)
+
+Estimated depth-maps 1 (5.88%, 1s, ETA 25s)...
+Estimated depth-maps 2 (11.76%, 3s, ETA 22s)...
+Estimated depth-maps 3 (17.65%, 4s, ETA 21s)...
+Estimated depth-maps 4 (23.53%, 5s, ETA 19s)...
+Estimated depth-maps 5 (29.41%, 7s, ETA 17s)...
+Estimated depth-maps 6 (35.29%, 8s, ETA 16s)...
+Estimated depth-maps 7 (41.18%, 10s, ETA 14s)...
+Estimated depth-maps 8 (47.06%, 11s, ETA 13s)...
+Estimated depth-maps 9 (52.94%, 13s, ETA 11s)...
+Estimated depth-maps 10 (58.82%, 14s, ETA 10s)...
+Estimated depth-maps 11 (64.71%, 16s, ETA 8s)...
+Estimated depth-maps 12 (70.59%, 17s, ETA 7s)...
+Estimated depth-maps 13 (76.47%, 19s, ETA 5s)...
+Estimated depth-maps 14 (82.35%, 20s, ETA 4s)...
+Estimated depth-maps 15 (88.24%, 21s, ETA 2s)...
+Estimated depth-maps 16 (94.12%, 23s, ETA 1s)...
+Estimated depth-maps 17 (100.00%, 24s, ETA 0ms)...
+Estimated depth-maps 17 (100%, 24s737ms)
+
+Geometric-consistent estimated depth-maps 1 (5.88%, 306ms, ETA 4s)...
+Geometric-consistent estimated depth-maps 2 (11.76%, 619ms, ETA 4s)...
+Geometric-consistent estimated depth-maps 3 (17.65%, 908ms, ETA 4s)...
+Geometric-consistent estimated depth-maps 4 (23.53%, 1s, ETA 3s)...
+Geometric-consistent estimated depth-maps 5 (29.41%, 1s, ETA 3s)...
+Geometric-consistent estimated depth-maps 6 (35.29%, 1s, ETA 3s)...
+Geometric-consistent estimated depth-maps 7 (41.18%, 2s, ETA 2s)...
+Geometric-consistent estimated depth-maps 8 (47.06%, 2s, ETA 2s)...
+Geometric-consistent estimated depth-maps 9 (52.94%, 2s, ETA 2s)...
+Geometric-consistent estimated depth-maps 10 (58.82%, 3s, ETA 2s)...
+Geometric-consistent estimated depth-maps 11 (64.71%, 3s, ETA 1s)...
+Geometric-consistent estimated depth-maps 12 (70.59%, 3s, ETA 1s)...
+Geometric-consistent estimated depth-maps 13 (76.47%, 3s, ETA 1s)...
+Geometric-consistent estimated depth-maps 14 (82.35%, 4s, ETA 897ms)...
+Geometric-consistent estimated depth-maps 15 (88.24%, 4s, ETA 580ms)...
+Geometric-consistent estimated depth-maps 16 (94.12%, 4s, ETA 291ms)...
+Geometric-consistent estimated depth-maps 17 (100.00%, 4s, ETA 0ms)...
+Geometric-consistent estimated depth-maps 17 (100%, 4s985ms)
+
+Geometric-consistent estimated depth-maps 1 (5.88%, 294ms, ETA 4s)...
+Geometric-consistent estimated depth-maps 2 (11.76%, 574ms, ETA 4s)...
+Geometric-consistent estimated depth-maps 3 (17.65%, 901ms, ETA 4s)...
+Geometric-consistent estimated depth-maps 4 (23.53%, 1s, ETA 3s)...
+Geometric-consistent estimated depth-maps 5 (29.41%, 1s, ETA 3s)...
+Geometric-consistent estimated depth-maps 6 (35.29%, 1s, ETA 3s)...
+Geometric-consistent estimated depth-maps 7 (41.18%, 2s, ETA 2s)...
+Geometric-consistent estimated depth-maps 8 (47.06%, 2s, ETA 2s)...
+Geometric-consistent estimated depth-maps 9 (52.94%, 2s, ETA 2s)...
+Geometric-consistent estimated depth-maps 10 (58.82%, 2s, ETA 2s)...
+Geometric-consistent estimated depth-maps 11 (64.71%, 3s, ETA 1s)...
+Geometric-consistent estimated depth-maps 12 (70.59%, 3s, ETA 1s)...
+Geometric-consistent estimated depth-maps 13 (76.47%, 3s, ETA 1s)...
+Geometric-consistent estimated depth-maps 14 (82.35%, 4s, ETA 888ms)...
+Geometric-consistent estimated depth-maps 15 (88.24%, 4s, ETA 575ms)...
+Geometric-consistent estimated depth-maps 16 (94.12%, 4s, ETA 288ms)...
+Geometric-consistent estimated depth-maps 17 (100.00%, 4s, ETA 0ms)...
+Geometric-consistent estimated depth-maps 17 (100%, 4s920ms)
+
+Filtered depth-maps 1 (5.88%, 117ms, ETA 1s)...
+Filtered depth-maps 17 (100%, 150ms)
+
+Fused depth-maps 10 (58.82%, 104ms, ETA 72ms)...
+Fused depth-maps 17 (100%, 129ms)
+05:56:35 [App     ] Densifying point-cloud completed: 151675 points (35s20ms)
+[INFO]    running "/code/SuperBuild/install/bin/OpenMVS/DensifyPointCloud" --filter-point-cloud -20 -i "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/scene_dense.mvs" -v 0 --cuda-device -2
+05:56:36 [App     ] OpenMVS x32 v2.2.0
+05:56:36 [App     ] Build date: Nov 11 2025, 07:35:21
+05:56:36 [App     ] CPU:  (11 cores)
+05:56:36 [App     ] RAM: 15.35GB Physical Memory 1024.00MB Virtual Memory
+05:56:36 [App     ] OS: Linux 6.12.54-linuxkit (aarch64)
+05:56:36 [App     ] Disk:
+05:56:36 [App     ] warning: no SSE compatible CPU or OS detected
+05:56:36 [App     ] Command line: DensifyPointCloud --filter-point-cloud -20 -i /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/scene_dense.mvs -v 0 --cuda-device -2
+05:56:36 [App     ] The camera directions mean is unbalanced; the scene will be considered unbounded (no ROI)
+
+Point visibility checks 3070 (2.02%, 100ms, ETA 4s)...
+Point visibility checks 15478 (10.20%, 200ms, ETA 1s)...
+Point visibility checks 32717 (21.57%, 300ms, ETA 1s)...
+Point visibility checks 59621 (39.31%, 400ms, ETA 617ms)...
+Point visibility checks 87871 (57.93%, 500ms, ETA 363ms)...
+Point visibility checks 115468 (76.13%, 600ms, ETA 188ms)...
+Point visibility checks 133608 (88.09%, 700ms, ETA 94ms)...
+Point visibility checks 149782 (98.75%, 800ms, ETA 10ms)...
+Point visibility checks 151675 (100%, 817ms)
+[INFO]    Finished openmvs stage
+[INFO]    Running odm_filterpoints stage
+[INFO]    Filtering /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/scene_dense_dense_filtered.ply (statistical, meanK 16, standard deviation 5)
+[INFO]    running "/code/SuperBuild/install/bin/FPCFilter" --input "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/scene_dense_dense_filtered.ply" --output "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_filterpoints/point_cloud.ply" --concurrency 11 --meank 16 --std 5 --stats "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_filterpoints/point_cloud_stats.json"
+*** FPCFilter - v0.2 ***
+
+?> Parameters:
+input = /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/openmvs/scene_dense_dense_filtered.ply
+output = /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_filterpoints/point_cloud.ply
+stats = /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_filterpoints/point_cloud_stats.json
+std = 5
+meanK = 16
+boundary = auto
+concurrency = 11
+verbose = no
+
+-> Setting num_threads to 11
+
+?> Skipping crop
+
+?> Skipping sampling
+
+-> Statistical filtering
+
+-> Spacing estimation completed (0.01 meters)
+
+?> Done in 0.07869s
+
+-> Writing output
+
+?> Done in 0.01546s
+
+?> Pipeline done in 0.09418s
+
+[INFO]    Finished odm_filterpoints stage
+[INFO]    Running odm_meshing stage
+[INFO]    Writing ODM Mesh file in: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_mesh.ply
+[INFO]    running "/code/SuperBuild/install/bin/PoissonRecon" --in "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_filterpoints/point_cloud.ply" --out "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_mesh.dirty.ply" --depth 11 --pointWeight 4.0 --samplesPerNode 1.0 --threads 10 --bType 2 --linearFit
+[INFO]    running "/code/SuperBuild/install/bin/OpenMVS/ReconstructMesh" -i "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_mesh.dirty.ply" -o "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_mesh.ply" --archive-type 3 --remove-spikes 0 --remove-spurious 20 --smooth 0 --target-face-num 400000 -v 0
+05:56:46 [App     ] OpenMVS x32 v2.2.0
+05:56:46 [App     ] Build date: Nov 11 2025, 07:35:21
+05:56:46 [App     ] CPU:  (11 cores)
+05:56:46 [App     ] RAM: 15.35GB Physical Memory 1024.00MB Virtual Memory
+05:56:46 [App     ] OS: Linux 6.12.54-linuxkit (aarch64)
+05:56:46 [App     ] Disk:
+05:56:46 [App     ] warning: no SSE compatible CPU or OS detected
+05:56:46 [App     ] Command line: ReconstructMesh -i /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_mesh.dirty.ply -o /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_mesh.ply --archive-type 3 --remove-spikes 0 --remove-spurious 20 --smooth 0 --target-face-num 400000 -v 0
+
+Decimated faces 40684 (4.05%, 810ms, ETA 19s)...
+Decimated faces 82838 (8.24%, 910ms, ETA 10s)...
+Decimated faces 119198 (11.85%, 1s, ETA 7s)...
+Decimated faces 152350 (15.15%, 1s, ETA 6s)...
+Decimated faces 179736 (17.87%, 1s, ETA 5s)...
+Decimated faces 204750 (20.36%, 1s, ETA 5s)...
+Decimated faces 225849 (22.46%, 1s, ETA 4s)...
+Decimated faces 240282 (23.89%, 1s, ETA 4s)...
+Decimated faces 261422 (26.00%, 1s, ETA 4s)...
+Decimated faces 287020 (28.54%, 1s, ETA 4s)...
+Decimated faces 310346 (30.86%, 1s, ETA 4s)...
+Decimated faces 331066 (32.92%, 1s, ETA 3s)...
+Decimated faces 350734 (34.88%, 2s, ETA 3s)...
+Decimated faces 371134 (36.91%, 2s, ETA 3s)...
+Decimated faces 391318 (38.91%, 2s, ETA 3s)...
+Decimated faces 410402 (40.81%, 2s, ETA 3s)...
+Decimated faces 429356 (42.70%, 2s, ETA 3s)...
+Decimated faces 432142 (42.97%, 2s, ETA 3s)...
+Decimated faces 462654 (46.01%, 2s, ETA 3s)...
+Decimated faces 492742 (49.00%, 2s, ETA 2s)...
+Decimated faces 518202 (51.53%, 2s, ETA 2s)...
+Decimated faces 544540 (54.15%, 3s, ETA 2s)...
+Decimated faces 569983 (56.68%, 3s, ETA 2s)...
+Decimated faces 594135 (59.08%, 3s, ETA 2s)...
+Decimated faces 617699 (61.43%, 3s, ETA 2s)...
+Decimated faces 640061 (63.65%, 3s, ETA 1s)...
+Decimated faces 660649 (65.70%, 3s, ETA 1s)...
+Decimated faces 680633 (67.69%, 3s, ETA 1s)...
+Decimated faces 700411 (69.65%, 3s, ETA 1s)...
+Decimated faces 719351 (71.54%, 3s, ETA 1s)...
+Decimated faces 735935 (73.18%, 3s, ETA 1s)...
+Decimated faces 752581 (74.84%, 4s, ETA 1s)...
+Decimated faces 769527 (76.53%, 4s, ETA 1s)...
+Decimated faces 785700 (78.13%, 4s, ETA 1s)...
+Decimated faces 801348 (79.69%, 4s, ETA 1s)...
+Decimated faces 816384 (81.18%, 4s, ETA 1s)...
+Decimated faces 827156 (82.26%, 4s, ETA 1s)...
+Decimated faces 853954 (84.92%, 4s, ETA 853ms)...
+Decimated faces 878839 (87.40%, 4s, ETA 707ms)...
+Decimated faces 900601 (89.56%, 5s, ETA 583ms)...
+Decimated faces 922627 (91.75%, 5s, ETA 459ms)...
+Decimated faces 943739 (93.85%, 5s, ETA 341ms)...
+Decimated faces 964327 (95.90%, 5s, ETA 227ms)...
+Decimated faces 984111 (97.86%, 5s, ETA 117ms)...
+Decimated faces 1002715 (99.71%, 5s, ETA 15ms)...
+Decimated faces 1005587 (100%, 5s521ms)
+[INFO]    Writing ODM 2.5D Mesh file in: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.ply
+[INFO]    ODM 2.5D DSM resolution: 0.01
+[INFO]    Created temporary directory: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp
+[INFO]    Creating DSM for 2.5D mesh
+[INFO]    running renderdem "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_filterpoints/point_cloud.ply" --outdir "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp" --output-type max --radiuses 0.015707963267948967,0.022214414690791835,0.03141592653589794 --resolution 0.01 --max-tiles 9 --decimation 1 --classification -1 --tile-size 4096 --force
+Reading 147852 points
+Point cloud bounds are [minx: -3.99081778526, maxx: 2.62487435341, miny: -3.38157773018, maxy: 4.98648786545]
+DEM resolution is (662, 837), max tile size is 4096, will split DEM generation into 1 tiles
+r0.015708_x0_y0.tif
+r0.0222144_x0_y0.tif
+r0.0314159_x0_y0.tif
+[INFO]    Generated 3 tiles
+[INFO]    running gdalbuildvrt -input_file_list "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles_list.txt" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.vrt"
+0...10...20...30...40...50...60...70...80...90...100 - done.
+[INFO]    running gdal_translate -co NUM_THREADS=11 -co BIGTIFF=IF_SAFER -co COMPRESS=DEFLATE --config GDAL_CACHEMAX 46.55% -outsize 10% 0 "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.vrt" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.small.tif"
+0
+...10
+...
+20.
+..30..
+.40.
+.
+.
+50
+.
+.
+.
+60
+.
+.
+.
+70
+.
+.
+.
+80
+.
+.
+.
+90
+.
+.
+.
+Input file size is 662, 837
+0...10...20...30...40...50...60...70...80...90...100 - done.
+[INFO]    running gdalbuildvrt -resolution highest -r bilinear "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/merged.vrt" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.small_filled.tif" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.vrt"
+0...10...20...30...40...50...60...70...80...90...100 - done.
+[INFO]    running gdal_translate -co NUM_THREADS=11 -co TILED=YES -co BIGTIFF=IF_SAFER -co COMPRESS=DEFLATE --config GDAL_CACHEMAX 46.55% "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/merged.vrt" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.tif"
+Input file size is 662, 837
+0...10...20...30...40...50...60...70...80...90...100 - done.
+[INFO]    running fastrasterfilter "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.tif" --output "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/mesh_dsm.tif" --window-size 512 --radius 4 --co TILED=YES --co BIGTIFF=IF_SAFER --co COMPRESS=DEFLATE
+Input: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/tiles.tif
+Size: 662x837
+Blocks: 1
+Smoothing...1... done
+Wrote /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/mesh_dsm.tif
+[INFO]    Completed smoothing to create /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/mesh_dsm.tif in 0:00:00.099319
+[INFO]    Completed mesh_dsm.tif in 0:00:00.263575
+[INFO]    Creating mesh from DSM: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/mesh_dsm.tif
+[INFO]    running "/code/SuperBuild/install/bin/dem2mesh" -inputFile "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/mesh_dsm.tif" -outputFile "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.dirty.ply" -maxTileLength 2000 -maxVertexCount 200000 -maxConcurrency 11 -edgeSwapThreshold 0.15 -verbose
+Running with parameters:
+-inputFile /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/tmp/mesh_dsm.tif
+-outputFile /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.dirty.ply
+-maxVertexCount 200000
+-maxTileLength 2000
+-maxConcurrency 11
+-edgeSwapThreshold 0.150000
+-verbose
+Raster Size is 662x837
+Extent is (-3.990818, 2.629182), (-3.381578, 4.988422)
+NoData value: -9999
+Description:
+Reading raster...
+Total vertices before simplification: 554094
+Subdivisions: 1x1
+Splitting area in 1
+Block size is 662, 837
+Concurrency set to 11
+Allocating 1 raster data blocks of 2652 bytes
+Scanning block (0,0)
+Empty blocks: 0
+Processing block (0,0)
+Sampled 1105192 faces, target is 400000
+Triangle count: 400000
+Single block, saving to PLY
+Performing edge collapses...
+Writing to file...  done!
+[INFO]    running "/code/SuperBuild/install/bin/OpenMVS/ReconstructMesh" -i "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.dirty.ply" -o "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.ply" --archive-type 3 --remove-spikes 0 --remove-spurious 0 --smooth 0 --target-face-num 400000 -v 0
+05:56:55 [App     ] OpenMVS x32 v2.2.0
+05:56:55 [App     ] Build date: Nov 11 2025, 07:35:21
+05:56:55 [App     ] CPU:  (11 cores)
+05:56:55 [App     ] RAM: 15.35GB Physical Memory 1024.00MB Virtual Memory
+05:56:55 [App     ] OS: Linux 6.12.54-linuxkit (aarch64)
+05:56:55 [App     ] Disk:
+05:56:55 [App     ] warning: no SSE compatible CPU or OS detected
+05:56:55 [App     ] Command line: ReconstructMesh -i /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.dirty.ply -o /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.ply --archive-type 3 --remove-spikes 0 --remove-spurious 0 --smooth 0 --target-face-num 400000 -v 0
+[INFO]    Finished odm_meshing stage
+[INFO]    Running mvs_texturing stage
+[INFO]    Writing MVS Textured file in: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo.obj
+[INFO]    running "/code/SuperBuild/install/bin/texrecon" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/reconstruction.nvm" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_mesh.ply" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo" -d gmi -o gauss_clamping -t none --no_intermediate_results     --num_threads=11 --max_texture_size=8192
+/code/SuperBuild/install/bin/texrecon (built on Nov 11 2025, 06:01:09)
+Load and prepare mesh:
+Reading PLY: 161413 verts... 323416 faces... done.
+Generating texture views:
+NVM: Loading file...
+NVM: Number of views: 17
+NVM: Number of features: 1815
+
+
+Loading 100%... done. (Took 0.027s)
+Building adjacency graph:
+
+
+Adding edges 100%... done. (Took 0.261s)
+485066 total edges.
+View selection:
+Building BVH from 323416 faces... done. (Took: 212 ms)
+
+
+Calculating face qualities 100%... done. (Took 1.039s)
+
+
+Postprocessing face infos 100%... done. (Took 0.104s)
+Maximum quality of a face within an image: 54.1289
+Clamping qualities to 5.20773 within normalization.
+Optimizing:
+Time[s]	Energy
+0	335180
+1	329498
+1	324126
+1	321320
+2	320241
+2	319599
+2	319234
+3	318901
+3	318645
+3	318488
+4	318402
+4	318331
+4	318278
+4	318223
+132288 faces have not been seen
+Took: 6.068s
+Generating texture patches:
+Running... done. (Took 0.278s)
+7739 texture patches.
+Running global seam leveling:
+Create matrices for optimization...  done.
+Lhs dimensionality: 139204 x 139204
+Calculating adjustments:
+Color channel 1: CG took 123 iterations. Residual is 9.51701e-05
+Color channel 2: CG took 123 iterations. Residual is 9.29054e-05
+Color channel 0: CG took 123 iterations. Residual is 8.79634e-05
+Took 0.125 seconds
+
+
+Adjusting texture patches 100%... done. (Took 0.014s)
+Running local seam leveling:
+
+
+Blending texture patches 100%... done. (Took 0.196s)
+Generating texture atlases:
+Sorting texture patches... done.
+
+Working on atlas 23 100%... done.
+Finalizing texture atlases... done. (Took: 0s)
+Building objmodel:
+Saving model... done.
+Whole texturing procedure took: 9.3s
+[INFO]    Generating glTF Binary
+[INFO]    Converting /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo.obj --> /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo.glb
+[INFO]    Loading /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo.obj
+[INFO]    Loading odm_textured_model_geo_material0000_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0001_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0002_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0003_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0004_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0005_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0006_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0007_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0008_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0009_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0010_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0011_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0012_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0013_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0014_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0015_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0016_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0017_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0018_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0019_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0020_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0021_map_Kd.png
+[INFO]    Loading odm_textured_model_geo_material0022_map_Kd.png
+2026-01-07 05:57:07,124 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,143 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,145 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,147 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,149 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,150 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,152 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,153 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,154 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,155 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,156 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,156 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,157 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,158 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,159 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,160 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,161 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,162 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,163 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,164 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,164 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,165 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+2026-01-07 05:57:07,166 WARNING: CPLE_NotSupported in driver JPEG does not support creation option JPEG_QUALITY
+[INFO]    Writing...
+[INFO]    Wrote /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo.glb
+[INFO]    Compressing with draco
+[INFO]    running draco_transcoder -i "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo.glb" -o "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo_compressed.glb" -qt 16 -qp 16
+Transcode	/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing/odm_textured_model_geo.glb	268
+[INFO]    Writing MVS Textured file in: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing_25d/odm_textured_model_geo.obj
+[INFO]    running "/code/SuperBuild/install/bin/texrecon" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/undistorted/reconstruction.nvm" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_meshing/odm_25dmesh.ply" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing_25d/odm_textured_model_geo" -d gmi -o gauss_clamping -t none --no_intermediate_results   --nadir_mode  --num_threads=11 --max_texture_size=8192
+/code/SuperBuild/install/bin/texrecon (built on Nov 11 2025, 06:01:09)
+Load and prepare mesh:
+Reading PLY: 198734 verts... 394476 faces... done.
+Warning: Zero-length normals detected: 0 face normals, 1 vertex normals
+Generating texture views:
+NVM: Loading file...
+NVM: Number of views: 17
+NVM: Number of features: 1815
+
+
+Loading 100%... done. (Took 0.022s)
+Building adjacency graph:
+
+
+Adding edges 100%... done. (Took 0.268s)
+590219 total edges.
+View selection:
+Building BVH from 394476 faces... done. (Took: 166 ms)
+
+
+Calculating face qualities 100%... done. (Took 1.103s)
+
+
+Postprocessing face infos 100%... done. (Took 0.254s)
+Maximum quality of a face within an image: 9999.99
+Clamping qualities to 9958.98 within normalization.
+Optimizing:
+Time[s]	Energy
+0	152380
+0	149906
+0	147347
+0	145958
+1	145331
+1	144957
+1	144719
+1	144490
+1	144346
+2	144252
+2	144210
+2	144179
+2	144144
+2	144116
+2	144090
+16988 faces have not been seen
+Took: 4.884s
+Generating texture patches:
+Running... done. (Took 0.229s)
+302 texture patches.
+Running global seam leveling:
+Create matrices for optimization...  done.
+Lhs dimensionality: 197098 x 197098
+Calculating adjustments:
+Color channel 0: CG took 85 iterations. Residual is 8.42722e-05
+Color channel 1: CG took 86 iterations. Residual is 9.31378e-05
+Color channel 2: CG took 86 iterations. Residual is 9.26538e-05
+Took 0.115 seconds
+
+
+Adjusting texture patches 100%... done. (Took 0.055s)
+Running local seam leveling:
+
+
+Blending texture patches 100%... done. (Took 0.66s)
+Generating texture atlases:
+Sorting texture patches... done.
+
+Working on atlas 1 100%... done.
+Finalizing texture atlases... done. (Took: 0s)
+Building objmodel:
+Saving model... done.
+Whole texturing procedure took: 8.659s
+[INFO]    Finished mvs_texturing stage
+[INFO]    Running odm_georeferencing stage
+[INFO]    Converting point cloud (non-georeferenced)
+[INFO]    running pdal translate -i "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_filterpoints/point_cloud.ply" -o "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.laz" ferry --filters.ferry.dimensions="views => UserData"
+[INFO]    Creating Entwine Point Tile output
+[INFO]    running entwine build --threads 11 --tmp "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/entwine_pointcloud-tmp" -i /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.laz -o "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/entwine_pointcloud"
+1/1: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.laz
+Dimensions: [
+X:int32, Y:int32, Z:int32, Intensity:uint16, ReturnNumber:uint8,
+NumberOfReturns:uint8, ScanDirectionFlag:uint8, EdgeOfFlightLine:uint8,
+Classification:uint8, Synthetic:uint8, KeyPoint:uint8, Withheld:uint8,
+Overlap:uint8, ScanAngleRank:float32, UserData:uint8, PointSourceId:uint16,
+GpsTime:float64, ScanChannel:uint8, Red:uint16, Green:uint16, Blue:uint16,
+OriginId:uint32
+]
+Points: 147,852
+Bounds: [(-4, -4, -11), (3, 5, 0)]
+Scale: 0.01
+SRS: none
+
+Adding 0 - /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.laz
+Joining
+Done 0
+Saving
+Wrote 147,852 points.
+[INFO]    Finished odm_georeferencing stage
+[INFO]    Running odm_dem stage
+[WARNING] Not georeferenced, using ungeoreferenced point cloud...
+[WARNING] Cannot calculate GSD, using requested resolution of 5.00
+[INFO]    Create DSM: False
+[INFO]    Create DTM: False
+[INFO]    DEM input file /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.laz found: True
+[WARNING] DEM will not be generated
+[INFO]    Finished odm_dem stage
+[INFO]    Running odm_orthophoto stage
+[WARNING] Cannot calculate GSD, using requested resolution of 5.00
+[INFO]    Creating GeoTIFF
+[INFO]    running "/code/SuperBuild/install/bin/odm_orthophoto" -inputFiles /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing_25d/odm_textured_model_geo.obj -logFile "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto_log.txt" -outputFile "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto_render.tif" -resolution 20.0 -verbose -outputCornerFile "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto_corners.txt"       --config GDAL_CACHEMAX 7441559552.0
+Reading mesh file... /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_texturing_25d/odm_textured_model_geo.obj
+Found material0000
+Loading odm_textured_model_geo_material0000_map_Kd.png
+Mesh file read.
+
+Boundary points:
+Point 1: -3.99082 -3.37158
+Point 2: -3.99082 4.98842
+Point 3: 2.61918 4.98842
+Point 4: 2.61918 -3.37158
+
+Model bounds x : -3.99082 -> 2.61918
+Model bounds y : -3.37158 -> 4.98842
+Model area : 55.2596m2
+Model resolution, width x height : 133x168
+Translating and scaling mesh...
+Rendering the ortho photo...
+Texture channels: 3
+Texture depth: 8bit
+Rendering material0000 ... done
+... model rendered
+
+
+Writing ortho photo to /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto_render.tif
+Set GDAL_CACHEMAX to 7441559552
+Writing corner coordinates to /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto_corners.txt
+Orthophoto generation done.
+[INFO]    Adding pseudo georeferencing (raster should show up at the equator) to /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto_render.tif
+[INFO]    Renaming /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto_render.tif --> /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto.tif
+[INFO]    Finished odm_orthophoto stage
+[INFO]    Running odm_report stage
+[INFO]    Exporting shots.geojson
+[INFO]    Wrote /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_report/shots.geojson
+[INFO]    Copied /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/camera_mappings.npz --> /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_report/camera_mappings.npz
+[INFO]    running pdal info --dimensions "X,Y,Z" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.laz" > "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.info.json"
+[INFO]    running pdal translate -i "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_georeferencing/odm_georeferenced_model.laz" -o "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/stats/overlap.tif" --writer gdal --writers.gdal.resolution=0.0059785714285714294 --writers.gdal.data_type=uint8_t --writers.gdal.dimension=UserData --writers.gdal.output_type=max --writers.gdal.radius=0.008454976797902006
+[INFO]    running gdaldem color-relief "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/stats/overlap.tif" "/code/opendm/report/overlap_color_map.txt" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/stats/overlap.png" -of PNG -alpha
+0...10...20...30...40...50...60...70...80...90...100 - done.
+[INFO]    running gdal_translate -of png "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_orthophoto/odm_orthophoto.tif" "/var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/opensfm/stats/ortho.png" -b 1 -b 2 -b 3 -b 4 -outsize 1400 0 -co WORLDFILE=YES --config GDAL_CACHEMAX 44.85%
+Input file size is 133, 168
+0...10...20...30...40...50...60...70...80...90...100 - done.
+[INFO]    Exporting report to /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698/odm_report/report.pdf
+2026-01-07 05:57:18,898 DEBUG: ICC profile found for image /tmp/tmpax4vqfay/overlap_diagram_legend.png - It will be inserted in the PDF document
+2026-01-07 05:57:19,534 DEBUG: Final size summary of the biggest document sections:
+2026-01-07 05:57:19,534 DEBUG: - pages: 3.7KiB
+2026-01-07 05:57:19,534 DEBUG: - fonts: 201.0B
+2026-01-07 05:57:19,534 DEBUG: - images: 1.7MiB
+2026-01-07 05:57:19,534 DEBUG: - iccp: 475.0B
+[INFO]    Finished odm_report stage
+[INFO]    Running odm_postprocess stage
+[INFO]    Post Processing
+[INFO]    Finished odm_postprocess stage
+[INFO]    No more stages to run
+[INFO]    MMMMMMMMMMMNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNMMMMMMMMMMM
+[INFO]    MMMMMMdo:..---../sNMMMMMMMMMMMMMMMMMMMMMMMMMMNs/..---..:odMMMMMM
+[INFO]    MMMMy-.odNMMMMMNy/`/mMMMMMMMMMMMMMMMMMMMMMMm/`/hNMMMMMNdo.-yMMMM
+[INFO]    MMN/`sMMMMMMMMMNNMm/`yMMMMMMMMMMMMMMMMMMMMy`/mMNNMMMMMMMMNs`/MMM
+[INFO]    MM/ hMMMMMMMMNs.+MMM/ dMMMMMMMMMMMMMMMMMMh +MMM+.sNMMMMMMMMh +MM
+[INFO]    MN /MMMMMMNo/./mMMMMN :MMMMMMMMMMMMMMMMMM: NMMMMm/./oNMMMMMM: NM
+[INFO]    Mm +MMMMMN+ `/MMMMMMM`-MMMMMMMMMMMMMMMMMM-`MMMMMMM:` oNMMMMM+ mM
+[INFO]    MM..NMMNs./mNMMMMMMMy sMMMMMMMMMMMMMMMMMMo hMMMMMMMNm/.sNMMN`-MM
+[INFO]    MMd`:mMNomMMMMMMMMMy`:MMMMMMMNmmmmNMMMMMMN:`hMMMMMMMMMdoNMm-`dMM
+[INFO]    MMMm:.omMMMMMMMMNh/  sdmmho/.`..`-``-/sddh+  /hNMMMMMMMMdo.:mMMM
+[INFO]    MMMMMd+--/osss+:-:/`  ```:- .ym+ hmo``:-`   `+:-:ossso/-:+dMMMMM
+[INFO]    MMMMMMMNmhysosydmNMo   /ds`/NMM+ hMMd..dh.  sMNmdysosyhmNMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMMMs .:-:``hmmN+ yNmds -:.:`-NMMMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMMN.-mNm- //:::. -:://: +mMd`-NMMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMM+ dMMN -MMNNN+ yNNNMN :MMMs sMMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMM`.mmmy /mmmmm/ smmmmm``mmmh :MMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMM``:::- ./////. -:::::` :::: -MMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMM:`mNNd /NNNNN+ hNNNNN .NNNy +MMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMMd`/MMM.`ys+//. -/+oso +MMN.`mMMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMMMMMy /o:- `oyhd/ shys+ `-:s-`hMMMMMMMMMMMMMMMMMM
+[INFO]    MMMMMMMMNmdhhhdmNMMM`  +d+ sMMM+ hMMN:`hh-  sMMNmdhhhdmNMMMMMMMM
+[INFO]    MMMMMms:::/++//::+ho    .+- /dM+ hNh- +/`   -h+:://++/::/smMMMMM
+[INFO]    MMMN+./hmMMMMMMNds-  ./oso:.``:. :-``.:os+-  -sdNMMMMMMmy:.oNMMM
+[INFO]    MMm-.hMNhNMMMMMMMMNo`/MMMMMNdhyyyyhhdNMMMM+`oNMMMMMMMMNhNMh.-mMM
+[INFO]    MM:`mMMN/-sNNMMMMMMMo yMMMMMMMMMMMMMMMMMMy sMMMMMMMNNs-/NMMm`:MM
+[INFO]    Mm /MMMMMd/.-oMMMMMMN :MMMMMMMMMMMMMMMMMM-`MMMMMMMo-./dMMMMM/ NM
+[INFO]    Mm /MMMMMMm:-`sNMMMMN :MMMMMMMMMMMMMMMMMM-`MMMMMNs`-/NMMMMMM/ NM
+[INFO]    MM:`mMMMMMMMMd/-sMMMo yMMMMMMMMMMMMMMMMMMy sMMMs-/dMMMMMMMMd`:MM
+[INFO]    MMm-.hMMMMMMMMMdhMNo`+MMMMMMMMMMMMMMMMMMMM+`oNMhdMMMMMMMMMh.-mMM
+[INFO]    MMMNo./hmNMMMMMNms--yMMMMMMMMMMMMMMMMMMMMMMy--smNMMMMMNmy/.oNMMM
+[INFO]    MMMMMms:-:/+++/:-+hMMMMMMMMMMMMMMMMMMMMMMMMMNh+-:/+++/:-:smMMMMM
+[INFO]    MMMMMMMMNdhhyhdmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMmdhyhhmNMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMNNNNNMMMMMMNNNNNNMMMMMMMMNNMMMMMMMNNMMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMh/-...-+dMMMm......:+hMMMMs../MMMMMo..sMMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMM/  /yhy-  sMMm  -hhy/  :NMM+   oMMMy   /MMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMy  /MMMMN`  NMm  /MMMMo  +MM: .` yMd``` :MMMMMMMMMMMM
+[INFO]    MMMMMMMMMMM+  sMMMMM:  hMm  /MMMMd  -MM- /s `h.`d- -MMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMs  +MMMMM.  mMm  /MMMMy  /MM. +M/   yM: `MMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMN-  smNm/  +MMm  :NNdo` .mMM` oMM+/yMM/  MMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMNo-    `:yMMMm      `:sNMMM` sMMMMMMM+  NMMMMMMMMMMM
+[INFO]    MMMMMMMMMMMMMMMNmmNMMMMMMMNmmmmNMMMMMMMNNMMMMMMMMMNNMMMMMMMMMMMM
+[INFO]    ODM app finished - Wed Jan 07 05:57:19  2026
+100 - done.
+Postprocessing: /var/www/data/b3ed2a92-8961-45fc-a62b-a98654fb7698
+
+Found point cloud: odm_georeferencing/odm_georeferenced_model.laz
+
+Entwine point cloud is already built.
+
+Entwine point cloud is already built.
+Postprocessing: done (•̀ᴗ•́)و!

@@ -7,9 +7,15 @@ export interface Model3DJob {
   id: string;
   status: Model3DJobStatus;
   provider: string;
+  providerJobId?: string | null;
+  providerStatus?: string | null;
+  providerLastError?: string | null;
+  lastCheckedAt?: string | null;
   inputImageUrls: string[];
   outputModelUrl?: string | null;
   errorMessage?: string | null;
+  // 진행률(%) - Photogrammetry(NodeODM)에서 주로 제공. 없으면 null.
+  progress?: number | null;
   texturePrompt?: string | null;
   textureImageUrl?: string | null;
   enablePbr?: boolean;

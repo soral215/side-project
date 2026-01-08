@@ -75,6 +75,15 @@ export const Model3DJobStatusWidget = () => {
                   </div>
                 </div>
                 <div className="text-[11px] text-gray-600 dark:text-gray-400 break-all mt-1">{j.id}</div>
+                {(j.status === 'PROCESSING' || j.status === 'PENDING') && (
+                  <div className="mt-2 text-[11px] text-gray-600 dark:text-gray-400">
+                    {typeof j.progress === 'number' ? (
+                      <span>진행률: <span className="font-semibold text-gray-900 dark:text-gray-100">{j.progress}%</span></span>
+                    ) : (
+                      <span>엔진 상태: <span className="font-semibold text-gray-900 dark:text-gray-100">{j.providerStatus || '알 수 없음'}</span></span>
+                    )}
+                  </div>
+                )}
                 {j.status === 'FAILED' && j.errorMessage && (
                   <div className="text-[11px] text-red-600 dark:text-red-400 mt-2 break-all">
                     {j.errorMessage}

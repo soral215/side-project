@@ -35,6 +35,21 @@ export default function Model3DPage() {
     return Object.values(jobsMap).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }, [jobsMap]);
 
+  const timeAgo = (iso: string) => {
+    const t = new Date(iso).getTime();
+    const diffMs = Date.now() - t;
+    if (!Number.isFinite(diffMs) || diffMs < 0) return '방금 전';
+    const sec = Math.floor(diffMs / 1000);
+    if (sec < 5) return '방금 전';
+    if (sec < 60) return `${sec}초 전`;
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}분 전`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}시간 전`;
+    const day = Math.floor(hr / 24);
+    return `${day}일 전`;
+  };
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -59,10 +74,10 @@ export default function Model3DPage() {
       showError('이미지 파일만 선택할 수 있어요.');
     }
 
-    // Meshy Multi Image to 3D는 1~4장 지원
-    const limited = onlyImages.slice(0, 4);
-    if (onlyImages.length > 4) {
-      showInfo('최대 4장까지 업로드할 수 있어요. 앞의 4장만 사용합니다.');
+    // Photogrammetry(권장 20장+)를 위해 넉넉히 받되, 서버에서 provider별로 사용량을 결정합니다.
+    const limited = onlyImages.slice(0, 60);
+    if (onlyImages.length > 60) {
+      showInfo('최대 60장까지 업로드할 수 있어요. 앞의 60장만 사용합니다.');
     }
 
     setFiles(limited);
@@ -265,7 +280,7 @@ export default function Model3DPage() {
 
             <div className="flex items-center gap-2 mb-4">
               <Button onClick={handlePickFiles} variant="secondary" size="sm">
-                이미지 선택 (최대 4장)
+                이미지 선택 (최대 60장)
               </Button>
               <Button onClick={createJob} disabled={!canSubmit} isLoading={isSubmitting} size="sm">
                 {isSubmitting ? '요청 중...' : '3D 변환 시작'}
@@ -347,6 +362,10 @@ export default function Model3DPage() {
                   <div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">작업 ID</div>
                     <div className="text-xs text-gray-900 dark:text-gray-100 break-all">{job.id}</div>
+                    <div className="text-[11px] text-gray-500 dark:text-gray-500 mt-1">
+                      provider: {job.provider}
+                      {job.providerJobId ? ` / providerJobId: ${job.providerJobId}` : ''}
+                    </div>
                   </div>
                   <div className="text-sm">
                     <span className="text-gray-600 dark:text-gray-400">상태: </span>
@@ -356,6 +375,39 @@ export default function Model3DPage() {
                     </span>
                   </div>
                 </div>
+
+                {(job.status === 'PROCESSING' || job.status === 'PENDING') && (
+                  <div className="mt-3 space-y-2">
+                    <div className="text-sm text-gray-700 dark:text-gray-300">
+                      엔진 상태: <span className="font-semibold">{job.providerStatus || '알 수 없음'}</span>
+                      {job.lastCheckedAt ? (
+                        <span className="text-xs text-gray-500 dark:text-gray-500"> · 마지막 확인 {timeAgo(job.lastCheckedAt)}</span>
+                      ) : null}
+                    </div>
+
+                    {typeof job.progress === 'number' && (
+                      <div>
+                        <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                          <span>진행률</span>
+                          <span className="font-semibold text-gray-900 dark:text-gray-100">{job.progress}%</span>
+                        </div>
+                        <div className="h-2 rounded bg-gray-200 dark:bg-gray-700 overflow-hidden mt-1">
+                          <div
+                            className="h-2 bg-blue-600"
+                            style={{ width: `${Math.max(0, Math.min(100, job.progress))}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {job.providerLastError && (
+                      <div className="text-[11px] text-yellow-700 dark:text-yellow-400 break-all">
+                        상태 조회 중 경고: {job.providerLastError}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {job.status === 'FAILED' && (
                   <div className="mt-3 text-sm text-red-600 dark:text-red-400">
                     실패: {job.errorMessage || '알 수 없는 오류'}
